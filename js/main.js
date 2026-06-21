@@ -214,11 +214,11 @@
 
     getEquipmentSlots() {
       return (this.config.framework.equipmentSlots || []).map(s => s.id);
-    },
+    }
 
     getEquipmentSlotLayout() {
       return this.config.framework.equipmentSlots || [];
-    },
+    }
 
     describeEffectShort(effect) {
       if (!effect?.type) return '';
@@ -236,7 +236,7 @@
         default:
           return this.describeEffect(effect).replace(/\.$/, '');
       }
-    },
+    }
 
     describeEffect(effect) {
       if (!effect?.type) return 'No gameplay effect.';
