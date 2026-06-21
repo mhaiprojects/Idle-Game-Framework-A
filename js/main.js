@@ -204,10 +204,18 @@
 
     getAchievementDisplay() {
       void this._reactiveTick;
-      return this.config.achievements.achievements.map(a => ({
-        ...a,
-        unlocked: this.state.achievements[a.codeName]?.unlocked
-      }));
+      const fmt = (v) => this.formatNumber(v);
+      return this.config.achievements.achievements.map(a => {
+        const unlocked = !!this.state.achievements[a.codeName]?.unlocked;
+        const requirementRows = unlocked ? [] : [
+          AFK.AchievementSystem.getRequirementRow(a.requirement, this.state, this.config, fmt)
+        ];
+        return {
+          ...a,
+          unlocked,
+          requirementRows
+        };
+      });
     }
 
     getInventoryDisplay() {
@@ -445,6 +453,106 @@
             ]
           };
         }
+        case 'achievement': {
+          const ach = this.config.achievements.achievements.find(a => a.codeName === codeName);
+          if (!ach) return null;
+          const unlocked = !!this.state.achievements[codeName]?.unlocked;
+          const sections = [
+            section('description', ach.description || L('noDescription'))
+          ];
+          if (!unlocked) {
+            sections.push(section('achievementRequirements',
+              AFK.AchievementSystem.getRequirementRow(ach.requirement, this.state, this.config, fmt).label));
+          }
+          if (ach.reward) {
+            const rewardBody = ach.reward.type === 'resourceBonus'
+              ? `+${fmt(ach.reward.amount)} ${AFK.ConfigManager.getResourceDisplayName(ach.reward.resource)}`
+              : ach.reward.effect
+                ? this.describeEffect(ach.reward.effect)
+                : ach.reward.type;
+            sections.push(section('reward', rewardBody));
+          }
+          const requirementRows = unlocked ? [] : [
+            AFK.AchievementSystem.getRequirementRow(ach.requirement, this.state, this.config, fmt)
+          ];
+          return {
+            title: ach.displayName,
+            icon: ach.icon,
+            sections,
+            requirements: requirementRows.length ? requirementRows : undefined
+          };
+        }
+        case 'prestige': {
+          const fmtLocal = fmt;
+          const prestigeRequirements = AFK.ConfigManager.buildRequirementRowsFromConditions(
+            this.config.prestige.prestigeMinimum, this.state, fmtLocal
+          );
+          const lostKept = AFK.PrestigeSystem.getLostKept(this.config);
+          const gain = AFK.PrestigeSystem.getProjectedGain(this.state, this.config);
+          const diff = AFK.FormulaEngine.getEffectiveDifficulty(this.state, this.config);
+          return {
+            title: AFK.ConfigManager.getSection('prestigeSoftReset').title,
+            icon: AFK.ConfigManager.getSection('prestigeSoftReset').icon,
+            sections: [
+              section('rewards',
+                `Gain +${gain} Prestige Shards. Cost mult: ${diff.costMultiplier.toFixed(2)}× · ${this.getPrimaryCurrencyLabel()}: ${diff.primaryCurrencyMultiplier.toFixed(2)}×`),
+              section('lost', lostKept.lost.join(' · ')),
+              section('kept', lostKept.kept.join(' · '))
+            ],
+            requirements: prestigeRequirements.length ? prestigeRequirements : undefined
+          };
+        }
+        case 'ascension': {
+          const next = AFK.AscensionSystem.getNextTier(this.state, this.config);
+          if (!next) return null;
+          const ascensionRequirements = this._buildAscensionRequirementRows(
+            next.ascensionRequirements?.conditions || [],
+            fmt
+          );
+          const lostKept = AFK.AscensionSystem.getLostKept(next);
+          const preview = AFK.AscensionSystem.getUnlockedFeaturesPreview(this.state, this.config);
+          const sections = [
+            section('description', `Ascend to ${AFK.ConfigManager.formatAscensionTierLabel(next.tier)}.`)
+          ];
+          if (preview.length) {
+            sections.push(section('unlocksPreview', preview.join(', ')));
+          }
+          sections.push(
+            section('lost', lostKept.lost.join(' · ')),
+            section('kept', lostKept.kept.join(' · '))
+          );
+          return {
+            title: AFK.ConfigManager.formatAscensionTierLabel(next.tier),
+            icon: AFK.ConfigManager.getDefaultIcon('ascension'),
+            sections,
+            requirements: ascensionRequirements.length ? ascensionRequirements : undefined
+          };
+        }
+        case 'prestigeBonus': {
+          const bonus = this.config.prestige.prestigeBonuses.find(b => b.codeName === codeName);
+          if (!bonus) return null;
+          const level = this.state.meta.prestige.purchasedBonuses[codeName] || 0;
+          const cost = bonus.cost * (level + 1);
+          const locked = bonus.requiredFeature && !this.isFeatureUnlocked(bonus.requiredFeature);
+          const sections = [
+            section('description', bonus.description || L('noDescription')),
+            section('effect', this.describeEffect({
+              ...bonus.effect,
+              multiplier: 1 + (bonus.effect.multiplierPerLevel || 0) * Math.max(level, 1)
+            })),
+            section('levelProgress', `Level ${level} / ${bonus.maxLevel}`),
+            section('purchaseRequirements', `${fmt(cost)} Prestige Shards per purchase`)
+          ];
+          const requirements = locked
+            ? AFK.ConfigManager.getFeatureUnlockInfo(bonus.requiredFeature, this.state, fmt).requirements
+            : undefined;
+          return {
+            title: bonus.displayName,
+            icon: bonus.icon,
+            sections,
+            requirements: requirements?.length ? requirements : undefined
+          };
+        }
         default:
           return null;
       }
@@ -461,20 +569,23 @@
 
     getPrestigeBonusesDisplay() {
       void this._reactiveTick;
+      const fmt = (v) => this.formatNumber(v);
       return (this.config.prestige.prestigeBonuses || []).map(bonus => {
         const level = this.state.meta.prestige.purchasedBonuses[bonus.codeName] || 0;
         const locked = bonus.requiredFeature && !this.isFeatureUnlocked(bonus.requiredFeature);
         const cost = bonus.cost * (level + 1);
         const maxed = level >= bonus.maxLevel;
         const canBuy = !locked && !maxed && this.state.meta.prestige.currency >= cost;
-        const fmt = (v) => this.formatNumber(v);
+        const unlockRequirements = locked
+          ? AFK.ConfigManager.getFeatureUnlockInfo(bonus.requiredFeature, this.state, fmt).requirements
+          : [];
         return {
           ...bonus,
           level,
           maxed,
           canBuy,
           locked,
-          lockReason: locked ? AFK.ConfigManager.getFeatureDisplayName(bonus.requiredFeature) : '',
+          unlockRequirements,
           costProgress: [AFK.ConfigManager.buildProgressEntry({
             current: this.state.meta.prestige.currency,
             required: cost,
@@ -496,16 +607,33 @@
       });
     }
 
+    _buildAscensionRequirementRows(conditions, fmt) {
+      return (conditions || []).map(cond => {
+        const detail = AFK.ConfigManager.formatUnlockConditionDetail(cond, this.state, fmt);
+        return {
+          icon: detail.icon,
+          label: detail.label,
+          progress: detail.progress,
+          met: detail.met
+        };
+      });
+    }
+
     getAscensionDisplay() {
       void this._reactiveTick;
+      const fmt = (v) => this.formatNumber(v);
       const tier = this.state.meta.ascension.currentTier;
       const next = AFK.AscensionSystem.getNextTier(this.state, this.config);
       const ascendCheck = AFK.AscensionSystem.canAscend(this.state, this.config);
-      const milestones = AFK.AscensionSystem.getMilestoneProgress(this.state, this.config).map(m => ({
-        label: this._milestoneLabel(m.condition),
-        progress: m.progress,
-        met: m.met
-      }));
+      const prestigeRequirements = AFK.ConfigManager.buildRequirementRowsFromConditions(
+        this.config.prestige.prestigeMinimum, this.state, fmt
+      );
+      const ascensionRequirements = next?.ascensionRequirements
+        ? this._buildAscensionRequirementRows(
+          next.ascensionRequirements.conditions || [next.ascensionRequirements],
+          fmt
+        )
+        : [];
       const lostKeptPrestige = AFK.PrestigeSystem.getLostKept(this.config);
       const lostKeptAscend = next ? AFK.AscensionSystem.getLostKept(next) : { lost: [], kept: [] };
 
@@ -518,7 +646,8 @@
         canPrestige: AFK.PrestigeSystem.canPrestige(this.state, this.config),
         canAscend: ascendCheck.met,
         nextTierName: next ? AFK.ConfigManager.formatAscensionTierLabel(next.tier) : '',
-        milestones,
+        prestigeRequirements,
+        ascensionRequirements,
         prestigeLost: lostKeptPrestige.lost,
         prestigeKept: lostKeptPrestige.kept,
         ascendLost: lostKeptAscend.lost,
@@ -529,12 +658,6 @@
         difficulty: AFK.FormulaEngine.getEffectiveDifficulty(this.state, this.config),
         prestigeBonuses: this.getPrestigeBonusesDisplay()
       };
-    }
-
-    _milestoneLabel(cond) {
-      return AFK.ConfigManager.formatUnlockConditionDetail(
-        cond, this.state, (v) => this.formatNumber(v)
-      ).label;
     }
 
     getStatsDisplay() {

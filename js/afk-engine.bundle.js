@@ -564,6 +564,16 @@ const ConfigManager = {
     }
     return text;
   },
+  formatAchievementLabel(key, vars = {}) {
+    let text = config.defaults.achievementLabels[key] ?? key;
+    for (const [k, v] of Object.entries(vars)) {
+      text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
+    }
+    return text;
+  },
+  buildRequirementRowsFromConditions(unlockConditions, state, formatNumber) {
+    return this.buildUnlockRequirements(unlockConditions, state, formatNumber);
+  },
   getFramework() { return config.framework; },
   getDifficulty() { return config.difficulty; },
   getResources() { return config.resources.resources; },
@@ -2259,43 +2269,123 @@ const AchievementSystem = {
     }
   },
 
-  _checkRequirement(req, state, config, mods, primary) {
+  getRequirementRow(req, state, config, formatNumber) {
+    const fmt = formatNumber || (n => n);
+    const mods = ModifierSystem.collect(state, config);
+    const primary = config.resources.resources.find(r => r.isPrimary);
+    const met = this._checkRequirement(req, state, config, mods, primary);
+    let progress = met ? 1 : 0;
+    let icon = ConfigManager.getDefaultIcon('achievement');
+    let label = req.type;
+
     switch (req.type) {
-      case 'totalTaps':
-        return state.stats.totalTaps >= req.amount;
-      case 'totalClicks':
-        return state.stats.totalClicks >= req.amount;
-      case 'generatorOwned':
-        return (state.generators[req.generator]?.quantityPurchased || 0) >= req.amount;
-      case 'generatorCount': {
-        let total = 0;
-        for (const g of Object.values(state.generators)) total += g.quantityPurchased;
-        return total >= req.amount;
+      case 'totalTaps': {
+        const current = state.stats.totalTaps;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '👆';
+        label = ConfigManager.formatAchievementLabel('totalTaps', { current, required: req.amount });
+        break;
       }
-      case 'resourceEarned':
-        return (state.resources[req.resource]?.totalEarned || 0) >= req.amount;
+      case 'totalClicks': {
+        const current = state.stats.totalClicks || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '👆';
+        label = ConfigManager.formatAchievementLabel('totalClicks', { current, required: req.amount });
+        break;
+      }
+      case 'generatorOwned': {
+        const gen = config.generators.generators.find(g => g.codeName === req.generator);
+        const current = state.generators[req.generator]?.quantityPurchased || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = gen?.icon || ConfigManager.getDefaultIcon('generator');
+        label = ConfigManager.formatAchievementLabel('generatorOwned', {
+          name: gen?.displayName || req.generator,
+          current,
+          required: req.amount
+        });
+        break;
+      }
+      case 'generatorCount': {
+        let current = 0;
+        for (const g of Object.values(state.generators)) current += g.quantityPurchased;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = ConfigManager.getDefaultIcon('generator');
+        label = ConfigManager.formatAchievementLabel('generatorCount', { current, required: req.amount });
+        break;
+      }
+      case 'resourceEarned': {
+        const res = ConfigManager.getResource(req.resource);
+        const current = state.resources[req.resource]?.totalEarned || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = res?.icon || ConfigManager.getDefaultIcon('resource');
+        label = ConfigManager.formatAchievementLabel('resourceEarned', {
+          name: res?.displayName || req.resource,
+          current: fmt(current),
+          required: fmt(req.amount)
+        });
+        break;
+      }
       case 'primaryCurrencyRateReached':
-        return FormulaEngine.calculatePrimaryCurrencyRate(state, config, mods) >= req.amount;
-      case 'ppsReached':
-        return FormulaEngine.calculatePrimaryCurrencyRate(state, config, mods) >= req.amount;
+      case 'ppsReached': {
+        const current = FormulaEngine.calculatePrimaryCurrencyRate(state, config, mods);
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = primary?.icon || ConfigManager.getDefaultIcon('primaryCurrency');
+        label = ConfigManager.formatAchievementLabel('primaryCurrencyRate', {
+          name: primary?.displayName || 'Primary currency',
+          current: fmt(current),
+          required: fmt(req.amount)
+        });
+        break;
+      }
       case 'prestigeCount': {
         const tier = state.meta.ascension.currentTier;
-        return (state.meta.ascension.tiers[tier]?.prestigeCount || 0) >= req.amount;
+        const current = state.meta.ascension.tiers[tier]?.prestigeCount || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = ConfigManager.getDefaultIcon('ascension');
+        label = ConfigManager.formatAchievementLabel('prestigeCount', { current, required: req.amount });
+        break;
       }
-      case 'ascensionCount':
-        return state.meta.ascension.totalAscensions >= req.amount;
-      case 'artifactCount':
-        return Object.keys(state.artifacts.acquired).length >= req.amount;
-      case 'itemCollected':
-        return (state.inventory[req.item] || 0) >= req.amount;
-      case 'playTime':
-        return state.stats.playTimeSeconds >= req.amount;
+      case 'ascensionCount': {
+        const current = state.meta.ascension.totalAscensions || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = ConfigManager.getDefaultIcon('ascension');
+        label = ConfigManager.formatAchievementLabel('ascensionCount', { current, required: req.amount });
+        break;
+      }
+      case 'artifactCount': {
+        const current = Object.keys(state.artifacts.acquired).length;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🔮';
+        label = ConfigManager.formatAchievementLabel('artifactCount', { current, required: req.amount });
+        break;
+      }
+      case 'itemCollected': {
+        const item = config.items.items.find(i => i.codeName === req.item);
+        const current = state.inventory[req.item] || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = item?.icon || ConfigManager.getDefaultIcon('unknown');
+        label = ConfigManager.formatAchievementLabel('itemCollected', {
+          name: item?.displayName || req.item,
+          current,
+          required: req.amount
+        });
+        break;
+      }
+      case 'playTime': {
+        const current = Math.floor(state.stats.playTimeSeconds);
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '⏱️';
+        label = ConfigManager.formatAchievementLabel('playTime', { current, required: req.amount });
+        break;
+      }
       default:
-        return false;
+        break;
     }
-  }
-};
 
+    return { icon, label, progress, met };
+  },
+
+  _checkRequirement(req, state, config, mods, primary) {
 // --- js/game/systems/EventSystem.js ---
 
 const EventSystem = {

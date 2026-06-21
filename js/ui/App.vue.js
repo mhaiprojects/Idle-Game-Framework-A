@@ -219,10 +219,12 @@ export default {
             @use-boost="onUseBoost" @more-info="onMoreInfo" />
           <ArtifactPanel v-if="state.ui.activeTab === 'artifacts'" :artifacts="artifacts"
             @more-info="onMoreInfo" />
-          <AchievementPanel v-if="state.ui.activeTab === 'achievements'" :achievements="achievements" />
+          <AchievementPanel v-if="state.ui.activeTab === 'achievements'" :achievements="achievements"
+            @more-info="onMoreInfo" />
           <AscensionPanel v-if="state.ui.activeTab === 'ascension'" v-bind="ascensionData"
             :format-number="formatNumber" :primary-currency-label="primaryCurrencyLabel"
-            @prestige="onPrestige" @ascend="onAscend" @buy-bonus="onBuyBonus" />
+            @prestige="onPrestige" @ascend="onAscend" @buy-bonus="onBuyBonus"
+            @more-info="onMoreInfo" />
           <StatsPanel v-if="state.ui.activeTab === 'stats'"
             :stats="statsData" :primary-breakdown="primaryBreakdown"
             :primary-currency-label="primaryCurrencyLabel"

@@ -1968,6 +1968,22 @@ window.AFK_CONFIG = {
       "provides": {
         "icon": "\u2795",
         "title": "Provides"
+      },
+      "prestigeRequirements": {
+        "icon": "\u267b\ufe0f",
+        "title": "Prestige Requirements"
+      },
+      "ascensionRequirements": {
+        "icon": "\ud83d\udd04",
+        "title": "Ascension Requirements"
+      },
+      "achievementRequirements": {
+        "icon": "\ud83c\udfc6",
+        "title": "Achievement Requirements"
+      },
+      "reward": {
+        "icon": "\ud83c\udf81",
+        "title": "Reward"
       }
     },
     "panels": {
@@ -2102,6 +2118,19 @@ window.AFK_CONFIG = {
       "lifetimeResourceStatic": "Lifetime {name}: 0 / {required}",
       "generatorPurchasesStatic": "Generator purchases: 0 / {required}",
       "lifetimePrestigesStatic": "Prestiges: 0 / {required}"
+    },
+    "achievementLabels": {
+      "totalTaps": "Total taps: {current} / {required}",
+      "totalClicks": "Total clicks: {current} / {required}",
+      "generatorOwned": "{name}: {current} / {required}",
+      "generatorCount": "Generators owned: {current} / {required}",
+      "resourceEarned": "Lifetime {name}: {current} / {required}",
+      "primaryCurrencyRate": "{name} rate: {current} / {required}/s",
+      "prestigeCount": "Prestiges this tier: {current} / {required}",
+      "ascensionCount": "Ascensions: {current} / {required}",
+      "artifactCount": "Artifacts collected: {current} / {required}",
+      "itemCollected": "{name} owned: {current} / {required}",
+      "playTime": "Play time: {current}s / {required}s"
     }
   }
 };

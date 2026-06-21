@@ -296,6 +296,18 @@
 
 ---
 
+### 2026-6-21-23-30-0 — Clear prestige/ascension and unlock requirements in UI
+
+**Request:** Prestige and ascension requirements should be clear; all unlock requirements accessible on object cards and/or via More Info.
+
+**Implemented:**
+- Prestige card shows Prestige Requirements with progress bars; ascension card shows Ascension Requirements
+- Prestige shop locked bonuses use full UnlockRequirementsList instead of a one-line lock reason
+- Achievement cards show requirement progress when locked; More Info on prestige, ascension, shop bonuses, achievements
+- Info modals for prestige, ascension, prestigeBonus, and achievement with full requirement details
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec

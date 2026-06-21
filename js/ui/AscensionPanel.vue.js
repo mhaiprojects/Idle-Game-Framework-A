@@ -1,28 +1,23 @@
-import ProgressBar from './components/ProgressBar.vue.js';
-import PanelHeader from './components/PanelHeader.vue.js';
+import UnlockRequirementsList from './components/UnlockRequirementsList.vue.js';
 import ResourceProgressList from './components/ResourceProgressList.vue.js';
+import MoreInfoButton from './components/MoreInfoButton.vue.js';
 import CardSection from './components/CardSection.vue.js';
+import PanelHeader from './components/PanelHeader.vue.js';
 
 export default {
   name: 'AscensionPanel',
-  components: { ProgressBar, ResourceProgressList, PanelHeader, CardSection },
+  components: { UnlockRequirementsList, ResourceProgressList, MoreInfoButton, PanelHeader, CardSection },
   props: {
     tierName: String, currentTier: Number, prestigeCount: Number,
     lifetimePrestiges: Number, projectedGain: Number, canPrestige: Boolean,
-    canAscend: Boolean, nextTierName: String, milestones: Array,
-    prestigeLost: Array, prestigeKept: Array, ascendLost: Array, ascendKept: Array,
-    featurePreview: Array, prestigeCurrency: Number, formatNumber: Function,
-    maxTierReached: Boolean, difficulty: Object, primaryCurrencyLabel: String,
-    prestigeBonuses: Array, canBuyPrestigeShop: Boolean
+    canAscend: Boolean, nextTierName: String, prestigeRequirements: Array,
+    ascensionRequirements: Array, prestigeLost: Array, prestigeKept: Array,
+    ascendLost: Array, ascendKept: Array, featurePreview: Array,
+    prestigeCurrency: Number, formatNumber: Function, maxTierReached: Boolean,
+    difficulty: Object, primaryCurrencyLabel: String, prestigeBonuses: Array
   },
-  emits: ['prestige', 'ascend', 'buy-bonus'],
+  emits: ['prestige', 'ascend', 'buy-bonus', 'more-info'],
   data() { return { showPrestigeModal: false, showAscendModal: false }; },
-  methods: {
-    bonusCost(bonus) {
-      const level = bonus.level || 0;
-      return bonus.cost * (level + 1);
-    }
-  },
   template: `
     <div class="panel">
       <PanelHeader panel-key="ascension" />
@@ -38,7 +33,15 @@ export default {
 
       <CardSection section-key="prestigeSoftReset" level="panel">
         <div class="card">
-          <CardSection section-key="rewards" :first="true">
+          <div class="card-header">
+            <span class="card-name">{{ prestigeSectionTitle }}</span>
+            <MoreInfoButton @click="$emit('more-info', 'prestige', 'softReset')" />
+          </div>
+          <UnlockRequirementsList
+            :requirements="prestigeRequirements"
+            section-key="prestigeRequirements"
+            :first="true" />
+          <CardSection section-key="rewards">
             <p class="section-text">Gain: +{{ projectedGain }} Prestige Shards</p>
             <p class="section-text muted">Cost mult: {{ difficulty?.costMultiplier?.toFixed(2) }}× | {{ primaryCurrencyLabel }}: {{ difficulty?.primaryCurrencyMultiplier?.toFixed(2) }}×</p>
           </CardSection>
@@ -54,33 +57,41 @@ export default {
             <span class="card-icon">{{ bonus.icon }}</span>
             <span class="card-name">{{ bonus.displayName }}</span>
             <span class="card-owned">Lv {{ bonus.level }}/{{ bonus.maxLevel }}</span>
+            <MoreInfoButton @click="$emit('more-info', 'prestigeBonus', bonus.codeName)" />
           </div>
-          <p style="font-size:0.75rem;color:var(--color-muted)">{{ bonus.description }}</p>
-          <CardSection v-if="bonus.levelProgress" section-key="levelProgress" :first="true">
+          <p class="card-description">{{ bonus.description }}</p>
+          <UnlockRequirementsList v-if="bonus.locked && bonus.unlockRequirements?.length"
+            :requirements="bonus.unlockRequirements"
+            section-key="unlockRequirements"
+            :first="true" />
+          <CardSection v-else-if="bonus.levelProgress" section-key="levelProgress" :first="true">
             <ResourceProgressList :entries="[bonus.levelProgress]" />
           </CardSection>
-          <CardSection v-if="!bonus.locked && !bonus.maxed" section-key="purchaseRequirements" :first="!bonus.levelProgress">
+          <CardSection v-if="!bonus.locked && !bonus.maxed" section-key="purchaseRequirements"
+            :first="bonus.locked || !bonus.levelProgress">
             <ResourceProgressList :entries="bonus.costProgress" />
             <div class="section-actions">
               <button class="btn btn-primary btn-sm" :disabled="!bonus.canBuy" @click="$emit('buy-bonus', bonus.codeName)">Buy</button>
             </div>
           </CardSection>
-          <CardSection v-else-if="bonus.locked" section-key="unlockRequirements" :first="!bonus.levelProgress">
-            <p class="hint-text" style="margin-bottom:0">🔒 {{ bonus.lockReason }}</p>
+          <CardSection v-else-if="bonus.maxed" section-key="status" :first="!bonus.levelProgress">
+            <p class="hint-text" style="margin-bottom:0">{{ maxLevelLabel }}</p>
           </CardSection>
         </div>
       </CardSection>
 
       <CardSection v-if="!maxTierReached" section-key="ascension" level="panel">
         <div class="card">
-          <CardSection :title="'Ascend to ' + nextTierName" :first="true">
-            <div v-for="(m, i) in milestones" :key="i" class="resource-progress-row">
-              <div class="resource-progress-label" :class="{ met: m.met }">{{ m.label }}</div>
-              <ProgressBar :progress="m.progress" :met="m.met" />
-            </div>
-            <CardSection v-if="featurePreview.length" section-key="unlocksPreview">
-              <p class="section-text accent">{{ featurePreview.join(', ') }}</p>
-            </CardSection>
+          <div class="card-header">
+            <span class="card-name">{{ ascendTitle }}</span>
+            <MoreInfoButton @click="$emit('more-info', 'ascension', 'next')" />
+          </div>
+          <UnlockRequirementsList
+            :requirements="ascensionRequirements"
+            section-key="ascensionRequirements"
+            :first="true" />
+          <CardSection v-if="featurePreview.length" section-key="unlocksPreview">
+            <p class="section-text accent">{{ featurePreview.join(', ') }}</p>
           </CardSection>
           <div class="section-actions section-actions-start">
             <button class="btn btn-primary" :disabled="!canAscend" @click="showAscendModal = true">Ascend</button>
@@ -91,6 +102,7 @@ export default {
       <div v-if="showPrestigeModal" class="modal-overlay" @click.self="showPrestigeModal = false">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Confirm Prestige</h3>
+          <UnlockRequirementsList :requirements="prestigeRequirements" section-key="prestigeRequirements" :first="true" />
           <div class="modal-columns">
             <CardSection section-key="lost" :first="true" class="lost">
               <div v-for="l in prestigeLost" :key="l" class="section-text">• {{ l }}</div>
@@ -112,6 +124,7 @@ export default {
           <CardSection section-key="warning" :first="true">
             <p class="section-text danger">This cannot be undone.</p>
           </CardSection>
+          <UnlockRequirementsList :requirements="ascensionRequirements" section-key="ascensionRequirements" />
           <div class="modal-columns">
             <CardSection section-key="lost" class="lost">
               <div v-for="l in ascendLost" :key="l" class="section-text">• {{ l }}</div>
@@ -127,5 +140,16 @@ export default {
         </div>
       </div>
     </div>
-  `
+  `,
+  computed: {
+    prestigeSectionTitle() {
+      return AFK?.ConfigManager?.getSection?.('prestigeSoftReset')?.title || 'Prestige';
+    },
+    ascendTitle() {
+      return `Ascend to ${this.nextTierName}`;
+    },
+    maxLevelLabel() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('maxLevelReached') || '';
+    }
+  }
 };

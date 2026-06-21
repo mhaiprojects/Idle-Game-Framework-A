@@ -110,6 +110,16 @@ export const ConfigManager = {
     }
     return text;
   },
+  formatAchievementLabel(key, vars = {}) {
+    let text = config.defaults.achievementLabels[key] ?? key;
+    for (const [k, v] of Object.entries(vars)) {
+      text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
+    }
+    return text;
+  },
+  buildRequirementRowsFromConditions(unlockConditions, state, formatNumber) {
+    return this.buildUnlockRequirements(unlockConditions, state, formatNumber);
+  },
   getFramework() { return config.framework; },
   getDifficulty() { return config.difficulty; },
   getResources() { return config.resources.resources; },

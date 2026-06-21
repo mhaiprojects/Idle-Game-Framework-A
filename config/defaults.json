@@ -117,7 +117,11 @@
     "activeSkill": { "icon": "⚔️", "title": "Active Skill" },
     "currentlyEquipped": { "icon": "🧰", "title": "Currently Equipped" },
     "permanentBonus": { "icon": "♾️", "title": "Permanent Bonus" },
-    "provides": { "icon": "➕", "title": "Provides" }
+    "provides": { "icon": "➕", "title": "Provides" },
+    "prestigeRequirements": { "icon": "♻️", "title": "Prestige Requirements" },
+    "ascensionRequirements": { "icon": "🔄", "title": "Ascension Requirements" },
+    "achievementRequirements": { "icon": "🏆", "title": "Achievement Requirements" },
+    "reward": { "icon": "🎁", "title": "Reward" }
   },
   "panels": {
     "generators": { "icon": "⚙️", "title": "Generators" },
@@ -168,5 +172,18 @@
     "lifetimeResourceStatic": "Lifetime {name}: 0 / {required}",
     "generatorPurchasesStatic": "Generator purchases: 0 / {required}",
     "lifetimePrestigesStatic": "Prestiges: 0 / {required}"
+  },
+  "achievementLabels": {
+    "totalTaps": "Total taps: {current} / {required}",
+    "totalClicks": "Total clicks: {current} / {required}",
+    "generatorOwned": "{name}: {current} / {required}",
+    "generatorCount": "Generators owned: {current} / {required}",
+    "resourceEarned": "Lifetime {name}: {current} / {required}",
+    "primaryCurrencyRate": "{name} rate: {current} / {required}/s",
+    "prestigeCount": "Prestiges this tier: {current} / {required}",
+    "ascensionCount": "Ascensions: {current} / {required}",
+    "artifactCount": "Artifacts collected: {current} / {required}",
+    "itemCollected": "{name} owned: {current} / {required}",
+    "playTime": "Play time: {current}s / {required}s"
   }
 }
