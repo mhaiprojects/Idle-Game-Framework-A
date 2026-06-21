@@ -1,13 +1,14 @@
 import CardSection from './components/CardSection.vue.js';
+import PanelHeader from './components/PanelHeader.vue.js';
 
 export default {
   name: 'ProgressPanel',
-  components: { CardSection },
+  components: { PanelHeader, CardSection },
   props: { progress: Object },
   template: `
     <div class="panel">
-      <h2 class="panel-title">🔧 Progress Tracker</h2>
-      <CardSection title="Summary" level="panel" :first="true">
+      <PanelHeader panel-key="progress" />
+      <CardSection section-key="summary" level="panel" :first="true">
         <div class="progress-summary">
           {{ progress.percentage }}% Complete ({{ progress.passed }}/{{ progress.total }})
         </div>

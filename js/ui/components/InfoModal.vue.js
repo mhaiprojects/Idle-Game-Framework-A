@@ -14,7 +14,9 @@ export default {
           <h3>{{ info.title }}</h3>
         </div>
         <CardSection v-for="(section, i) in info.sections" :key="i"
-          :title="section.heading" :first="i === 0">
+          :section-key="section.sectionKey"
+          :title="section.title || section.heading"
+          :first="i === 0">
           <p class="section-text">{{ section.body }}</p>
         </CardSection>
         <UnlockRequirementsList v-if="info.requirements?.length" :requirements="info.requirements" />

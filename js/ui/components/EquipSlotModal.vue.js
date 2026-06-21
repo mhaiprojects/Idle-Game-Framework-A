@@ -17,14 +17,19 @@ export default {
       return `rarity-${rarity || 'common'}`;
     }
   },
+  computed: {
+    slotFallback() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('equipmentSlotFallback') || '';
+    }
+  },
   template: `
     <div v-if="open" class="modal-overlay" @click.self="$emit('close')">
       <div class="modal equip-slot-modal animate__animated animate__fadeIn">
         <div class="equip-modal-header">
-          <h3>{{ slot?.label || 'Equipment' }}</h3>
+          <h3>{{ slot?.label || slotFallback }}</h3>
           <p class="hint-text">{{ characterName }} · sorted by rarity</p>
         </div>
-        <CardSection title="Available Items" :first="true">
+        <CardSection section-key="availableItems" :first="true">
           <div v-if="items.length" class="equip-modal-list">
             <button v-for="item in items" :key="item.codeName"
               class="equip-modal-item"

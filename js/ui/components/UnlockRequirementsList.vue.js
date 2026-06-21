@@ -6,11 +6,12 @@ export default {
   components: { ProgressBar, CardSection },
   props: {
     requirements: { type: Array, default: () => [] },
-    heading: { type: String, default: 'Unlock Requirements' },
+    sectionKey: { type: String, default: 'unlockRequirements' },
+    title: { type: String, default: '' },
     first: { type: Boolean, default: false }
   },
   template: `
-    <CardSection v-if="requirements.length" :title="heading" :first="first">
+    <CardSection v-if="requirements.length" :section-key="sectionKey" :title="title" :first="first">
       <div v-for="(req, i) in requirements" :key="i" class="unlock-req-row">
         <span class="unlock-req-icon">{{ req.icon }}</span>
         <div class="unlock-req-body">

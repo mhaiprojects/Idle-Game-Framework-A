@@ -283,6 +283,19 @@
 
 ---
 
+### 2026-6-21-23-0-0 — Defaults config, section icons, card spacing
+
+**Request:** Move all defaults (icons, calculation fallbacks) to a Defaults config file; prefix section titles with icons; separate card sections with line and space.
+
+**Implemented:**
+- `config/defaults.json` — icons, labels, calculations, equipment fallbacks, section/panel/tab definitions, unlock label templates
+- `ConfigManager` helpers: `getDefaultIcon`, `getDefaultLabel`, `getDefaultCalc`, `getSection`, `getPanel`, `getTabs`
+- Engine/UI read fallbacks from defaults instead of hardcoded literals
+- `CardSection` / `PanelHeader` resolve titles and icons from defaults via `sectionKey` / `panelKey`
+- Card sections use stronger top border and spacing between grouped blocks
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec

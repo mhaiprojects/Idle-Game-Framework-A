@@ -60,6 +60,11 @@ const EVENTS = {
 
 // --- js/game/FormulaEngine.js ---
 const FormulaEngine = {
+  _calc(config, key) {
+    const cfg = config || (typeof window !== 'undefined' ? window.AFK?.ConfigManager?.getAll?.() : null);
+    return cfg?.defaults?.calculations?.[key];
+  },
+
   formatNumber(value, config, precision) {
     const nf = config.framework.numberFormat;
     const prec = precision ?? nf.displayPrecision;
@@ -87,7 +92,8 @@ const FormulaEngine = {
       const profile = diff.profiles[profileKey];
       if (profile) {
         costMult *= profile.costMultiplier;
-        primaryCurrencyMult *= profile.primaryCurrencyMultiplier ?? profile.ppsMultiplier ?? 1;
+        primaryCurrencyMult *= profile.primaryCurrencyMultiplier ?? profile.ppsMultiplier
+          ?? this._calc(config, 'primaryCurrencyMultiplierFallback');
         offlineEff *= profile.offlineEfficiency;
       }
     }
@@ -95,7 +101,8 @@ const FormulaEngine = {
     const prestigeCount = state.meta.ascension.tiers[tier]?.prestigeCount || 0;
     const pdc = diff.prestigeDifficultyPerCount;
     costMult *= (1 + pdc.costIncreasePerPrestige * prestigeCount);
-    const primaryDecrease = pdc.primaryCurrencyDecreasePerPrestige ?? pdc.ppsDecreasePerPrestige ?? 0;
+    const primaryDecrease = pdc.primaryCurrencyDecreasePerPrestige ?? pdc.ppsDecreasePerPrestige
+      ?? this._calc(config, 'primaryCurrencyDecreaseFallback');
     primaryCurrencyMult *= (1 - primaryDecrease * prestigeCount);
 
     return { costMultiplier: costMult, primaryCurrencyMultiplier: primaryCurrencyMult, offlineEfficiency: offlineEff };
@@ -114,7 +121,8 @@ const FormulaEngine = {
       }
     }
 
-    multiplicative.sort((a, b) => (a.priority || 0) - (b.priority || 0));
+    multiplicative.sort((a, b) => (a.priority ?? this._calc(null, 'modifierPriorityDefault'))
+      - (b.priority ?? this._calc(null, 'modifierPriorityDefault')));
 
     let value = base + additive;
     for (const mod of multiplicative) {
@@ -320,15 +328,16 @@ const FormulaEngine = {
     return Math.floor(Math.log(Math.max(runValue / minimum, 1)) / Math.log(logBase));
   },
 
-  calculateUpgradeCost(upgrade, purchaseCount) {
-    return Math.floor(upgrade.cost * Math.pow(upgrade.costScale || 1, purchaseCount));
+  calculateUpgradeCost(upgrade, purchaseCount, config) {
+    const scale = upgrade.costScale ?? this._calc(config, 'upgradeCostScale');
+    return Math.floor(upgrade.cost * Math.pow(scale, purchaseCount));
   },
 
   evaluateUnlockConditions(unlockConditions, state, config) {
     if (!unlockConditions) return { met: true, unmet: [] };
 
     const conditions = unlockConditions.conditions || [unlockConditions];
-    const operator = unlockConditions.operator || 'AND';
+    const operator = unlockConditions.operator || this._calc(config, 'unlockOperator');
     const unmet = [];
 
     for (const cond of conditions) {
@@ -356,11 +365,13 @@ const FormulaEngine = {
         return Object.entries(cost).every(([res, amt]) => (state.resources[res]?.quantity || 0) >= amt);
       }
       case 'generatorOwned':
-        return (state.generators[cond.generator]?.quantityPurchased || 0) >= (cond.quantity || cond.amount || 1);
+        return (state.generators[cond.generator]?.quantityPurchased || this._calc(config, 'numericZero'))
+          >= (cond.quantity || cond.amount || this._calc(config, 'unlockConditionQuantity'));
       case 'resourceHeld':
-        return (state.resources[cond.resource]?.quantity || 0) >= cond.amount;
+        return (state.resources[cond.resource]?.quantity || this._calc(config, 'numericZero')) >= cond.amount;
       case 'upgradePurchased':
-        return (state.upgrades[cond.upgrade]?.purchaseCount || 0) >= (cond.level || 1);
+        return (state.upgrades[cond.upgrade]?.purchaseCount || this._calc(config, 'numericZero'))
+          >= (cond.level || this._calc(config, 'unlockConditionLevel'));
       case 'ascensionTier':
         return state.meta.ascension.currentTier >= cond.minTier;
       case 'prestigeCount': {
@@ -416,9 +427,11 @@ const FormulaEngine = {
       case 'resourceHeld':
         return Math.min(1, (state.resources[cond.resource]?.quantity || 0) / cond.amount);
       case 'generatorOwned':
-        return Math.min(1, (state.generators[cond.generator]?.quantityPurchased || 0) / (cond.quantity || cond.amount || 1));
+        return Math.min(1, (state.generators[cond.generator]?.quantityPurchased || this._calc(config, 'numericZero'))
+          / (cond.quantity || cond.amount || this._calc(config, 'unlockConditionQuantity')));
       case 'upgradePurchased':
-        return Math.min(1, (state.upgrades[cond.upgrade]?.purchaseCount || 0) / (cond.level || 1));
+        return Math.min(1, (state.upgrades[cond.upgrade]?.purchaseCount || this._calc(config, 'numericZero'))
+          / (cond.level || this._calc(config, 'unlockConditionLevel')));
       case 'ascensionTier':
         return cond.minTier > 0
           ? Math.min(1, state.meta.ascension.currentTier / cond.minTier)
@@ -446,7 +459,7 @@ let config = null;
 const CONFIG_FILES = [
   'framework', 'difficulty', 'resources', 'generators', 'upgrades',
   'items', 'artifacts', 'characters', 'achievements', 'events',
-  'drops', 'ascension', 'prestige'
+  'drops', 'ascension', 'prestige', 'defaults'
 ];
 
 async function loadAllConfigs() {
@@ -521,6 +534,36 @@ function flattenConditions(unlockConditions) {
 
 const ConfigManager = {
   getAll() { return config; },
+  getDefaults() { return config.defaults; },
+  getDefaultIcon(key) {
+    return config.defaults.icons[key] ?? config.defaults.icons.unknown;
+  },
+  getDefaultLabel(key, vars = {}) {
+    let text = config.defaults.labels[key] ?? key;
+    for (const [k, v] of Object.entries(vars)) {
+      text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
+    }
+    return text;
+  },
+  getDefaultCalc(key) {
+    return config.defaults.calculations[key];
+  },
+  getSection(key) {
+    return config.defaults.sections[key] || { title: key, icon: '' };
+  },
+  getPanel(key) {
+    return config.defaults.panels[key] || { title: key, icon: '' };
+  },
+  getTabs() {
+    return config.defaults.tabs || [];
+  },
+  formatUnlockLabel(key, vars = {}) {
+    let text = config.defaults.unlockLabels[key] ?? key;
+    for (const [k, v] of Object.entries(vars)) {
+      text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
+    }
+    return text;
+  },
   getFramework() { return config.framework; },
   getDifficulty() { return config.difficulty; },
   getResources() { return config.resources.resources; },
@@ -628,7 +671,7 @@ const ConfigManager = {
 
   formatAscensionTierLabel(tierNumber) {
     const tier = this.getAscensionTierConfig(tierNumber);
-    if (!tier) return `Ascension ${tierNumber}`;
+    if (!tier) return this.getDefaultLabel('ascensionTierFallback', { tier: tierNumber });
     return `Ascension ${tierNumber}: ${tier.displayName}`;
   },
 
@@ -643,7 +686,7 @@ const ConfigManager = {
     const fmt = formatNumber || (n => n);
     const progress = required > 0 ? Math.min(1, current / required) : 1;
     return {
-      code: code || name || label || 'progress',
+      code: code || name || label || this.getDefaultCalc('progressCodeFallback'),
       icon: icon || '',
       name: name || '',
       label: label || null,
@@ -675,10 +718,10 @@ const ConfigManager = {
   formatFirstPurchaseCostLabel(generatorCode, state, formatNumber) {
     const gen = this.getGenerator(generatorCode);
     const fmt = formatNumber || (n => n);
-    if (!gen) return 'Unknown generator cost';
+    if (!gen) return this.getDefaultLabel('unknownGeneratorCost');
     const cost = FormulaEngine.calculateGeneratorCost(gen, 0, [], config, state || {});
     const costLabel = this.formatResourceCostLabel(cost, fmt);
-    return `${gen.displayName} first purchase: ${costLabel}`;
+    return this.formatUnlockLabel('firstPurchaseCost', { name: gen.displayName, cost: costLabel });
   },
 
   formatUnlockConditionDetail(cond, state, formatNumber) {
@@ -692,76 +735,104 @@ const ConfigManager = {
     switch (cond.type) {
       case 'achievement': {
         const ach = config.achievements.achievements.find(a => a.codeName === cond.achievement);
-        detail = { icon: ach?.icon || '🏆', label: `Achievement: ${ach?.displayName || cond.achievement}` };
+        detail = {
+          icon: ach?.icon || this.getDefaultIcon('achievement'),
+          label: this.formatUnlockLabel('achievement', { name: ach?.displayName || cond.achievement })
+        };
         break;
       }
       case 'resourceHeld': {
         const res = this.getResource(cond.resource);
-        const held = state?.resources[cond.resource]?.quantity || 0;
+        const held = state?.resources[cond.resource]?.quantity || this.getDefaultCalc('numericZero');
         detail = {
           icon: res?.icon || '',
-          label: `${res?.displayName || cond.resource}: ${fmt(held)} / ${fmt(cond.amount)}`
+          label: this.formatUnlockLabel('resourceHeld', {
+            name: res?.displayName || cond.resource,
+            current: fmt(held),
+            required: fmt(cond.amount)
+          })
         };
         break;
       }
       case 'generatorOwned': {
         const gen = this.getGenerator(cond.generator);
-        const need = cond.quantity || cond.amount || 1;
-        const owned = state?.generators[cond.generator]?.quantityPurchased || 0;
+        const need = cond.quantity || cond.amount || this.getDefaultCalc('unlockConditionQuantity');
+        const owned = state?.generators[cond.generator]?.quantityPurchased || this.getDefaultCalc('numericZero');
         detail = {
-          icon: gen?.icon || '⚙️',
-          label: `${gen?.displayName || cond.generator}: ${owned} / ${need}`
+          icon: gen?.icon || this.getDefaultIcon('generator'),
+          label: this.formatUnlockLabel('generatorOwned', {
+            name: gen?.displayName || cond.generator,
+            current: owned,
+            required: need
+          })
         };
         break;
       }
       case 'canAffordFirstPurchase': {
         const gen = cond.generator ? this.getGenerator(cond.generator) : null;
         detail = {
-          icon: gen?.icon || '💰',
+          icon: gen?.icon || this.getDefaultIcon('generatorCost'),
           label: this.formatFirstPurchaseCostLabel(cond.generator, state, fmt)
         };
         break;
       }
       case 'upgradePurchased': {
         const upg = this.getUpgrade(cond.upgrade);
-        const level = cond.level || 1;
-        const owned = state?.upgrades[cond.upgrade]?.purchaseCount || 0;
+        const level = cond.level || this.getDefaultCalc('unlockConditionLevel');
+        const owned = state?.upgrades[cond.upgrade]?.purchaseCount || this.getDefaultCalc('numericZero');
         detail = {
-          icon: upg?.icon || '⬆️',
-          label: `${upg?.displayName || cond.upgrade}: level ${owned} / ${level}`
+          icon: upg?.icon || this.getDefaultIcon('upgrade'),
+          label: this.formatUnlockLabel('upgradePurchased', {
+            name: upg?.displayName || cond.upgrade,
+            current: owned,
+            required: level
+          })
         };
         break;
       }
       case 'ascensionTier':
-        detail = { icon: '🔄', label: this.formatAscensionTierLabel(cond.minTier) };
+        detail = { icon: this.getDefaultIcon('ascension'), label: this.formatAscensionTierLabel(cond.minTier) };
         break;
       case 'prestigeCount': {
-        const tier = state?.meta?.ascension?.currentTier ?? 0;
-        const count = state?.meta?.ascension?.tiers[tier]?.prestigeCount || 0;
-        detail = { icon: '🔄', label: `Prestiges this tier: ${count} / ${cond.min}` };
+        const tier = state?.meta?.ascension?.currentTier ?? this.getDefaultCalc('numericZero');
+        const count = state?.meta?.ascension?.tiers[tier]?.prestigeCount || this.getDefaultCalc('numericZero');
+        detail = {
+          icon: this.getDefaultIcon('ascension'),
+          label: this.formatUnlockLabel('prestigesThisTier', { current: count, required: cond.min })
+        };
         break;
       }
       case 'lifetimeResourcesGenerated': {
         const res = this.getResource(cond.resource);
-        const total = state?.meta?.milestones?.lifetimeResourcesGenerated?.[cond.resource] || 0;
+        const total = state?.meta?.milestones?.lifetimeResourcesGenerated?.[cond.resource] || this.getDefaultCalc('numericZero');
         detail = {
           icon: res?.icon || '',
-          label: `Lifetime ${res?.displayName || cond.resource}: ${fmt(total)} / ${fmt(cond.min)}`
+          label: this.formatUnlockLabel('lifetimeResource', {
+            name: res?.displayName || cond.resource,
+            current: fmt(total),
+            required: fmt(cond.min)
+          })
         };
         break;
       }
       case 'lifetimeGeneratorPurchases': {
-        const total = state?.meta?.milestones?.lifetimeGeneratorPurchases || 0;
-        detail = { icon: '⚙️', label: `Generator purchases: ${total} / ${cond.min}` };
+        const total = state?.meta?.milestones?.lifetimeGeneratorPurchases || this.getDefaultCalc('numericZero');
+        detail = {
+          icon: this.getDefaultIcon('generator'),
+          label: this.formatUnlockLabel('generatorPurchases', { current: total, required: cond.min })
+        };
         break;
       }
       case 'lifetimePrestiges': {
-        const total = state?.meta?.milestones?.lifetimePrestiges || 0;
-        detail = { icon: '🔄', label: `Prestiges: ${total} / ${cond.min}` };
+        const total = state?.meta?.milestones?.lifetimePrestiges || this.getDefaultCalc('numericZero');
+        detail = {
+          icon: this.getDefaultIcon('ascension'),
+          label: this.formatUnlockLabel('lifetimePrestiges', { current: total, required: cond.min })
+        };
         break;
       }
       default:
-        detail = { icon: '❓', label: cond.type };
+        detail = { icon: this.getDefaultIcon('unknown'), label: cond.type };
     }
 
     return { ...detail, progress, met };
@@ -772,24 +843,21 @@ const ConfigManager = {
   },
 
   getEquipmentConfig() {
-    return config.framework.equipment || {
-      defaultRarity: 'common',
-      stackBonusPerCopy: 0.02,
-      rarityMultipliers: { common: 1, uncommon: 1.15, rare: 1.35, epic: 1.6, legendary: 2 },
-      rarityOrder: ['common', 'uncommon', 'rare', 'epic', 'legendary']
-    };
+    return config.framework.equipment || config.defaults.equipment;
   },
 
   getRarityMultiplier(rarity) {
     const eq = this.getEquipmentConfig();
-    const key = rarity || eq.defaultRarity || 'common';
-    return eq.rarityMultipliers[key] ?? eq.rarityMultipliers.common ?? 1;
+    const key = rarity || eq.defaultRarity || config.defaults.equipment.defaultRarity;
+    return eq.rarityMultipliers[key]
+      ?? eq.rarityMultipliers[config.defaults.equipment.defaultRarity]
+      ?? this.getDefaultCalc('rarityMultiplierFallback');
   },
 
   getRaritySortIndex(rarity) {
-    const order = this.getEquipmentConfig().rarityOrder || [];
+    const order = this.getEquipmentConfig().rarityOrder || config.defaults.equipment.rarityOrder || [];
     const idx = order.indexOf(rarity);
-    return idx >= 0 ? idx : 0;
+    return idx >= 0 ? idx : this.getDefaultCalc('raritySortIndexFallback');
   },
 
   formatRarityLabel(rarity) {
@@ -825,9 +893,9 @@ const ConfigManager = {
     if (!item?.effect) return null;
     const eq = this.getEquipmentConfig();
     const rarityMult = this.getRarityMultiplier(item.rarity || eq.defaultRarity);
-    const copies = Math.max(1, stackQty || 1);
-    const stackMult = 1 + (eq.stackBonusPerCopy || 0) * (copies - 1);
-    const mult = item.effect.multiplier || 1;
+    const copies = Math.max(this.getDefaultCalc('equipmentStackMinCopies'), stackQty || this.getDefaultCalc('equipmentStackMinCopies'));
+    const stackMult = 1 + (eq.stackBonusPerCopy || config.defaults.equipment.stackBonusPerCopy) * (copies - 1);
+    const mult = item.effect.multiplier || this.getDefaultCalc('effectMultiplierDefault');
     const scale = rarityMult * stackMult;
     let scaledMult;
     if (item.effect.type === 'costReduction') {
@@ -843,7 +911,12 @@ const ConfigManager = {
     if (cond.type === 'canAffordFirstPurchase') {
       const gen = cond.generator ? this.getGenerator(cond.generator) : null;
       if (!gen) {
-        return [{ icon: '💰', label: 'Unknown generator cost', progress: 0, met: false }];
+        return [{
+          icon: this.getDefaultIcon('generatorCost'),
+          label: this.getDefaultLabel('unknownGeneratorCost'),
+          progress: this.getDefaultCalc('numericZero'),
+          met: false
+        }];
       }
       const cost = FormulaEngine.calculateGeneratorCost(gen, 0, [], config, state || {});
       const rows = Object.entries(cost).map(([code, required]) => {
@@ -851,16 +924,20 @@ const ConfigManager = {
         const meta = this.getResourceMeta(code);
         const progress = required > 0 ? Math.min(1, held / required) : 1;
         return {
-          icon: meta.icon || '💰',
-          label: `${meta.name}: ${fmt(held)} / ${fmt(required)}`,
+          icon: meta.icon || this.getDefaultIcon('generatorCost'),
+          label: this.formatUnlockLabel('resourceHeld', {
+            name: meta.name,
+            current: fmt(held),
+            required: fmt(required)
+          }),
           progress,
           met: held >= required
         };
       });
       return rows.length ? rows : [{
-        icon: gen.icon || '💰',
-        label: `${gen.displayName}: no cost defined`,
-        progress: 0,
+        icon: gen.icon || this.getDefaultIcon('generatorCost'),
+        label: `${gen.displayName}: ${this.getDefaultLabel('noGeneratorCostDefined')}`,
+        progress: this.getDefaultCalc('numericZero'),
         met: false
       }];
     }
@@ -928,7 +1005,7 @@ const ConfigManager = {
         title: this.getFeatureDisplayName(featureCode),
         met,
         requirements: [{
-          icon: '🔄',
+          icon: this.getDefaultIcon('ascension'),
           label: this.formatAscensionTierLabel(tierInfo.tier),
           progress: tierInfo.tier > 0
             ? Math.min(1, state.meta.ascension.currentTier / tierInfo.tier)
@@ -941,25 +1018,17 @@ const ConfigManager = {
     return {
       title: this.getFeatureDisplayName(featureCode),
       met: false,
-      requirements: [{ icon: '🔒', label: 'Requirements unknown', progress: 0, met: false }]
+      requirements: [{
+        icon: this.getDefaultIcon('lock'),
+        label: this.getDefaultLabel('requirementsUnknown'),
+        progress: this.getDefaultCalc('numericZero'),
+        met: false
+      }]
     };
   },
 
   getFeatureDisplayName(featureCode) {
-    const names = {
-      'tab:generators': 'Generators',
-      'tab:upgrades': 'Upgrades',
-      'tab:characters': 'Characters',
-      'tab:inventory': 'Inventory',
-      'tab:artifacts': 'Artifacts',
-      'tab:achievements': 'Achievements',
-      'tab:ascension': 'Ascension',
-      'tab:stats': 'Stats',
-      'tab:settings': 'Settings',
-      'systems:drops': 'Drops',
-      'systems:randomEvents': 'Random Events',
-      'prestigeShop:tier2': 'Prestige Shop Tier 2'
-    };
+    const names = config.defaults.features;
     if (names[featureCode]) return names[featureCode];
     if (featureCode.startsWith('generators:')) {
       return this.getGeneratorDisplayName(featureCode.replace('generators:', ''));
@@ -980,35 +1049,55 @@ const ConfigManager = {
     }
     switch (cond.type) {
       case 'achievement':
-        return `🏆 Achievement: ${this.getAchievementDisplayName(cond.achievement)}`;
+        return this.formatUnlockLabel('achievement', {
+          name: this.getAchievementDisplayName(cond.achievement)
+        });
       case 'resourceHeld': {
         const res = this.getResource(cond.resource);
-        return `${res?.icon || ''} ${res?.displayName || cond.resource}: 0 / ${cond.amount}`.trim();
+        return this.formatUnlockLabel('resourceHeldStatic', {
+          icon: res?.icon || '',
+          name: res?.displayName || cond.resource,
+          required: cond.amount
+        }).trim();
       }
       case 'generatorOwned': {
         const gen = this.getGenerator(cond.generator);
-        const need = cond.quantity || cond.amount || 1;
-        return `${gen?.icon || '⚙️'} ${gen?.displayName || cond.generator}: 0 / ${need}`;
+        const need = cond.quantity || cond.amount || this.getDefaultCalc('unlockConditionQuantity');
+        return this.formatUnlockLabel('generatorOwnedStatic', {
+          icon: gen?.icon || this.getDefaultIcon('generator'),
+          name: gen?.displayName || cond.generator,
+          required: need
+        });
       }
       case 'canAffordFirstPurchase': {
         const gen = cond.generator ? this.getGenerator(cond.generator) : null;
-        return `${gen?.icon || '💰'} ${gen?.displayName || cond.generator} first purchase cost`;
+        return this.formatUnlockLabel('firstPurchaseCostStatic', {
+          icon: gen?.icon || this.getDefaultIcon('generatorCost'),
+          name: gen?.displayName || cond.generator
+        });
       }
       case 'upgradePurchased': {
         const upg = this.getUpgrade(cond.upgrade);
-        const level = cond.level || 1;
-        return `${upg?.icon || '⬆️'} ${upg?.displayName || cond.upgrade}: level 0 / ${level}`;
+        const level = cond.level || this.getDefaultCalc('unlockConditionLevel');
+        return this.formatUnlockLabel('upgradePurchasedStatic', {
+          icon: upg?.icon || this.getDefaultIcon('upgrade'),
+          name: upg?.displayName || cond.upgrade,
+          required: level
+        });
       }
       case 'ascensionTier':
         return this.formatAscensionTierLabel(cond.minTier);
       case 'prestigeCount':
-        return `Prestiges this tier: 0 / ${cond.min}`;
+        return this.formatUnlockLabel('prestigesThisTierStatic', { required: cond.min });
       case 'lifetimeResourcesGenerated':
-        return `Lifetime ${this.getResourceDisplayName(cond.resource)}: 0 / ${cond.min}`;
+        return this.formatUnlockLabel('lifetimeResourceStatic', {
+          name: this.getResourceDisplayName(cond.resource),
+          required: cond.min
+        });
       case 'lifetimeGeneratorPurchases':
-        return `Generator purchases: 0 / ${cond.min}`;
+        return this.formatUnlockLabel('generatorPurchasesStatic', { required: cond.min });
       case 'lifetimePrestiges':
-        return `Prestiges: 0 / ${cond.min}`;
+        return this.formatUnlockLabel('lifetimePrestigesStatic', { required: cond.min });
       default:
         return cond.type;
     }
@@ -1370,7 +1459,7 @@ const ModifierSystem = {
         if (!itemCode) continue;
         const item = config.items.items.find(i => i.codeName === itemCode);
         if (!item?.effect) continue;
-        const stackQty = state.inventory[itemCode] || 1;
+        const stackQty = state.inventory[itemCode] ?? ConfigManager.getDefaultCalc('equipmentStackMinCopies');
         const effect = ConfigManager.getEffectiveItemEffect(item, stackQty);
         this._addEffectMods(mods, effect, `equip:${char.codeName}:${itemCode}`, null, null, 1);
       }
@@ -1393,7 +1482,7 @@ const ModifierSystem = {
 
   _addEffectMods(mods, effect, codeName, category, targetId, count) {
     if (!effect) return;
-    const mult = effect.multiplier || 1;
+    const mult = effect.multiplier ?? ConfigManager.getDefaultCalc('effectMultiplierDefault');
     const val = effect.type === 'costReduction' ? mult : mult;
 
     switch (effect.type) {
@@ -1624,7 +1713,7 @@ class GameState {
     const unlock = FormulaEngine.evaluateUnlockConditions(upgrade.unlockConditions, this.data, this.config);
     if (!unlock.met) return false;
 
-    const cost = FormulaEngine.calculateUpgradeCost(upgrade, us.purchaseCount);
+    const cost = FormulaEngine.calculateUpgradeCost(upgrade, us.purchaseCount, this.config);
     if ((this.data.resources[upgrade.costResource]?.quantity || 0) < cost) return false;
 
     this.addResource(upgrade.costResource, -cost, 'upgrade');
@@ -1720,7 +1809,7 @@ class GameState {
     }
     this._bumpModCache();
     EventBus.emit(EVENTS.ACHIEVEMENT_UNLOCKED, { achievement: codeName });
-    this.showToast(`🏆 ${configAch?.displayName || codeName}`);
+    this.showToast(`${this.config.defaults.icons.toastAchievement} ${configAch?.displayName || codeName}`);
     return true;
   }
 
@@ -1739,7 +1828,7 @@ class GameState {
     this.data.ui.resourceDeltas.push({ id, resource, amount });
     setTimeout(() => {
       this.data.ui.resourceDeltas = this.data.ui.resourceDeltas.filter(d => d.id !== id);
-    }, this.config.framework.ui.toastDurationMs || 1000);
+    }, this.config.framework.ui.toastDurationMs ?? this.config.defaults.calculations.toastDurationFallbackMs);
   }
 
   equipItem(characterCode, slot, itemCode) {
@@ -1781,7 +1870,7 @@ class GameState {
     const primaryRate = FormulaEngine.calculatePrimaryCurrencyRate(this.data, this.config, mods);
     const peak = this.data.meta.prestige.run.peakPrimaryCurrencyRateThisRun
       ?? this.data.meta.prestige.run.peakPPSThisRun
-      ?? 0;
+      ?? this.config.defaults.calculations.peakPrimaryCurrencyRateFallback;
     if (primaryRate > peak) {
       this.data.meta.prestige.run.peakPrimaryCurrencyRateThisRun = primaryRate;
     }

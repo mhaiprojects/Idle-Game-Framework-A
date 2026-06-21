@@ -1,8 +1,9 @@
 import CardSection from './components/CardSection.vue.js';
+import PanelHeader from './components/PanelHeader.vue.js';
 
 export default {
   name: 'SettingsPanel',
-  components: { CardSection },
+  components: { PanelHeader, CardSection },
   props: { settings: Object },
   emits: ['update-setting', 'export-save', 'import-save', 'reset-game'],
   methods: {
@@ -13,8 +14,8 @@ export default {
   },
   template: `
     <div class="panel">
-      <h2 class="panel-title">🛠️ Settings</h2>
-      <CardSection title="Display" level="panel" :first="true">
+      <PanelHeader panel-key="settings" />
+      <CardSection section-key="display" level="panel" :first="true">
         <div class="settings-row">
           <span>Sidebar Position</span>
           <div class="toggle-group">
@@ -35,7 +36,7 @@ export default {
           <button class="btn btn-ghost" @click="$emit('update-setting', 'showTutorial', !settings.showTutorial)">{{ settings.showTutorial ? 'On' : 'Off' }}</button>
         </div>
       </CardSection>
-      <CardSection title="Save Data" level="panel">
+      <CardSection section-key="saveData" level="panel">
         <div class="section-actions section-actions-start" style="flex-direction:column;align-items:stretch">
           <button class="btn btn-ghost" @click="$emit('export-save')">Export Save</button>
           <label class="btn btn-ghost" style="text-align:center;cursor:pointer">

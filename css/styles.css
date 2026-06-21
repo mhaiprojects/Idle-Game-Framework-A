@@ -199,9 +199,9 @@ html, body {
 
 /* Shared section grouping — cards, modals, and tabs */
 .card-section {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid rgba(99, 102, 241, 0.2);
+  margin-top: 0.85rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid rgba(99, 102, 241, 0.28);
 }
 
 .panel-section {
@@ -215,6 +215,13 @@ html, body {
   margin-top: 0;
   padding-top: 0;
   border-top: none;
+}
+
+.card-section-heading,
+.panel-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .card-section-heading {
@@ -231,6 +238,24 @@ html, body {
   margin-bottom: 0.5rem;
   color: var(--color-muted);
   letter-spacing: 0.02em;
+}
+
+.section-title-icon,
+.panel-title-icon {
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.card-description {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  margin-bottom: 0;
 }
 
 .section-body > *:last-child {

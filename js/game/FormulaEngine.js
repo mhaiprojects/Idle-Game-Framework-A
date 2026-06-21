@@ -1,4 +1,9 @@
 export const FormulaEngine = {
+  _calc(config, key) {
+    const cfg = config || (typeof window !== 'undefined' ? window.AFK?.ConfigManager?.getAll?.() : null);
+    return cfg?.defaults?.calculations?.[key];
+  },
+
   formatNumber(value, config, precision) {
     const nf = config.framework.numberFormat;
     const prec = precision ?? nf.displayPrecision;
@@ -26,7 +31,8 @@ export const FormulaEngine = {
       const profile = diff.profiles[profileKey];
       if (profile) {
         costMult *= profile.costMultiplier;
-        primaryCurrencyMult *= profile.primaryCurrencyMultiplier ?? profile.ppsMultiplier ?? 1;
+        primaryCurrencyMult *= profile.primaryCurrencyMultiplier ?? profile.ppsMultiplier
+          ?? this._calc(config, 'primaryCurrencyMultiplierFallback');
         offlineEff *= profile.offlineEfficiency;
       }
     }
@@ -34,7 +40,8 @@ export const FormulaEngine = {
     const prestigeCount = state.meta.ascension.tiers[tier]?.prestigeCount || 0;
     const pdc = diff.prestigeDifficultyPerCount;
     costMult *= (1 + pdc.costIncreasePerPrestige * prestigeCount);
-    const primaryDecrease = pdc.primaryCurrencyDecreasePerPrestige ?? pdc.ppsDecreasePerPrestige ?? 0;
+    const primaryDecrease = pdc.primaryCurrencyDecreasePerPrestige ?? pdc.ppsDecreasePerPrestige
+      ?? this._calc(config, 'primaryCurrencyDecreaseFallback');
     primaryCurrencyMult *= (1 - primaryDecrease * prestigeCount);
 
     return { costMultiplier: costMult, primaryCurrencyMultiplier: primaryCurrencyMult, offlineEfficiency: offlineEff };
@@ -53,7 +60,8 @@ export const FormulaEngine = {
       }
     }
 
-    multiplicative.sort((a, b) => (a.priority || 0) - (b.priority || 0));
+    multiplicative.sort((a, b) => (a.priority ?? this._calc(null, 'modifierPriorityDefault'))
+      - (b.priority ?? this._calc(null, 'modifierPriorityDefault')));
 
     let value = base + additive;
     for (const mod of multiplicative) {
@@ -259,15 +267,16 @@ export const FormulaEngine = {
     return Math.floor(Math.log(Math.max(runValue / minimum, 1)) / Math.log(logBase));
   },
 
-  calculateUpgradeCost(upgrade, purchaseCount) {
-    return Math.floor(upgrade.cost * Math.pow(upgrade.costScale || 1, purchaseCount));
+  calculateUpgradeCost(upgrade, purchaseCount, config) {
+    const scale = upgrade.costScale ?? this._calc(config, 'upgradeCostScale');
+    return Math.floor(upgrade.cost * Math.pow(scale, purchaseCount));
   },
 
   evaluateUnlockConditions(unlockConditions, state, config) {
     if (!unlockConditions) return { met: true, unmet: [] };
 
     const conditions = unlockConditions.conditions || [unlockConditions];
-    const operator = unlockConditions.operator || 'AND';
+    const operator = unlockConditions.operator || this._calc(config, 'unlockOperator');
     const unmet = [];
 
     for (const cond of conditions) {
@@ -295,11 +304,13 @@ export const FormulaEngine = {
         return Object.entries(cost).every(([res, amt]) => (state.resources[res]?.quantity || 0) >= amt);
       }
       case 'generatorOwned':
-        return (state.generators[cond.generator]?.quantityPurchased || 0) >= (cond.quantity || cond.amount || 1);
+        return (state.generators[cond.generator]?.quantityPurchased || this._calc(config, 'numericZero'))
+          >= (cond.quantity || cond.amount || this._calc(config, 'unlockConditionQuantity'));
       case 'resourceHeld':
-        return (state.resources[cond.resource]?.quantity || 0) >= cond.amount;
+        return (state.resources[cond.resource]?.quantity || this._calc(config, 'numericZero')) >= cond.amount;
       case 'upgradePurchased':
-        return (state.upgrades[cond.upgrade]?.purchaseCount || 0) >= (cond.level || 1);
+        return (state.upgrades[cond.upgrade]?.purchaseCount || this._calc(config, 'numericZero'))
+          >= (cond.level || this._calc(config, 'unlockConditionLevel'));
       case 'ascensionTier':
         return state.meta.ascension.currentTier >= cond.minTier;
       case 'prestigeCount': {
@@ -355,9 +366,11 @@ export const FormulaEngine = {
       case 'resourceHeld':
         return Math.min(1, (state.resources[cond.resource]?.quantity || 0) / cond.amount);
       case 'generatorOwned':
-        return Math.min(1, (state.generators[cond.generator]?.quantityPurchased || 0) / (cond.quantity || cond.amount || 1));
+        return Math.min(1, (state.generators[cond.generator]?.quantityPurchased || this._calc(config, 'numericZero'))
+          / (cond.quantity || cond.amount || this._calc(config, 'unlockConditionQuantity')));
       case 'upgradePurchased':
-        return Math.min(1, (state.upgrades[cond.upgrade]?.purchaseCount || 0) / (cond.level || 1));
+        return Math.min(1, (state.upgrades[cond.upgrade]?.purchaseCount || this._calc(config, 'numericZero'))
+          / (cond.level || this._calc(config, 'unlockConditionLevel')));
       case 'ascensionTier':
         return cond.minTier > 0
           ? Math.min(1, state.meta.ascension.currentTier / cond.minTier)

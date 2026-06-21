@@ -1,13 +1,14 @@
 import CardSection from './components/CardSection.vue.js';
+import PanelHeader from './components/PanelHeader.vue.js';
 
 export default {
   name: 'AchievementPanel',
-  components: { CardSection },
+  components: { PanelHeader, CardSection },
   props: { achievements: Array },
   template: `
     <div class="panel">
-      <h2 class="panel-title">🏆 Achievements</h2>
-      <CardSection title="All Achievements" level="panel" :first="true">
+      <PanelHeader panel-key="achievements" />
+      <CardSection section-key="allAchievements" level="panel" :first="true">
         <div v-for="ach in achievements" :key="ach.codeName" class="card achievement-badge" :class="{ unlocked: ach.unlocked, 'animate__animated animate__bounceIn': ach.unlocked }">
           <div class="card-header">
             <span class="card-icon">{{ ach.icon }}</span>

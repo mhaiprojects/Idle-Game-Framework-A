@@ -15,6 +15,7 @@ import EventBanner from './components/EventBanner.vue.js';
 import UnlockModal from './components/UnlockModal.vue.js';
 import InfoModal from './components/InfoModal.vue.js';
 import CardSection from './components/CardSection.vue.js';
+import PanelHeader from './components/PanelHeader.vue.js';
 
 export default {
   name: 'App',
@@ -22,7 +23,7 @@ export default {
     ResourceBar, GeneratorPanel, UpgradePanel, CharacterPanel,
     InventoryPanel, ArtifactPanel, AchievementPanel, AscensionPanel,
     SettingsPanel, StatsPanel, ProgressPanel, ActionBar, Toast, EventBanner,
-    UnlockModal, InfoModal, CardSection
+    UnlockModal, InfoModal, CardSection, PanelHeader
   },
   props: {
     game: Object
@@ -40,18 +41,7 @@ export default {
       return this.state.settings.sidebarPosition === 'left' ? 'sidebar-left' : 'sidebar-right';
     },
     allTabs() {
-      return [
-        { id: 'generators', icon: '⚙️', label: 'Generators', feature: 'tab:generators' },
-        { id: 'upgrades', icon: '⬆️', label: 'Upgrades', feature: 'tab:upgrades' },
-        { id: 'characters', icon: '👤', label: 'Characters', feature: 'tab:characters' },
-        { id: 'inventory', icon: '🎒', label: 'Inventory', feature: 'tab:inventory' },
-        { id: 'artifacts', icon: '🔮', label: 'Artifacts', feature: 'tab:artifacts' },
-        { id: 'achievements', icon: '🏆', label: 'Achievements', feature: 'tab:achievements' },
-        { id: 'ascension', icon: '🔄', label: 'Ascension', feature: 'tab:ascension' },
-        { id: 'stats', icon: '📊', label: 'Stats', feature: 'tab:stats' },
-        { id: 'settings', icon: '🛠️', label: 'Settings', feature: 'tab:settings' },
-        { id: 'progress', icon: '🔧', label: 'Progress', devOnly: true }
-      ];
+      return this.config?.defaults?.tabs || [];
     },
     tabs() {
       return this.allTabs.filter(t => !t.devOnly || this.state.settings.devMode);
@@ -243,8 +233,8 @@ export default {
             @export-save="onExportSave" @import-save="onImportSave" @reset-game="onResetGame" />
           <ProgressPanel v-if="state.ui.activeTab === 'progress'" :progress="progressData" />
           <div v-if="state.settings.devMode && state.ui.activeTab !== 'progress'" class="dev-tools panel">
-            <h3 class="panel-title">Dev Tools</h3>
-            <CardSection title="Speed Controls" level="panel" :first="true">
+            <PanelHeader panel-key="devTools" />
+            <CardSection section-key="speedControls" level="panel" :first="true">
               <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
                 <button v-for="s in config.framework.devTools.speedMultipliers" :key="s"
                   class="btn btn-ghost" @click="game.setSpeed(s)">{{ s }}×</button>
@@ -253,7 +243,7 @@ export default {
                 <button class="btn btn-ghost" @click="game.devExportState()">Log State</button>
               </div>
             </CardSection>
-            <CardSection v-if="formulaInspector" title="Formula Inspector" level="panel">
+            <CardSection v-if="formulaInspector" section-key="formulaInspector" level="panel">
               <div style="font-size:0.75rem;background:var(--color-bg-card);padding:0.5rem;border-radius:6px">
                 <div>Tap gain: {{ formatNumber(formulaInspector.tapGain) }}</div>
                 <div>{{ primaryCurrencyLabel }} rate: {{ formatNumber(formulaInspector.primaryRate) }}/s</div>
@@ -280,10 +270,10 @@ export default {
       <div v-if="offlineModal" class="modal-overlay" @click.self="dismissOffline">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Welcome Back!</h3>
-          <CardSection title="Time Away" :first="true">
+          <CardSection section-key="timeAway" :first="true">
             <p class="section-text">You were away for {{ Math.floor(offlineModal.elapsed) }}s</p>
           </CardSection>
-          <CardSection title="Offline Gains">
+          <CardSection section-key="offlineGains">
             <div v-for="(amt, res) in offlineModal.gains" :key="res" class="section-text">
               {{ game.getResourceMeta(res).icon }} {{ game.getResourceLabel(res) }}: +{{ formatNumber(amt) }}
             </div>

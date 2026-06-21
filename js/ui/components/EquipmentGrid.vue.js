@@ -30,7 +30,12 @@ export default {
       if (!code) return null;
       const items = this.getSlotItems ? this.getSlotItems(this.character.codeName, slotId || this.modalSlot || '') : [];
       return items.find(i => i.codeName === code)
-        || { codeName: code, displayName: code, icon: '❓', rarityLabel: '' };
+        || {
+          codeName: code,
+          displayName: code,
+          icon: AFK.ConfigManager.getDefaultIcon('unknown'),
+          rarityLabel: ''
+        };
     },
     openSlot(slotId) {
       this.modalSlot = slotId;

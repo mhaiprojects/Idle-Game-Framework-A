@@ -3,16 +3,17 @@ import UnlockRequirementsList from './components/UnlockRequirementsList.vue.js';
 import ResourceProgressList from './components/ResourceProgressList.vue.js';
 import MoreInfoButton from './components/MoreInfoButton.vue.js';
 import CardSection from './components/CardSection.vue.js';
+import PanelHeader from './components/PanelHeader.vue.js';
 
 export default {
   name: 'GeneratorPanel',
-  components: { PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList, MoreInfoButton, CardSection },
+  components: { PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList, MoreInfoButton, CardSection, PanelHeader },
   props: {
     generators: Array,
     multiplier: [Number, String],
     multiplierOptions: Array,
     formatNumber: Function,
-    primaryCurrencyLabel: { type: String, default: 'Primary currency' }
+    primaryCurrencyLabel: String
   },
   emits: ['buy', 'multiplier-change', 'more-info'],
   methods: {
@@ -23,8 +24,8 @@ export default {
   },
   template: `
     <div class="panel">
-      <h2 class="panel-title">⚙️ Generators</h2>
-      <CardSection title="Bulk Purchase" level="panel" :first="true">
+      <PanelHeader panel-key="generators" />
+      <CardSection section-key="bulkPurchase" level="panel" :first="true">
         <PurchaseMultiplier :options="multiplierOptions" :active="multiplier" @change="$emit('multiplier-change', $event)" />
       </CardSection>
       <div v-for="gen in generators" :key="gen.codeName" class="card">
@@ -34,9 +35,9 @@ export default {
           <span class="card-owned">×{{ gen.owned }}</span>
           <MoreInfoButton @click="$emit('more-info', 'generator', gen.codeName)" />
         </div>
-        <p style="font-size:0.75rem;color:var(--color-muted)">{{ gen.description }}</p>
+        <p class="card-description">{{ gen.description }}</p>
         <div v-if="gen.isUnlocked">
-          <CardSection v-if="gen.production?.length" title="Production" :first="true">
+          <CardSection v-if="gen.production?.length" section-key="production" :first="true">
             <div v-for="row in gen.production" :key="row.resource" class="production-row">
               <span class="production-resource">
                 <span>{{ row.icon }}</span>
@@ -48,7 +49,7 @@ export default {
               </span>
             </div>
           </CardSection>
-          <CardSection title="Purchase Requirements">
+          <CardSection section-key="purchaseRequirements">
             <ResourceProgressList :entries="gen.costProgress" />
             <div class="section-actions">
               <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
@@ -57,8 +58,13 @@ export default {
         </div>
         <UnlockRequirementsList v-else-if="gen.unlockRequirements?.length"
           :requirements="gen.unlockRequirements" :first="true" />
-        <p v-else class="hint-text">Requirements unavailable.</p>
+        <p v-else class="hint-text">{{ requirementsUnavailable }}</p>
       </div>
     </div>
-  `
+  `,
+  computed: {
+    requirementsUnavailable() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('requirementsUnavailable') || '';
+    }
+  }
 };

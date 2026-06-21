@@ -2,16 +2,17 @@ import UnlockRequirementsList from './components/UnlockRequirementsList.vue.js';
 import ResourceProgressList from './components/ResourceProgressList.vue.js';
 import MoreInfoButton from './components/MoreInfoButton.vue.js';
 import CardSection from './components/CardSection.vue.js';
+import PanelHeader from './components/PanelHeader.vue.js';
 
 export default {
   name: 'UpgradePanel',
-  components: { UnlockRequirementsList, ResourceProgressList, MoreInfoButton, CardSection },
+  components: { UnlockRequirementsList, ResourceProgressList, MoreInfoButton, CardSection, PanelHeader },
   props: {
     upgrades: Array,
     formatNumber: Function,
     getResourceMeta: Function,
     bestUpgradeCode: String,
-    primaryCurrencyLabel: { type: String, default: 'Primary currency' }
+    primaryCurrencyLabel: String
   },
   emits: ['buy', 'more-info'],
   methods: {
@@ -21,7 +22,7 @@ export default {
   },
   template: `
     <div class="panel">
-      <h2 class="panel-title">⬆️ Upgrades</h2>
+      <PanelHeader panel-key="upgrades" />
       <div v-for="upg in upgrades" :key="upg.codeName" class="card"
         :class="{ 'best-upgrade': upg.codeName === bestUpgradeCode && upg.canBuy }">
         <div class="card-header">
@@ -32,12 +33,12 @@ export default {
           <span v-if="upg.codeName === bestUpgradeCode && upg.canBuy" class="efficiency-tag">Best</span>
           <MoreInfoButton @click="$emit('more-info', 'upgrade', upg.codeName)" />
         </div>
-        <p style="font-size:0.75rem;color:var(--color-muted)">{{ upg.description }}</p>
+        <p class="card-description">{{ upg.description }}</p>
         <template v-if="upg.unlocked && !upg.maxed">
-          <CardSection v-if="upg.levelProgress" title="Level Progress" :first="true">
+          <CardSection v-if="upg.levelProgress" section-key="levelProgress" :first="true">
             <ResourceProgressList :entries="[upg.levelProgress]" />
           </CardSection>
-          <CardSection title="Purchase Requirements" :first="!upg.levelProgress">
+          <CardSection section-key="purchaseRequirements" :first="!upg.levelProgress">
             <ResourceProgressList :entries="upg.costProgress" />
             <div class="section-actions">
               <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
@@ -45,11 +46,16 @@ export default {
           </CardSection>
         </template>
         <UnlockRequirementsList v-else-if="!upg.unlocked" :requirements="upg.unlockRequirements" :first="true" />
-        <CardSection v-else title="Status" :first="true">
+        <CardSection v-else section-key="status" :first="true">
           <ResourceProgressList v-if="upg.levelProgress" :entries="[upg.levelProgress]" />
-          <p class="hint-text" style="margin-bottom:0">Max level reached</p>
+          <p class="hint-text" style="margin-bottom:0">{{ maxLevelLabel }}</p>
         </CardSection>
       </div>
     </div>
-  `
+  `,
+  computed: {
+    maxLevelLabel() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('maxLevelReached') || '';
+    }
+  }
 };

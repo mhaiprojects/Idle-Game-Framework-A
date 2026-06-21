@@ -52,7 +52,8 @@
     }
 
     getPrimaryCurrencyLabel() {
-      return AFK.ConfigManager.getPrimaryResource()?.displayName || 'Primary currency';
+      return AFK.ConfigManager.getPrimaryResource()?.displayName
+        || AFK.ConfigManager.getDefaultLabel('primaryCurrency');
     }
 
     getPrimaryCurrencyRateFormatted() {
@@ -77,7 +78,8 @@
     }
 
     getPrimaryIcon() {
-      return AFK.ConfigManager.getPrimaryResource()?.icon || '⏱️';
+      return AFK.ConfigManager.getPrimaryResource()?.icon
+        || AFK.ConfigManager.getDefaultIcon('primaryCurrency');
     }
 
     getGeneratorDisplay() {
@@ -137,7 +139,7 @@
       const upgrades = this.config.upgrades.upgrades.map(u => {
         const us = this.state.upgrades[u.codeName];
         const unlock = AFK.FormulaEngine.evaluateUnlockConditions(u.unlockConditions, this.state, this.config);
-        const cost = AFK.FormulaEngine.calculateUpgradeCost(u, us.purchaseCount);
+        const cost = AFK.FormulaEngine.calculateUpgradeCost(u, us.purchaseCount, this.config);
         const fmt = (v) => this.formatNumber(v);
         const canAfford = (this.state.resources[u.costResource]?.quantity || 0) >= cost;
         const maxed = u.maxPurchases !== null && us.purchaseCount >= u.maxPurchases;
@@ -303,48 +305,41 @@
     getEntityInfo(type, codeName) {
       void this._reactiveTick;
       const fmt = (v) => this.formatNumber(v);
+      const L = (key, vars) => AFK.ConfigManager.getDefaultLabel(key, vars);
+      const section = (sectionKey, body, title) => ({ sectionKey, body, ...(title ? { title } : {}) });
       switch (type) {
         case 'item': {
           const item = this.config.items.items.find(i => i.codeName === codeName);
           if (!item) return null;
           const qty = this.state.inventory[item.codeName] || 0;
           const sections = [
-            { heading: 'Description', body: item.description || 'No description.' }
+            section('description', item.description || L('noDescription'))
           ];
           if (item.effect) {
-            sections.push({ heading: 'Provides', body: this.describeEffect(item.effect) });
+            sections.push(section('provides', this.describeEffect(item.effect)));
           }
-          sections.push({ heading: 'Owned', body: `${qty}` });
+          sections.push(section('owned', `${qty}`));
           if (item.type === 'consumable') {
-            sections.push({
-              heading: 'Usage',
-              body: item.actionBarEligible
-                ? 'Use from inventory or the action bar when owned.'
-                : 'Use from inventory when owned.'
-            });
+            sections.push(section('usage', item.actionBarEligible
+              ? 'Use from inventory or the action bar when owned.'
+              : 'Use from inventory when owned.'));
           } else if (item.type === 'equipable') {
             const slotLabel = AFK.ConfigManager.getEquipmentSlotLabel(item.slot);
             const eqCfg = AFK.ConfigManager.getEquipmentConfig();
-            const stackPct = Math.round((eqCfg.stackBonusPerCopy || 0) * 100);
-            sections.push({
-              heading: 'Rarity',
-              body: `${AFK.ConfigManager.formatRarityLabel(item.rarity)} (×${AFK.ConfigManager.getRarityMultiplier(item.rarity)} base power)`
-            });
+            const stackPct = Math.round((eqCfg.stackBonusPerCopy ?? this.config.defaults.equipment.stackBonusPerCopy) * 100);
+            sections.push(section('rarity',
+              `${AFK.ConfigManager.formatRarityLabel(item.rarity)} (×${AFK.ConfigManager.getRarityMultiplier(item.rarity)} base power)`));
             if (qty > 0) {
               const effective = AFK.ConfigManager.getEffectiveItemEffect(item, qty);
-              sections.push({
-                heading: 'Effective Power',
-                body: `${this.describeEffect(effective)} · ${qty} stacked (+${stackPct}% per extra copy)`
-              });
+              sections.push(section('effectivePower',
+                `${this.describeEffect(effective)} · ${qty} stacked (+${stackPct}% per extra copy)`));
             }
             const wearers = Object.entries(this.state.characters)
               .filter(([, cs]) => Object.values(cs.equipment || {}).includes(item.codeName))
               .map(([code]) => this.config.characters.characters.find(c => c.codeName === code))
               .filter(Boolean);
-            sections.push({
-              heading: 'Equipment Slot',
-              body: `${slotLabel || item.slot}${wearers.length ? ` · equipped on ${wearers.map(c => c.icon + ' ' + c.displayName).join(', ')}` : ''}`
-            });
+            sections.push(section('equipmentSlot',
+              `${slotLabel || item.slot}${wearers.length ? ` · equipped on ${wearers.map(c => c.icon + ' ' + c.displayName).join(', ')}` : ''}`));
           }
           return { title: item.displayName, icon: item.icon, sections };
         }
@@ -352,7 +347,7 @@
           const char = this.config.characters.characters.find(c => c.codeName === codeName);
           if (!char) return null;
           const cs = this.state.characters[codeName];
-          const sections = [{ heading: 'Description', body: char.description || 'No description.' }];
+          const sections = [section('description', char.description || L('noDescription'))];
           const benefits = [];
           if (char.baseStats?.globalMultiplier) {
             benefits.push(`+${Math.round((char.baseStats.globalMultiplier - 1) * 100)}% global production when active.`);
@@ -364,12 +359,12 @@
             const cm = char.baseStats.categoryMultiplier;
             benefits.push(`+${Math.round((cm.multiplier - 1) * 100)}% ${cm.category} generator output when active.`);
           }
-          sections.push({ heading: 'Benefits When Active', body: benefits.length ? benefits.join(' ') : 'No passive bonuses.' });
+          sections.push(section('benefitsWhenActive', benefits.length ? benefits.join(' ') : L('noPassiveBonuses')));
           if (char.activeSkill) {
-            sections.push({
-              heading: 'Active Skill — ' + char.activeSkill.displayName,
-              body: `${this.describeEffect(char.activeSkill.effect)} Cooldown: ${char.activeSkill.cooldownSeconds}s.`
-            });
+            const skillTitle = `${AFK.ConfigManager.getSection('activeSkill').title} — ${char.activeSkill.displayName}`;
+            sections.push(section('activeSkill',
+              `${this.describeEffect(char.activeSkill.effect)} Cooldown: ${char.activeSkill.cooldownSeconds}s.`,
+              skillTitle));
           }
           if (cs?.equipment && Object.keys(cs.equipment).length) {
             const equipped = Object.entries(cs.equipment).filter(([, v]) => v).map(([slot, code]) => {
@@ -377,7 +372,7 @@
               const slotLabel = AFK.ConfigManager.getEquipmentSlotLabel(slot);
               return `${slotLabel}: ${item?.icon || ''} ${item?.displayName || code}`;
             });
-            sections.push({ heading: 'Currently Equipped', body: equipped.join(' · ') || 'Nothing equipped.' });
+            sections.push(section('currentlyEquipped', equipped.join(' · ') || L('nothingEquipped')));
           }
           const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
             { unlockConditions: char.unlockConditions }, this.state, fmt
@@ -398,9 +393,9 @@
             return `${res?.icon || ''} ${res?.displayName || p.resource}: ${p.amount}/s per owned (${p.role})`;
           }).join(' · ');
           const sections = [
-            { heading: 'Description', body: gen.description || 'No description.' },
-            { heading: 'Production', body: produces || 'No production defined.' },
-            { heading: 'Owned', body: `${gs?.quantityPurchased || 0} units` }
+            section('description', gen.description || L('noDescription')),
+            section('production', produces || L('noProductionDefined')),
+            section('owned', L('unitsOwned', { count: gs?.quantityPurchased || 0 }))
           ];
           const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
             { unlockConditions: gen.unlockConditions, requiredFeature: gen.requiredFeature },
@@ -426,10 +421,12 @@
             title: upg.displayName,
             icon: upg.icon,
             sections: [
-              { heading: 'Description', body: upg.description || 'No description.' },
-              { heading: 'Effect', body: this.describeEffect(upg.effect) },
-              { heading: 'Purchase Requirements', body: `${fmt(upg.cost)} ${res?.icon || ''} ${res?.displayName || upg.costResource} per level` },
-              { heading: 'Level Progress', body: `Level ${us?.purchaseCount || 0}${upg.maxPurchases != null ? ' / ' + upg.maxPurchases : ''}` }
+              section('description', upg.description || L('noDescription')),
+              section('effect', this.describeEffect(upg.effect)),
+              section('purchaseRequirements',
+                `${fmt(upg.cost)} ${res?.icon || ''} ${res?.displayName || upg.costResource} per level`),
+              section('levelProgress',
+                `Level ${us?.purchaseCount || 0}${upg.maxPurchases != null ? ' / ' + upg.maxPurchases : ''}`)
             ],
             requirements: requirements.length ? requirements : undefined
           };
@@ -441,9 +438,10 @@
             title: art.displayName,
             icon: art.icon,
             sections: [
-              { heading: 'Description', body: art.description || 'No description.' },
-              { heading: 'Rarity', body: art.rarity || 'Unknown' },
-              { heading: 'Permanent Bonus', body: this.describeEffect(art.effect).replace(/ while equipped or active\.?$/, ' permanently once collected.') }
+              section('description', art.description || L('noDescription')),
+              section('rarity', art.rarity || L('unknownEntity')),
+              section('permanentBonus',
+                this.describeEffect(art.effect).replace(/ while equipped or active\.?$/, ' permanently once collected.'))
             ]
           };
         }

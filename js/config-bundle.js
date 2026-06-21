@@ -1713,5 +1713,395 @@ window.AFK_CONFIG = {
         "requiredFeature": "prestigeShop:tier2"
       }
     ]
+  },
+  "defaults": {
+    "icons": {
+      "unknown": "\u2753",
+      "lock": "\ud83d\udd12",
+      "achievement": "\ud83c\udfc6",
+      "generator": "\u2699\ufe0f",
+      "generatorCost": "\ud83d\udcb0",
+      "upgrade": "\u2b06\ufe0f",
+      "ascension": "\ud83d\udd04",
+      "resource": "\ud83d\udc8e",
+      "primaryCurrency": "\u23f1\ufe0f",
+      "settings": "\ud83d\udee0\ufe0f",
+      "toastAchievement": "\ud83c\udfc6"
+    },
+    "labels": {
+      "primaryCurrency": "Primary currency",
+      "requirementsUnknown": "Requirements unknown",
+      "requirementsUnavailable": "Requirements unavailable.",
+      "unknownGeneratorCost": "Unknown generator cost",
+      "noGeneratorCostDefined": "no cost defined",
+      "unknownEntity": "???",
+      "noDescription": "No description.",
+      "equipmentSlotFallback": "Equipment",
+      "noPassiveBonuses": "No passive bonuses.",
+      "nothingEquipped": "Nothing equipped.",
+      "noProductionDefined": "No production defined.",
+      "maxLevelReached": "Max level reached",
+      "commonRarity": "Common",
+      "ascensionTierFallback": "Ascension {tier}",
+      "unitsOwned": "{count} units"
+    },
+    "calculations": {
+      "upgradeCostScale": 1,
+      "unlockOperator": "AND",
+      "unlockConditionQuantity": 1,
+      "unlockConditionLevel": 1,
+      "modifierPriorityDefault": 0,
+      "effectMultiplierDefault": 1,
+      "equipmentStackMinCopies": 1,
+      "progressCodeFallback": "progress",
+      "prestigeBonusLevelBase": 0,
+      "numericZero": 0,
+      "numericOne": 1,
+      "primaryCurrencyMultiplierFallback": 1,
+      "primaryCurrencyDecreaseFallback": 0,
+      "rarityMultiplierFallback": 1,
+      "raritySortIndexFallback": 0,
+      "toastDurationFallbackMs": 1000,
+      "peakPrimaryCurrencyRateFallback": 0
+    },
+    "equipment": {
+      "defaultRarity": "common",
+      "stackBonusPerCopy": 0.02,
+      "rarityMultipliers": {
+        "common": 1,
+        "uncommon": 1.15,
+        "rare": 1.35,
+        "epic": 1.6,
+        "legendary": 2
+      },
+      "rarityOrder": [
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary"
+      ]
+    },
+    "features": {
+      "tab:generators": "Generators",
+      "tab:upgrades": "Upgrades",
+      "tab:characters": "Characters",
+      "tab:inventory": "Inventory",
+      "tab:artifacts": "Artifacts",
+      "tab:achievements": "Achievements",
+      "tab:ascension": "Ascension",
+      "tab:stats": "Stats",
+      "tab:settings": "Settings",
+      "systems:drops": "Drops",
+      "systems:randomEvents": "Random Events",
+      "prestigeShop:tier2": "Prestige Shop Tier 2"
+    },
+    "sections": {
+      "bulkPurchase": {
+        "icon": "\ud83d\udd22",
+        "title": "Bulk Purchase"
+      },
+      "production": {
+        "icon": "\ud83d\udcc8",
+        "title": "Production"
+      },
+      "purchaseRequirements": {
+        "icon": "\ud83d\udcb0",
+        "title": "Purchase Requirements"
+      },
+      "unlockRequirements": {
+        "icon": "\ud83d\udd12",
+        "title": "Unlock Requirements"
+      },
+      "levelProgress": {
+        "icon": "\ud83d\udcca",
+        "title": "Level Progress"
+      },
+      "status": {
+        "icon": "\u2705",
+        "title": "Status"
+      },
+      "activation": {
+        "icon": "\u26a1",
+        "title": "Activation"
+      },
+      "equipment": {
+        "icon": "\ud83d\udee1\ufe0f",
+        "title": "Equipment"
+      },
+      "overview": {
+        "icon": "\u2139\ufe0f",
+        "title": "Overview"
+      },
+      "consumables": {
+        "icon": "\ud83e\uddea",
+        "title": "Consumables"
+      },
+      "details": {
+        "icon": "\ud83d\udccb",
+        "title": "Details"
+      },
+      "collection": {
+        "icon": "\ud83d\udcda",
+        "title": "Collection"
+      },
+      "allAchievements": {
+        "icon": "\ud83c\udfc6",
+        "title": "All Achievements"
+      },
+      "prestigeSoftReset": {
+        "icon": "\u267b\ufe0f",
+        "title": "Prestige (Soft Reset)"
+      },
+      "rewards": {
+        "icon": "\ud83c\udf81",
+        "title": "Rewards"
+      },
+      "prestigeShop": {
+        "icon": "\ud83d\uded2",
+        "title": "Prestige Shop"
+      },
+      "ascension": {
+        "icon": "\ud83d\udd04",
+        "title": "Ascension"
+      },
+      "unlocksPreview": {
+        "icon": "\ud83d\udd13",
+        "title": "Unlocks Preview"
+      },
+      "summary": {
+        "icon": "\ud83d\udccc",
+        "title": "Summary"
+      },
+      "display": {
+        "icon": "\ud83d\udda5\ufe0f",
+        "title": "Display"
+      },
+      "saveData": {
+        "icon": "\ud83d\udcbe",
+        "title": "Save Data"
+      },
+      "primaryByGenerator": {
+        "icon": "\u2699\ufe0f",
+        "title": "Primary by Generator"
+      },
+      "activeEvents": {
+        "icon": "\u2728",
+        "title": "Active Events"
+      },
+      "availableItems": {
+        "icon": "\ud83c\udf92",
+        "title": "Available Items"
+      },
+      "timeAway": {
+        "icon": "\u23f3",
+        "title": "Time Away"
+      },
+      "offlineGains": {
+        "icon": "\ud83d\udce6",
+        "title": "Offline Gains"
+      },
+      "warning": {
+        "icon": "\u26a0\ufe0f",
+        "title": "Warning"
+      },
+      "lost": {
+        "icon": "\u274c",
+        "title": "Lost"
+      },
+      "kept": {
+        "icon": "\u2705",
+        "title": "Kept"
+      },
+      "speedControls": {
+        "icon": "\u23e9",
+        "title": "Speed Controls"
+      },
+      "formulaInspector": {
+        "icon": "\ud83d\udd2c",
+        "title": "Formula Inspector"
+      },
+      "description": {
+        "icon": "\ud83d\udcdd",
+        "title": "Description"
+      },
+      "effect": {
+        "icon": "\u2728",
+        "title": "Effect"
+      },
+      "owned": {
+        "icon": "\ud83d\udce6",
+        "title": "Owned"
+      },
+      "usage": {
+        "icon": "\ud83c\udfaf",
+        "title": "Usage"
+      },
+      "rarity": {
+        "icon": "\ud83d\udca0",
+        "title": "Rarity"
+      },
+      "effectivePower": {
+        "icon": "\ud83d\udcaa",
+        "title": "Effective Power"
+      },
+      "equipmentSlot": {
+        "icon": "\ud83d\udee1\ufe0f",
+        "title": "Equipment Slot"
+      },
+      "benefitsWhenActive": {
+        "icon": "\u2b50",
+        "title": "Benefits When Active"
+      },
+      "activeSkill": {
+        "icon": "\u2694\ufe0f",
+        "title": "Active Skill"
+      },
+      "currentlyEquipped": {
+        "icon": "\ud83e\uddf0",
+        "title": "Currently Equipped"
+      },
+      "permanentBonus": {
+        "icon": "\u267e\ufe0f",
+        "title": "Permanent Bonus"
+      },
+      "provides": {
+        "icon": "\u2795",
+        "title": "Provides"
+      }
+    },
+    "panels": {
+      "generators": {
+        "icon": "\u2699\ufe0f",
+        "title": "Generators"
+      },
+      "upgrades": {
+        "icon": "\u2b06\ufe0f",
+        "title": "Upgrades"
+      },
+      "characters": {
+        "icon": "\ud83d\udc64",
+        "title": "Characters"
+      },
+      "inventory": {
+        "icon": "\ud83c\udf92",
+        "title": "Inventory"
+      },
+      "artifacts": {
+        "icon": "\ud83d\udd2e",
+        "title": "Artifacts"
+      },
+      "achievements": {
+        "icon": "\ud83c\udfc6",
+        "title": "Achievements"
+      },
+      "ascension": {
+        "icon": "\ud83d\udd04",
+        "title": "Ascension"
+      },
+      "stats": {
+        "icon": "\ud83d\udcca",
+        "title": "Stats"
+      },
+      "settings": {
+        "icon": "\ud83d\udee0\ufe0f",
+        "title": "Settings"
+      },
+      "progress": {
+        "icon": "\ud83d\udd27",
+        "title": "Progress Tracker"
+      },
+      "devTools": {
+        "icon": "\ud83e\uddea",
+        "title": "Dev Tools"
+      }
+    },
+    "tabs": [
+      {
+        "id": "generators",
+        "icon": "\u2699\ufe0f",
+        "label": "Generators",
+        "feature": "tab:generators"
+      },
+      {
+        "id": "upgrades",
+        "icon": "\u2b06\ufe0f",
+        "label": "Upgrades",
+        "feature": "tab:upgrades"
+      },
+      {
+        "id": "characters",
+        "icon": "\ud83d\udc64",
+        "label": "Characters",
+        "feature": "tab:characters"
+      },
+      {
+        "id": "inventory",
+        "icon": "\ud83c\udf92",
+        "label": "Inventory",
+        "feature": "tab:inventory"
+      },
+      {
+        "id": "artifacts",
+        "icon": "\ud83d\udd2e",
+        "label": "Artifacts",
+        "feature": "tab:artifacts"
+      },
+      {
+        "id": "achievements",
+        "icon": "\ud83c\udfc6",
+        "label": "Achievements",
+        "feature": "tab:achievements"
+      },
+      {
+        "id": "ascension",
+        "icon": "\ud83d\udd04",
+        "label": "Ascension",
+        "feature": "tab:ascension"
+      },
+      {
+        "id": "stats",
+        "icon": "\ud83d\udcca",
+        "label": "Stats",
+        "feature": "tab:stats"
+      },
+      {
+        "id": "settings",
+        "icon": "\ud83d\udee0\ufe0f",
+        "label": "Settings",
+        "feature": "tab:settings"
+      },
+      {
+        "id": "progress",
+        "icon": "\ud83d\udd27",
+        "label": "Progress",
+        "devOnly": true
+      }
+    ],
+    "modals": {
+      "unlockPrefix": "\ud83d\udd12",
+      "welcomeBack": "Welcome Back!",
+      "confirmPrestige": "Confirm Prestige",
+      "collectOffline": "Collect"
+    },
+    "unlockLabels": {
+      "achievement": "Achievement: {name}",
+      "resourceHeld": "{name}: {current} / {required}",
+      "generatorOwned": "{name}: {current} / {required}",
+      "firstPurchaseCost": "{name} first purchase: {cost}",
+      "upgradePurchased": "{name}: level {current} / {required}",
+      "prestigesThisTier": "Prestiges this tier: {current} / {required}",
+      "lifetimeResource": "Lifetime {name}: {current} / {required}",
+      "generatorPurchases": "Generator purchases: {current} / {required}",
+      "lifetimePrestiges": "Prestiges: {current} / {required}",
+      "firstPurchaseCostStatic": "{icon} {name} first purchase cost",
+      "resourceHeldStatic": "{icon} {name}: 0 / {required}",
+      "generatorOwnedStatic": "{icon} {name}: 0 / {required}",
+      "upgradePurchasedStatic": "{icon} {name}: level 0 / {required}",
+      "prestigesThisTierStatic": "Prestiges this tier: 0 / {required}",
+      "lifetimeResourceStatic": "Lifetime {name}: 0 / {required}",
+      "generatorPurchasesStatic": "Generator purchases: 0 / {required}",
+      "lifetimePrestigesStatic": "Prestiges: 0 / {required}"
+    }
   }
 };

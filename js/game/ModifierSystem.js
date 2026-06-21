@@ -67,7 +67,7 @@ export const ModifierSystem = {
         if (!itemCode) continue;
         const item = config.items.items.find(i => i.codeName === itemCode);
         if (!item?.effect) continue;
-        const stackQty = state.inventory[itemCode] || 1;
+        const stackQty = state.inventory[itemCode] ?? ConfigManager.getDefaultCalc('equipmentStackMinCopies');
         const effect = ConfigManager.getEffectiveItemEffect(item, stackQty);
         this._addEffectMods(mods, effect, `equip:${char.codeName}:${itemCode}`, null, null, 1);
       }
@@ -90,7 +90,7 @@ export const ModifierSystem = {
 
   _addEffectMods(mods, effect, codeName, category, targetId, count) {
     if (!effect) return;
-    const mult = effect.multiplier || 1;
+    const mult = effect.multiplier ?? ConfigManager.getDefaultCalc('effectMultiplierDefault');
     const val = effect.type === 'costReduction' ? mult : mult;
 
     switch (effect.type) {

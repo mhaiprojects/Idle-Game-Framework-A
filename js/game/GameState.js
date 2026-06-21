@@ -199,7 +199,7 @@ export class GameState {
     const unlock = FormulaEngine.evaluateUnlockConditions(upgrade.unlockConditions, this.data, this.config);
     if (!unlock.met) return false;
 
-    const cost = FormulaEngine.calculateUpgradeCost(upgrade, us.purchaseCount);
+    const cost = FormulaEngine.calculateUpgradeCost(upgrade, us.purchaseCount, this.config);
     if ((this.data.resources[upgrade.costResource]?.quantity || 0) < cost) return false;
 
     this.addResource(upgrade.costResource, -cost, 'upgrade');
@@ -295,7 +295,7 @@ export class GameState {
     }
     this._bumpModCache();
     EventBus.emit(EVENTS.ACHIEVEMENT_UNLOCKED, { achievement: codeName });
-    this.showToast(`🏆 ${configAch?.displayName || codeName}`);
+    this.showToast(`${this.config.defaults.icons.toastAchievement} ${configAch?.displayName || codeName}`);
     return true;
   }
 
@@ -314,7 +314,7 @@ export class GameState {
     this.data.ui.resourceDeltas.push({ id, resource, amount });
     setTimeout(() => {
       this.data.ui.resourceDeltas = this.data.ui.resourceDeltas.filter(d => d.id !== id);
-    }, this.config.framework.ui.toastDurationMs || 1000);
+    }, this.config.framework.ui.toastDurationMs ?? this.config.defaults.calculations.toastDurationFallbackMs);
   }
 
   equipItem(characterCode, slot, itemCode) {
@@ -356,7 +356,7 @@ export class GameState {
     const primaryRate = FormulaEngine.calculatePrimaryCurrencyRate(this.data, this.config, mods);
     const peak = this.data.meta.prestige.run.peakPrimaryCurrencyRateThisRun
       ?? this.data.meta.prestige.run.peakPPSThisRun
-      ?? 0;
+      ?? this.config.defaults.calculations.peakPrimaryCurrencyRateFallback;
     if (primaryRate > peak) {
       this.data.meta.prestige.run.peakPrimaryCurrencyRateThisRun = primaryRate;
     }

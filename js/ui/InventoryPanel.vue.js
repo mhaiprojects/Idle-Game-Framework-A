@@ -1,9 +1,10 @@
 import MoreInfoButton from './components/MoreInfoButton.vue.js';
+import PanelHeader from './components/PanelHeader.vue.js';
 import CardSection from './components/CardSection.vue.js';
 
 export default {
   name: 'InventoryPanel',
-  components: { MoreInfoButton, CardSection },
+  components: { MoreInfoButton, PanelHeader, CardSection },
   props: {
     items: Array,
     inventory: Object,
@@ -25,15 +26,15 @@ export default {
       return this.describeEffectShort ? this.describeEffectShort(item.effect) : '';
     },
     formatRarity(rarity) {
-      if (!rarity) return 'Common';
+      if (!rarity) return AFK?.ConfigManager?.getDefaultLabel?.('commonRarity') || '';
       return rarity.charAt(0).toUpperCase() + rarity.slice(1);
     }
   },
   template: `
     <div class="panel">
-      <h2 class="panel-title">🎒 Inventory</h2>
+      <PanelHeader panel-key="inventory" />
 
-      <CardSection title="Consumables" level="panel" :first="true">
+      <CardSection section-key="consumables" level="panel" :first="true">
         <div class="inventory-grid">
           <div v-for="item in items.filter(i => i.type === 'consumable')" :key="item.codeName" class="inv-item">
             <div class="inv-item-top">
@@ -52,7 +53,7 @@ export default {
         <p v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text" style="margin-bottom:0">No consumables yet.</p>
       </CardSection>
 
-      <CardSection title="Equipment" level="panel">
+      <CardSection section-key="equipment" level="panel">
         <p class="hint-text">Equip items on the Characters tab. Stackable gear — each copy owned boosts equipped power.</p>
         <div v-for="item in equipableItems" :key="item.codeName" class="card">
           <div class="card-header">
@@ -62,7 +63,7 @@ export default {
             <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
           </div>
           <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }}</p>
-          <CardSection title="Details" :first="true">
+          <CardSection section-key="details" :first="true">
             <span v-if="item.rarity" class="rarity-badge" :class="'rarity-' + (item.rarity || 'common')">{{ formatRarity(item.rarity) }}</span>
             <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
             <p class="section-text muted">{{ slotLabel(item.slot) }} slot</p>
