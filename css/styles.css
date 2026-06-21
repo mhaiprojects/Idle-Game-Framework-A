@@ -753,11 +753,49 @@ html, body {
 }
 
 .efficiency-tag {
-  font-size: 0.7rem;
-  color: var(--color-violet);
-  background: rgba(139,92,246,0.15);
-  padding: 0.1rem 0.4rem;
-  border-radius: 4px;
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.production-section {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.production-heading {
+  font-size: 0.8rem;
+  margin-bottom: 0.35rem;
+  color: var(--color-muted);
+}
+
+.production-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.production-resource {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.production-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
 }
 
 .hint-text { font-size: 0.75rem; color: var(--color-muted); margin-bottom: 0.5rem; }

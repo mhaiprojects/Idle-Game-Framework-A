@@ -33,11 +33,20 @@ export default {
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ gen.description }}</p>
         <div v-if="gen.isUnlocked">
-          <div style="font-size:0.8rem;margin-top:0.35rem">
-            {{ primaryCurrencyLabel }}: {{ formatNumber(gen.primaryCurrencyRate) }}/s
-            <span v-if="gen.primaryCurrencyPercent > 0" class="efficiency-tag">{{ gen.primaryCurrencyPercent.toFixed(1) }}%</span>
+          <div v-if="gen.production?.length" class="production-section">
+            <h4 class="production-heading">Production</h4>
+            <div v-for="row in gen.production" :key="row.resource" class="production-row">
+              <span class="production-resource">
+                <span>{{ row.icon }}</span>
+                <span>{{ row.name }}</span>
+              </span>
+              <span class="production-stats">
+                <span>{{ formatNumber(row.rate) }}/s</span>
+                <span class="efficiency-tag">{{ row.percent.toFixed(1) }}%</span>
+              </span>
+            </div>
           </div>
-          <div class="card-actions" style="flex-direction:column;align-items:stretch">
+          <div class="card-actions" style="flex-direction:column;align-items:stretch;margin-top:0.5rem">
             <ResourceProgressList :entries="gen.costProgress" />
             <div style="display:flex;justify-content:flex-end;margin-top:0.35rem">
               <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>

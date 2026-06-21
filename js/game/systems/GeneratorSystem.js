@@ -31,6 +31,15 @@ export const GeneratorSystem = {
       const featureLocked = gen.requiredFeature && !ConfigManager.isFeatureUnlocked(gen.requiredFeature, state);
       const isUnlocked = gs.isUnlocked && unlock.met && !featureLocked;
       const canBuy = isUnlocked && bulkQty > 0 && this._canAffordCost(state, buyCost);
+      const production = FormulaEngine.calculateGeneratorProduction(state, config, mods, gen.codeName)
+        .map(p => {
+          const res = ConfigManager.getResource(p.resource);
+          return {
+            ...p,
+            icon: res?.icon || '',
+            name: res?.displayName || p.resource
+          };
+        });
 
       return {
         ...gen,
@@ -40,6 +49,7 @@ export const GeneratorSystem = {
         nextCost: buyCost,
         buyQuantity: bulkQty,
         canBuy,
+        production,
         primaryCurrencyRate: genPrimary,
         primaryCurrencyPercent: primaryBreakdown.total > 0 ? (genPrimary / primaryBreakdown.total) * 100 : 0,
         featureLocked

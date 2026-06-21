@@ -178,6 +178,42 @@ export const FormulaEngine = {
     return { total, breakdown };
   },
 
+  calculateGeneratorProduction(state, config, mods, genCode) {
+    const gen = config.generators.generators.find(g => g.codeName === genCode);
+    if (!gen) return [];
+
+    const gs = state.generators[genCode];
+    const owned = gs?.quantityPurchased || 0;
+    const difficulty = this.getEffectiveDifficulty(state, config);
+    const primary = config.resources.resources.find(r => r.isPrimary);
+    const featureBlocked = gen.requiredFeature && !this._isFeatureUnlocked(gen.requiredFeature, state, config);
+
+    return (gen.produces || []).map(prod => {
+      let rate = 0;
+      if (owned > 0 && !featureBlocked) {
+        let base = prod.amount * owned;
+        const genMods = mods.filter(m =>
+          m.target === 'global' ||
+          (m.target === 'generator' && m.targetId === gen.codeName) ||
+          (m.target === 'category' && m.targetId === gen.category)
+        );
+        const result = this.applyModifierStack(base, genMods);
+        rate = result.value;
+        if (prod.resource === primary.codeName) {
+          rate *= difficulty.primaryCurrencyMultiplier;
+        }
+      }
+      const totalForResource = this.calculateResourceRate(state, config, mods, prod.resource);
+      const percent = totalForResource > 0 ? (rate / totalForResource) * 100 : 0;
+      return {
+        resource: prod.resource,
+        rate,
+        percent,
+        role: prod.role
+      };
+    });
+  },
+
   calculateTapGain(state, config, mods) {
     const fw = config.framework;
     const tap = fw.ui.tapAction;

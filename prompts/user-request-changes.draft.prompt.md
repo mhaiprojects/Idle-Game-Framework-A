@@ -261,6 +261,16 @@
 
 ---
 
+### 2026-6-21-22-0-0 — Generator card production section
+
+**Request:** Each generator card should show Production with resources generated and percentage of total production per resource.
+
+**Implemented:**
+- `FormulaEngine.calculateGeneratorProduction` — per-generator rates and % of global resource totals
+- Generator cards show Production section with icon, name, `/s` rate, and % badge per produced resource
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec
