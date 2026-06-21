@@ -43,6 +43,17 @@
   "characters": {
     "maxActive": 3
   },
+  "equipmentSlots": [
+    { "id": "cape", "label": "Cape", "row": 0, "col": 0 },
+    { "id": "helmet", "label": "Helmet", "row": 0, "col": 1 },
+    { "id": "amulet", "label": "Amulet", "row": 0, "col": 2 },
+    { "id": "mainHand", "label": "Main hand", "row": 1, "col": 0 },
+    { "id": "body", "label": "Body", "row": 1, "col": 1 },
+    { "id": "offHand", "label": "Off hand", "row": 1, "col": 2 },
+    { "id": "boots", "label": "Boots", "row": 2, "col": 0 },
+    { "id": "belt", "label": "Belt", "row": 2, "col": 1 },
+    { "id": "pet", "label": "Pet", "row": 2, "col": 2 }
+  ],
   "devTools": {
     "speedMultipliers": [1, 2, 5, 10],
     "resourceGrantAmount": 1000,

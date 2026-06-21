@@ -285,6 +285,135 @@ html, body {
   margin-top: 0.5rem;
 }
 
+.equipment-grid-wrap {
+  margin-top: 0.35rem;
+}
+
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+}
+
+.equip-grid-cell {
+  min-height: 4.5rem;
+  border: 1px dashed rgba(99, 102, 241, 0.35);
+  border-radius: 8px;
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  cursor: pointer;
+  background: rgba(15, 23, 42, 0.35);
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.equip-grid-cell:hover,
+.equip-grid-cell.open {
+  border-color: var(--color-accent);
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.equip-grid-cell.filled {
+  border-style: solid;
+}
+
+.equip-grid-slot-label {
+  font-size: 0.6rem;
+  color: var(--color-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.equip-grid-item-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.equip-grid-item-name {
+  font-size: 0.65rem;
+  line-height: 1.2;
+}
+
+.equip-grid-empty {
+  font-size: 1.1rem;
+  color: var(--color-muted);
+}
+
+.equip-picker {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.equip-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.equip-picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.equip-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 6px;
+  background: var(--color-bg-card);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.75rem;
+  text-align: left;
+}
+
+.equip-picker-item:hover {
+  border-color: var(--color-accent);
+}
+
+.inv-item-name {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.inv-item-desc {
+  font-size: 0.65rem;
+  color: var(--color-muted);
+  line-height: 1.35;
+  margin: 0.2rem 0;
+}
+
+.inv-item-qty {
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.effect-badge {
+  display: inline-block;
+  margin-top: 0.25rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
 .card-icon { font-size: 1.5rem; }
 .card-name { font-weight: 600; flex: 1; }
 .card-owned { color: var(--color-muted); font-size: 0.85rem; }
@@ -404,6 +533,26 @@ html, body {
   justify-content: center;
   font-size: 1.2rem;
   flex-shrink: 0;
+}
+
+.skill-slot-icon {
+  line-height: 1;
+}
+
+.skill-char-badge {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  font-size: 0.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .skill-slot.disabled, .boost-slot.disabled {

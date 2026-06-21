@@ -213,12 +213,30 @@
     }
 
     getEquipmentSlots() {
-      const slots = new Set();
-      for (const item of this.config.items.items) {
-        if (item.type === 'equipable' && item.slot) slots.add(item.slot);
+      return (this.config.framework.equipmentSlots || []).map(s => s.id);
+    },
+
+    getEquipmentSlotLayout() {
+      return this.config.framework.equipmentSlots || [];
+    },
+
+    describeEffectShort(effect) {
+      if (!effect?.type) return '';
+      const mult = effect.multiplier || 1;
+      const pct = Math.round(Math.abs(mult - 1) * 100);
+      const signed = mult >= 1 ? '+' : '-';
+      const dur = effect.durationSeconds ? ` · ${effect.durationSeconds}s` : '';
+      switch (effect.type) {
+        case 'globalMultiplier':
+          return `${signed}${pct}% production${dur}`;
+        case 'clickMultiplier':
+          return `${signed}${pct}% tap${dur}`;
+        case 'costReduction':
+          return `${pct}% cheaper purchases`;
+        default:
+          return this.describeEffect(effect).replace(/\.$/, '');
       }
-      return [...slots];
-    }
+    },
 
     describeEffect(effect) {
       if (!effect?.type) return 'No gameplay effect.';
@@ -252,13 +270,33 @@
         case 'item': {
           const item = this.config.items.items.find(i => i.codeName === codeName);
           if (!item) return null;
+          const qty = this.state.inventory[item.codeName] || 0;
           const sections = [
-            { heading: 'Description', body: item.description || 'No description.' },
-            { heading: 'Type', body: item.type === 'consumable' ? 'Consumable — used from inventory or action bar.' : `Equipable — ${item.slot} slot.` }
+            { heading: 'Description', body: item.description || 'No description.' }
           ];
           if (item.effect) {
-            sections.push({ heading: 'Game effect', body: this.describeEffect(item.effect) });
-            sections.push({ heading: 'Benefits', body: item.actionBarEligible ? 'Can be triggered from the action bar when owned.' : 'Passive bonus while equipped on a character.' });
+            sections.push({ heading: 'Provides', body: this.describeEffect(item.effect) });
+          }
+          sections.push({ heading: 'Owned', body: `${qty}` });
+          if (item.type === 'consumable') {
+            sections.push({
+              heading: 'Usage',
+              body: item.actionBarEligible
+                ? 'Use from inventory or the action bar when owned.'
+                : 'Use from inventory when owned.'
+            });
+          } else if (item.type === 'equipable') {
+            const slotLabel = AFK.ConfigManager.getEquipmentSlotLabel(item.slot);
+            const wearer = Object.entries(this.state.characters).find(([, cs]) =>
+              Object.values(cs.equipment || {}).includes(item.codeName)
+            );
+            const charDef = wearer
+              ? this.config.characters.characters.find(c => c.codeName === wearer[0])
+              : null;
+            sections.push({
+              heading: 'Equipment slot',
+              body: `${slotLabel || item.slot} · one character at a time${charDef ? ` · worn by ${charDef.icon} ${charDef.displayName}` : ''}`
+            });
           }
           return { title: item.displayName, icon: item.icon, sections };
         }
@@ -288,11 +326,20 @@
           if (cs?.equipment && Object.keys(cs.equipment).length) {
             const equipped = Object.entries(cs.equipment).filter(([, v]) => v).map(([slot, code]) => {
               const item = this.config.items.items.find(i => i.codeName === code);
-              return `${slot}: ${item?.icon || ''} ${item?.displayName || code}`;
+              const slotLabel = AFK.ConfigManager.getEquipmentSlotLabel(slot);
+              return `${slotLabel}: ${item?.icon || ''} ${item?.displayName || code}`;
             });
             sections.push({ heading: 'Currently equipped', body: equipped.join(' · ') || 'Nothing equipped.' });
           }
-          return { title: char.displayName, icon: char.icon, sections };
+          const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
+            { unlockConditions: char.unlockConditions }, this.state, fmt
+          );
+          return {
+            title: char.displayName,
+            icon: char.icon,
+            sections,
+            requirements: requirements.length ? requirements : undefined
+          };
         }
         case 'generator': {
           const gen = this.config.generators.generators.find(g => g.codeName === codeName);
@@ -307,24 +354,26 @@
             { heading: 'Production', body: produces || 'No production defined.' },
             { heading: 'Owned', body: `${gs?.quantityPurchased || 0} units` }
           ];
-          if (gen.unlockConditions || gen.requiredFeature) {
-            const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
-              { unlockConditions: gen.unlockConditions, requiredFeature: gen.requiredFeature },
-              this.state,
-              fmt
-            );
-            const body = AFK.ConfigManager.formatUnlockRequirementsText(requirements);
-            if (body) {
-              sections.push({ heading: 'Unlock requirements', body });
-            }
-          }
-          return { title: gen.displayName, icon: gen.icon, sections };
+          const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
+            { unlockConditions: gen.unlockConditions, requiredFeature: gen.requiredFeature },
+            this.state,
+            fmt
+          );
+          return {
+            title: gen.displayName,
+            icon: gen.icon,
+            sections,
+            requirements: requirements.length ? requirements : undefined
+          };
         }
         case 'upgrade': {
           const upg = this.config.upgrades.upgrades.find(u => u.codeName === codeName);
           if (!upg) return null;
           const us = this.state.upgrades[codeName];
           const res = AFK.ConfigManager.getResource(upg.costResource);
+          const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
+            { unlockConditions: upg.unlockConditions }, this.state, fmt
+          );
           return {
             title: upg.displayName,
             icon: upg.icon,
@@ -333,7 +382,8 @@
               { heading: 'Effect', body: this.describeEffect(upg.effect) },
               { heading: 'Cost', body: `${fmt(upg.cost)} ${res?.icon || ''} ${res?.displayName || upg.costResource} per level` },
               { heading: 'Progress', body: `Level ${us?.purchaseCount || 0}${upg.maxPurchases != null ? ' / ' + upg.maxPurchases : ''}` }
-            ]
+            ],
+            requirements: requirements.length ? requirements : undefined
           };
         }
         case 'artifact': {
@@ -472,6 +522,8 @@
         if (!cs?.activated) continue;
         skills.push({
           ...char.activeSkill,
+          characterIcon: char.icon,
+          characterName: char.displayName,
           cooldownRemaining: cs.skillCooldownRemaining
         });
         if (skills.length >= max) break;

@@ -7,17 +7,20 @@ export default {
     inventory: Object,
     characters: Array,
     equipableItems: Array,
-    equipmentSlots: Array
+    describeEffectShort: Function
   },
-  emits: ['use-boost', 'equip', 'unequip', 'more-info'],
+  emits: ['use-boost', 'more-info'],
   methods: {
     slotLabel(slot) {
-      return slot.charAt(0).toUpperCase() + slot.slice(1);
+      return slot ? slot.charAt(0).toUpperCase() + slot.slice(1) : '';
     },
     equippedOn(code) {
       return this.characters.filter(c =>
         c.unlocked && Object.values(c.equipment || {}).includes(code)
       );
+    },
+    effectLabel(item) {
+      return this.describeEffectShort ? this.describeEffectShort(item.effect) : '';
     }
   },
   template: `
@@ -31,8 +34,10 @@ export default {
             <div class="icon">{{ item.icon }}</div>
             <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
           </div>
-          <div>{{ item.displayName }}</div>
-          <div style="font-weight:700">{{ inventory[item.codeName] || 0 }}</div>
+          <div class="inv-item-name">{{ item.displayName }}</div>
+          <p class="inv-item-desc">{{ item.description }}</p>
+          <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
+          <div class="inv-item-qty">Owned: {{ inventory[item.codeName] || 0 }}</div>
           <button v-if="item.actionBarEligible && (inventory[item.codeName] || 0) > 0"
             class="btn btn-primary btn-sm" style="margin-top:0.35rem"
             @click="$emit('use-boost', item.codeName)">Use</button>
@@ -41,7 +46,7 @@ export default {
       <div v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text">No consumables yet.</div>
 
       <h3 class="section-subtitle">Equipment</h3>
-      <p class="hint-text">Equip items on the Characters tab, or use the controls below.</p>
+      <p class="hint-text">Equip items on the Characters tab. Each item can only be worn by one character at a time.</p>
       <div v-for="item in equipableItems" :key="item.codeName" class="card">
         <div class="card-header">
           <span class="card-icon">{{ item.icon }}</span>
@@ -49,18 +54,11 @@ export default {
           <span class="card-owned">×{{ inventory[item.codeName] || 0 }}</span>
           <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
         </div>
-        <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }} · {{ slotLabel(item.slot) }}</p>
+        <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }}</p>
+        <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
+        <div style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-muted)">{{ slotLabel(item.slot) }} slot</div>
         <div v-if="equippedOn(item.codeName).length" style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-accent)">
-          Equipped on: {{ equippedOn(item.codeName).map(c => c.displayName).join(', ') }}
-        </div>
-        <div v-if="characters.filter(c => c.unlocked).length" class="equip-assign-list">
-          <div v-for="char in characters.filter(c => c.unlocked)" :key="char.codeName" class="equip-slot-row">
-            <span>{{ char.icon }} {{ char.displayName }}</span>
-            <button v-if="char.equipment?.[item.slot] === item.codeName" class="btn btn-ghost btn-sm"
-              @click="$emit('unequip', char.codeName, item.slot)">Unequip</button>
-            <button v-else-if="(inventory[item.codeName] || 0) > 0" class="btn btn-primary btn-sm"
-              @click="$emit('equip', char.codeName, item.slot, item.codeName)">Equip</button>
-          </div>
+          Equipped on: {{ equippedOn(item.codeName).map(c => c.icon + ' ' + c.displayName).join(', ') }}
         </div>
       </div>
     </div>

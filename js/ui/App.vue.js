@@ -95,6 +95,9 @@ export default {
     equipmentSlots() {
       return this.game.getEquipmentSlots();
     },
+    equipmentSlotLayout() {
+      return this.game.getEquipmentSlotLayout();
+    },
     artifacts() {
       return this.game.getArtifactDisplay();
     },
@@ -185,6 +188,9 @@ export default {
     },
     getResourceMeta(code) {
       return this.game.getResourceMeta(code);
+    },
+    describeEffectShort(effect) {
+      return this.game.describeEffectShort(effect);
     }
   },
   template: `
@@ -213,15 +219,14 @@ export default {
             :characters="characters" :max-active="config.framework.characters.maxActive"
             :active-count="game.getActiveCharacterCount()"
             :inventory="state.inventory" :equipable-items="equipableItems"
-            :equipment-slots="equipmentSlots"
+            :equipment-slot-layout="equipmentSlotLayout"
             @toggle="onToggleCharacter" @equip="onEquip" @unequip="onUnequip"
             @more-info="onMoreInfo" />
           <InventoryPanel v-if="state.ui.activeTab === 'inventory'"
             :items="inventoryItems" :inventory="state.inventory"
             :characters="characters" :equipable-items="equipableItems"
-            :equipment-slots="equipmentSlots"
-            @use-boost="onUseBoost" @equip="onEquip" @unequip="onUnequip"
-            @more-info="onMoreInfo" />
+            :describe-effect-short="describeEffectShort"
+            @use-boost="onUseBoost" @more-info="onMoreInfo" />
           <ArtifactPanel v-if="state.ui.activeTab === 'artifacts'" :artifacts="artifacts"
             @more-info="onMoreInfo" />
           <AchievementPanel v-if="state.ui.activeTab === 'achievements'" :achievements="achievements" />

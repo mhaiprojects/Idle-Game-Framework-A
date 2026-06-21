@@ -770,6 +770,11 @@ const ConfigManager = {
     return null;
   },
 
+  getEquipmentSlotLabel(slotId) {
+    const slot = (config.framework.equipmentSlots || []).find(s => s.id === slotId);
+    return slot?.label || slotId;
+  },
+
   getUnlockedFeatures(state) {
     const features = new Set();
     const currentTier = state.meta.ascension.currentTier;
@@ -784,7 +789,12 @@ const ConfigManager = {
 
 // --- js/core/SaveManager.js ---
 
-const SAVE_VERSION = '1.1.0';
+const SAVE_VERSION = '1.2.0';
+
+const EQUIPMENT_SLOT_MIGRATION = {
+  accessory: 'amulet',
+  weapon: 'mainHand'
+};
 
 function simpleHash(str) {
   let hash = 0;
@@ -849,6 +859,22 @@ const SaveManager = {
         run.peakPrimaryCurrencyRateThisRun = run.peakPPSThisRun;
       }
       migrated.version = '1.1.0';
+    }
+
+    if (migrated.version === '1.1.0') {
+      const chars = migrated.state?.characters;
+      if (chars) {
+        for (const cs of Object.values(chars)) {
+          if (!cs?.equipment) continue;
+          const next = {};
+          for (const [slot, code] of Object.entries(cs.equipment)) {
+            if (!code) continue;
+            next[EQUIPMENT_SLOT_MIGRATION[slot] || slot] = code;
+          }
+          cs.equipment = next;
+        }
+      }
+      migrated.version = '1.2.0';
     }
 
     if (migrated.version === SAVE_VERSION) return migrated;
@@ -1473,7 +1499,9 @@ class GameState {
     if (item.slot && item.slot !== slot) return false;
 
     for (const c of Object.values(this.data.characters)) {
-      if (c.equipment?.[slot] === itemCode) c.equipment[slot] = null;
+      for (const [s, code] of Object.entries(c.equipment || {})) {
+        if (code === itemCode) c.equipment[s] = null;
+      }
     }
     cs.equipment = cs.equipment || {};
     cs.equipment[slot] = itemCode;

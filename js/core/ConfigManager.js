@@ -386,6 +386,11 @@ export const ConfigManager = {
     return null;
   },
 
+  getEquipmentSlotLabel(slotId) {
+    const slot = (config.framework.equipmentSlots || []).find(s => s.id === slotId);
+    return slot?.label || slotId;
+  },
+
   getUnlockedFeatures(state) {
     const features = new Set();
     const currentTier = state.meta.ascension.currentTier;

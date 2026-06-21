@@ -1,7 +1,12 @@
 import { EventBus, EVENTS } from './EventBus.js';
 import { ConfigManager } from './ConfigManager.js';
 
-const SAVE_VERSION = '1.1.0';
+const SAVE_VERSION = '1.2.0';
+
+const EQUIPMENT_SLOT_MIGRATION = {
+  accessory: 'amulet',
+  weapon: 'mainHand'
+};
 
 function simpleHash(str) {
   let hash = 0;
@@ -66,6 +71,22 @@ export const SaveManager = {
         run.peakPrimaryCurrencyRateThisRun = run.peakPPSThisRun;
       }
       migrated.version = '1.1.0';
+    }
+
+    if (migrated.version === '1.1.0') {
+      const chars = migrated.state?.characters;
+      if (chars) {
+        for (const cs of Object.values(chars)) {
+          if (!cs?.equipment) continue;
+          const next = {};
+          for (const [slot, code] of Object.entries(cs.equipment)) {
+            if (!code) continue;
+            next[EQUIPMENT_SLOT_MIGRATION[slot] || slot] = code;
+          }
+          cs.equipment = next;
+        }
+      }
+      migrated.version = '1.2.0';
     }
 
     if (migrated.version === SAVE_VERSION) return migrated;

@@ -62,6 +62,62 @@ window.AFK_CONFIG = {
     "characters": {
       "maxActive": 3
     },
+    "equipmentSlots": [
+      {
+        "id": "cape",
+        "label": "Cape",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "helmet",
+        "label": "Helmet",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "amulet",
+        "label": "Amulet",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "mainHand",
+        "label": "Main hand",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "body",
+        "label": "Body",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "offHand",
+        "label": "Off hand",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "boots",
+        "label": "Boots",
+        "row": 2,
+        "col": 0
+      },
+      {
+        "id": "belt",
+        "label": "Belt",
+        "row": 2,
+        "col": 1
+      },
+      {
+        "id": "pet",
+        "label": "Pet",
+        "row": 2,
+        "col": 2
+      }
+    ],
     "devTools": {
       "speedMultipliers": [
         1,
@@ -837,12 +893,36 @@ window.AFK_CONFIG = {
         }
       },
       {
+        "codeName": "starlightCape",
+        "displayName": "Starlight Cape",
+        "description": "A luminous cape woven from captured starlight.",
+        "icon": "\ud83e\udde3",
+        "type": "equipable",
+        "slot": "cape",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.05
+        }
+      },
+      {
+        "codeName": "chronoHelm",
+        "displayName": "Chrono Helm",
+        "description": "Helmet that bends time around the wearer.",
+        "icon": "\u26d1\ufe0f",
+        "type": "equipable",
+        "slot": "helmet",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.95
+        }
+      },
+      {
         "codeName": "temporalLens",
         "displayName": "Temporal Lens",
         "description": "Equipment that focuses temporal energy.",
         "icon": "\ud83d\udd0d",
         "type": "equipable",
-        "slot": "accessory",
+        "slot": "amulet",
         "effect": {
           "type": "globalMultiplier",
           "multiplier": 1.1
@@ -854,10 +934,70 @@ window.AFK_CONFIG = {
         "description": "A weapon forged from frozen time.",
         "icon": "\u2694\ufe0f",
         "type": "equipable",
-        "slot": "weapon",
+        "slot": "mainHand",
         "effect": {
           "type": "clickMultiplier",
           "multiplier": 1.2
+        }
+      },
+      {
+        "codeName": "voidPlate",
+        "displayName": "Void Plate",
+        "description": "Armor plate harvested from the dimensional void.",
+        "icon": "\ud83d\udee1\ufe0f",
+        "type": "equipable",
+        "slot": "body",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.08
+        }
+      },
+      {
+        "codeName": "fluxBuckler",
+        "displayName": "Flux Buckler",
+        "description": "Off-hand shield that stabilizes quantum flux.",
+        "icon": "\ud83d\udd30",
+        "type": "equipable",
+        "slot": "offHand",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      },
+      {
+        "codeName": "phaseBoots",
+        "displayName": "Phase Boots",
+        "description": "Boots that step between timelines.",
+        "icon": "\ud83d\udc62",
+        "type": "equipable",
+        "slot": "boots",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.1
+        }
+      },
+      {
+        "codeName": "timekeepersBelt",
+        "displayName": "Timekeeper's Belt",
+        "description": "Belt lined with chrono crystals.",
+        "icon": "\ud83c\udf97\ufe0f",
+        "type": "equipable",
+        "slot": "belt",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.92
+        }
+      },
+      {
+        "codeName": "quantumMote",
+        "displayName": "Quantum Mote",
+        "description": "A tiny pet formed from probability foam.",
+        "icon": "\ud83d\udc3e",
+        "type": "equipable",
+        "slot": "pet",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
         }
       },
       {

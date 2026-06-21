@@ -1,5 +1,8 @@
+import UnlockRequirementsList from './UnlockRequirementsList.vue.js';
+
 export default {
   name: 'InfoModal',
+  components: { UnlockRequirementsList },
   props: { info: Object },
   emits: ['close'],
   template: `
@@ -13,6 +16,8 @@ export default {
           <h4>{{ section.heading }}</h4>
           <p>{{ section.body }}</p>
         </div>
+        <UnlockRequirementsList v-if="info.requirements?.length"
+          :requirements="info.requirements" heading="Unlock requirements:" />
         <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">Close</button>
       </div>
     </div>

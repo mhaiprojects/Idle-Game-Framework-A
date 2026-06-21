@@ -194,6 +194,24 @@
 
 ---
 
+### 2026-6-21-19-0-38 — Unlock UI, consumable info, skill badges, equipment grid
+
+**Request:**
+- Show unlock requirements on object cards and in More Info modals
+- Consumables: more-info icon with full details, short description, effect indicator
+- Active skills on action bar show small character icon on skill slot
+- Character equip UI: 3×3 grid (cape/helmet/amulet, hands/body, boots/belt/pet), pull from owned items, one character per item
+
+**Implemented:**
+- `InfoModal` renders `UnlockRequirementsList` when entity info includes `requirements` (generators, upgrades, characters)
+- Consumable inventory cards: description, effect badge, enhanced item info modal (`Provides`, `Owned`, `Usage`)
+- `SkillSlot`: character icon badge overlay + tooltip with character name
+- `EquipmentGrid` component with 9-slot layout from `framework.json`; click slot to pick from available owned items
+- `items.json`: expanded equipables for all nine slots; save migration `1.2.0` for legacy slot names
+- `GameState.equipItem`: unequips item from any character before re-equipping (unique item rule)
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec

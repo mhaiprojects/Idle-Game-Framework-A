@@ -326,7 +326,9 @@ export class GameState {
     if (item.slot && item.slot !== slot) return false;
 
     for (const c of Object.values(this.data.characters)) {
-      if (c.equipment?.[slot] === itemCode) c.equipment[slot] = null;
+      for (const [s, code] of Object.entries(c.equipment || {})) {
+        if (code === itemCode) c.equipment[s] = null;
+      }
     }
     cs.equipment = cs.equipment || {};
     cs.equipment[slot] = itemCode;

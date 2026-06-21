@@ -58,8 +58,10 @@ AFK_UI.UnlockModal = {
 };
 
 // --- js/ui/components/InfoModal.vue.js ---
+
 AFK_UI.InfoModal = {
   name: 'InfoModal',
+  components: { UnlockRequirementsList },
   props: { info: Object },
   emits: ['close'],
   template: `
@@ -73,6 +75,8 @@ AFK_UI.InfoModal = {
           <h4>{{ section.heading }}</h4>
           <p>{{ section.body }}</p>
         </div>
+        <UnlockRequirementsList v-if="info.requirements?.length"
+          :requirements="info.requirements" heading="Unlock requirements:" />
         <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">Close</button>
       </div>
     </div>
@@ -143,8 +147,11 @@ AFK_UI.SkillSlot = {
     cooldownText() { return Math.ceil(this.skill.cooldownRemaining) + 's'; }
   },
   template: `
-    <div class="skill-slot" :class="{ disabled }" @click="!disabled && $emit('activate', skill.codeName)" :title="skill.displayName">
-      <span>{{ skill.icon }}</span>
+    <div class="skill-slot" :class="{ disabled }"
+      @click="!disabled && $emit('activate', skill.codeName)"
+      :title="(skill.characterName ? skill.characterName + ': ' : '') + skill.displayName">
+      <span class="skill-slot-icon">{{ skill.icon }}</span>
+      <span v-if="skill.characterIcon" class="skill-char-badge">{{ skill.characterIcon }}</span>
       <div v-if="disabled" class="cooldown-overlay">{{ cooldownText }}</div>
     </div>
   `
@@ -312,44 +319,24 @@ AFK_UI.UpgradePanel = {
 };
 
 // --- js/ui/CharacterPanel.vue.js ---
+const EquipmentGrid = AFK_UI.EquipmentGrid;
 
 AFK_UI.CharacterPanel = {
   name: 'CharacterPanel',
+  components: { UnlockRequirementsList, MoreInfoButton, EquipmentGrid },
   props: {
     characters: Array,
     maxActive: Number,
     activeCount: Number,
     inventory: Object,
     equipableItems: Array,
-    equipmentSlots: Array
+    equipmentSlotLayout: Array
   },
   emits: ['toggle', 'equip', 'unequip', 'more-info'],
-  methods: {
-    equippedItem(char, slot) {
-      const code = char.equipment?.[slot];
-      if (!code) return null;
-      return this.equipableItems.find(i => i.codeName === code) || { codeName: code, displayName: code, icon: '❓' };
-    },
-    ownedForSlot(slot) {
-      return this.equipableItems.filter(i =>
-        i.slot === slot && (this.inventory[i.codeName] || 0) > 0
-      );
-    },
-    onEquipSelect(char, slot, event) {
-      const code = event.target.value;
-      if (code) {
-        this.$emit('equip', char.codeName, slot, code);
-        event.target.value = '';
-      }
-    },
-    slotLabel(slot) {
-      return slot.charAt(0).toUpperCase() + slot.slice(1);
-    }
-  },
   template: `
     <div class="panel">
       <h2 class="panel-title">👤 Characters</h2>
-      <p class="hint-text">Active: {{ activeCount }}/{{ maxActive }}</p>
+      <p class="hint-text">Active: {{ activeCount }}/{{ maxActive }} · Each item can be equipped on one character only.</p>
       <div v-for="char in characters" :key="char.codeName" class="card">
         <div class="card-header">
           <span class="card-icon">{{ char.icon }}</span>
@@ -358,7 +345,8 @@ AFK_UI.CharacterPanel = {
           <MoreInfoButton @click="$emit('more-info', 'character', char.codeName)" />
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ char.description }}</p>
-        <div v-if="char.unlocked">
+        <UnlockRequirementsList v-if="!char.unlocked" :requirements="char.unlockRequirements" />
+        <div v-else>
           <div class="card-actions">
             <button class="btn" :class="char.activated ? 'btn-ghost' : 'btn-primary'" @click="$emit('toggle', char.codeName)">
               {{ char.activated ? 'Deactivate' : 'Activate' }}
@@ -366,24 +354,17 @@ AFK_UI.CharacterPanel = {
           </div>
           <div class="equipment-section">
             <h4 class="equipment-heading">Equipment</h4>
-            <div v-for="slot in equipmentSlots" :key="slot" class="equip-slot-row">
-              <span class="slot-label">{{ slotLabel(slot) }}</span>
-              <template v-if="equippedItem(char, slot)">
-                <span class="equipped-item">{{ equippedItem(char, slot).icon }} {{ equippedItem(char, slot).displayName }}</span>
-                <button class="btn btn-ghost btn-sm" @click="$emit('unequip', char.codeName, slot)">Unequip</button>
-              </template>
-              <template v-else>
-                <select class="equip-select" @change="onEquipSelect(char, slot, $event)">
-                  <option value="">— Equip item —</option>
-                  <option v-for="item in ownedForSlot(slot)" :key="item.codeName" :value="item.codeName">
-                    {{ item.icon }} {{ item.displayName }} (×{{ inventory[item.codeName] }})
-                  </option>
-                </select>
-              </template>
-            </div>
+            <EquipmentGrid
+              :character="char"
+              :equipable-items="equipableItems"
+              :inventory="inventory"
+              :characters="characters"
+              :slot-layout="equipmentSlotLayout"
+              @equip="(c, s, i) => $emit('equip', c, s, i)"
+              @unequip="(c, s) => $emit('unequip', c, s)"
+              @more-info="(type, code) => $emit('more-info', type, code)" />
           </div>
         </div>
-        <UnlockRequirementsList v-else :requirements="char.unlockRequirements" />
       </div>
     </div>
   `
@@ -398,17 +379,20 @@ AFK_UI.InventoryPanel = {
     inventory: Object,
     characters: Array,
     equipableItems: Array,
-    equipmentSlots: Array
+    describeEffectShort: Function
   },
-  emits: ['use-boost', 'equip', 'unequip', 'more-info'],
+  emits: ['use-boost', 'more-info'],
   methods: {
     slotLabel(slot) {
-      return slot.charAt(0).toUpperCase() + slot.slice(1);
+      return slot ? slot.charAt(0).toUpperCase() + slot.slice(1) : '';
     },
     equippedOn(code) {
       return this.characters.filter(c =>
         c.unlocked && Object.values(c.equipment || {}).includes(code)
       );
+    },
+    effectLabel(item) {
+      return this.describeEffectShort ? this.describeEffectShort(item.effect) : '';
     }
   },
   template: `
@@ -422,8 +406,10 @@ AFK_UI.InventoryPanel = {
             <div class="icon">{{ item.icon }}</div>
             <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
           </div>
-          <div>{{ item.displayName }}</div>
-          <div style="font-weight:700">{{ inventory[item.codeName] || 0 }}</div>
+          <div class="inv-item-name">{{ item.displayName }}</div>
+          <p class="inv-item-desc">{{ item.description }}</p>
+          <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
+          <div class="inv-item-qty">Owned: {{ inventory[item.codeName] || 0 }}</div>
           <button v-if="item.actionBarEligible && (inventory[item.codeName] || 0) > 0"
             class="btn btn-primary btn-sm" style="margin-top:0.35rem"
             @click="$emit('use-boost', item.codeName)">Use</button>
@@ -432,7 +418,7 @@ AFK_UI.InventoryPanel = {
       <div v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text">No consumables yet.</div>
 
       <h3 class="section-subtitle">Equipment</h3>
-      <p class="hint-text">Equip items on the Characters tab, or use the controls below.</p>
+      <p class="hint-text">Equip items on the Characters tab. Each item can only be worn by one character at a time.</p>
       <div v-for="item in equipableItems" :key="item.codeName" class="card">
         <div class="card-header">
           <span class="card-icon">{{ item.icon }}</span>
@@ -440,18 +426,11 @@ AFK_UI.InventoryPanel = {
           <span class="card-owned">×{{ inventory[item.codeName] || 0 }}</span>
           <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
         </div>
-        <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }} · {{ slotLabel(item.slot) }}</p>
+        <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }}</p>
+        <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
+        <div style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-muted)">{{ slotLabel(item.slot) }} slot</div>
         <div v-if="equippedOn(item.codeName).length" style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-accent)">
-          Equipped on: {{ equippedOn(item.codeName).map(c => c.displayName).join(', ') }}
-        </div>
-        <div v-if="characters.filter(c => c.unlocked).length" class="equip-assign-list">
-          <div v-for="char in characters.filter(c => c.unlocked)" :key="char.codeName" class="equip-slot-row">
-            <span>{{ char.icon }} {{ char.displayName }}</span>
-            <button v-if="char.equipment?.[item.slot] === item.codeName" class="btn btn-ghost btn-sm"
-              @click="$emit('unequip', char.codeName, item.slot)">Unequip</button>
-            <button v-else-if="(inventory[item.codeName] || 0) > 0" class="btn btn-primary btn-sm"
-              @click="$emit('equip', char.codeName, item.slot, item.codeName)">Equip</button>
-          </div>
+          Equipped on: {{ equippedOn(item.codeName).map(c => c.icon + ' ' + c.displayName).join(', ') }}
         </div>
       </div>
     </div>
@@ -823,6 +802,9 @@ AFK_UI.App = {
     equipmentSlots() {
       return this.game.getEquipmentSlots();
     },
+    equipmentSlotLayout() {
+      return this.game.getEquipmentSlotLayout();
+    },
     artifacts() {
       return this.game.getArtifactDisplay();
     },
@@ -913,6 +895,9 @@ AFK_UI.App = {
     },
     getResourceMeta(code) {
       return this.game.getResourceMeta(code);
+    },
+    describeEffectShort(effect) {
+      return this.game.describeEffectShort(effect);
     }
   },
   template: `
@@ -941,15 +926,14 @@ AFK_UI.App = {
             :characters="characters" :max-active="config.framework.characters.maxActive"
             :active-count="game.getActiveCharacterCount()"
             :inventory="state.inventory" :equipable-items="equipableItems"
-            :equipment-slots="equipmentSlots"
+            :equipment-slot-layout="equipmentSlotLayout"
             @toggle="onToggleCharacter" @equip="onEquip" @unequip="onUnequip"
             @more-info="onMoreInfo" />
           <InventoryPanel v-if="state.ui.activeTab === 'inventory'"
             :items="inventoryItems" :inventory="state.inventory"
             :characters="characters" :equipable-items="equipableItems"
-            :equipment-slots="equipmentSlots"
-            @use-boost="onUseBoost" @equip="onEquip" @unequip="onUnequip"
-            @more-info="onMoreInfo" />
+            :describe-effect-short="describeEffectShort"
+            @use-boost="onUseBoost" @more-info="onMoreInfo" />
           <ArtifactPanel v-if="state.ui.activeTab === 'artifacts'" :artifacts="artifacts"
             @more-info="onMoreInfo" />
           <AchievementPanel v-if="state.ui.activeTab === 'achievements'" :achievements="achievements" />
