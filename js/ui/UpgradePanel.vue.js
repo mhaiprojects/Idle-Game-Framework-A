@@ -1,4 +1,5 @@
 import UnlockRequirementsList from './components/UnlockRequirementsList.vue.js';
+import ResourceProgressList from './components/ResourceProgressList.vue.js';
 import MoreInfoButton from './components/MoreInfoButton.vue.js';
 
 export default {
@@ -30,14 +31,18 @@ export default {
           <MoreInfoButton @click="$emit('more-info', 'upgrade', upg.codeName)" />
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ upg.description }}</p>
-        <div v-if="upg.unlocked && !upg.maxed" class="card-actions">
-          <span style="font-size:0.75rem">
-            Cost: {{ formatNumber(upg.cost) }} {{ resourceMeta(upg.costResource).icon }} {{ resourceMeta(upg.costResource).name }}
-          </span>
-          <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
+        <div v-if="upg.unlocked && !upg.maxed" class="card-actions" style="flex-direction:column;align-items:stretch">
+          <ResourceProgressList v-if="upg.levelProgress" :entries="[upg.levelProgress]" />
+          <ResourceProgressList :entries="upg.costProgress" />
+          <div style="display:flex;justify-content:flex-end;margin-top:0.35rem">
+            <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
+          </div>
         </div>
         <UnlockRequirementsList v-else-if="!upg.unlocked" :requirements="upg.unlockRequirements" />
-        <div v-else class="locked-conditions">Max level reached</div>
+        <div v-else class="locked-conditions">
+          <ResourceProgressList v-if="upg.levelProgress" :entries="[upg.levelProgress]" />
+          Max level reached
+        </div>
       </div>
     </div>
   `

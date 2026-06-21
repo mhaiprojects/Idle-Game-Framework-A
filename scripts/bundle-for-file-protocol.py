@@ -81,6 +81,8 @@ with open('js/afk-engine.bundle.js', 'w') as out:
 UI_FILES = [
   'js/ui/components/Toast.vue.js', 'js/ui/components/Tooltip.vue.js',
   'js/ui/components/EventBanner.vue.js',
+  'js/ui/components/ProgressBar.vue.js',
+  'js/ui/components/ResourceProgressList.vue.js',
   'js/ui/components/UnlockRequirementsList.vue.js',
   'js/ui/components/MoreInfoButton.vue.js',
   'js/ui/components/EquipmentGrid.vue.js',
@@ -117,7 +119,8 @@ def validate_chain(cfg):
 UI_IMPORTS = {
   './components/PurchaseMultiplier.vue.js', './components/TapButton.vue.js',
   './components/SkillSlot.vue.js', './components/BoostSlot.vue.js', './components/Toast.vue.js',
-  './components/UnlockRequirementsList.vue.js', './components/MoreInfoButton.vue.js',
+  './components/UnlockRequirementsList.vue.js', './components/ProgressBar.vue.js',
+  './components/ResourceProgressList.vue.js', './components/MoreInfoButton.vue.js',
   './components/EquipmentGrid.vue.js', './components/UnlockModal.vue.js',
   './components/InfoModal.vue.js',
   './ResourceBar.vue.js', './GeneratorPanel.vue.js', './UpgradePanel.vue.js',

@@ -90,7 +90,8 @@
             { unlockConditions: gen.unlockConditions, requiredFeature: gen.requiredFeature },
             this.state,
             fmt
-          )
+          ),
+          costProgress: AFK.ConfigManager.buildCostProgressEntries(gen.nextCost, this.state, fmt)
         }));
     }
 
@@ -137,6 +138,7 @@
         const us = this.state.upgrades[u.codeName];
         const unlock = AFK.FormulaEngine.evaluateUnlockConditions(u.unlockConditions, this.state, this.config);
         const cost = AFK.FormulaEngine.calculateUpgradeCost(u, us.purchaseCount);
+        const fmt = (v) => this.formatNumber(v);
         const canAfford = (this.state.resources[u.costResource]?.quantity || 0) >= cost;
         const maxed = u.maxPurchases !== null && us.purchaseCount >= u.maxPurchases;
         let efficiency = 0;
@@ -160,7 +162,19 @@
           efficiency,
           unlockRequirements: AFK.ConfigManager.getCombinedUnlockRequirements(
             { unlockConditions: u.unlockConditions }, this.state, (v) => this.formatNumber(v)
-          )
+          ),
+          costProgress: AFK.ConfigManager.buildCostProgressEntries({ [u.costResource]: cost }, this.state, fmt),
+          levelProgress: u.maxPurchases != null
+            ? AFK.ConfigManager.buildProgressEntry({
+              current: us.purchaseCount,
+              required: u.maxPurchases,
+              icon: u.icon,
+              name: u.displayName,
+              code: `${u.codeName}-level`,
+              label: `Level ${us.purchaseCount} / ${u.maxPurchases}`,
+              formatNumber: (n) => String(n)
+            })
+            : null
         };
       });
 
@@ -422,12 +436,31 @@
         const cost = bonus.cost * (level + 1);
         const maxed = level >= bonus.maxLevel;
         const canBuy = !locked && !maxed && this.state.meta.prestige.currency >= cost;
+        const fmt = (v) => this.formatNumber(v);
         return {
           ...bonus,
           level,
+          maxed,
           canBuy,
           locked,
-          lockReason: locked ? AFK.ConfigManager.getFeatureDisplayName(bonus.requiredFeature) : ''
+          lockReason: locked ? AFK.ConfigManager.getFeatureDisplayName(bonus.requiredFeature) : '',
+          costProgress: [AFK.ConfigManager.buildProgressEntry({
+            current: this.state.meta.prestige.currency,
+            required: cost,
+            icon: '✨',
+            name: 'Prestige Shards',
+            code: 'prestigeCurrency',
+            formatNumber: fmt
+          })],
+          levelProgress: AFK.ConfigManager.buildProgressEntry({
+            current: level,
+            required: bonus.maxLevel,
+            icon: bonus.icon,
+            name: bonus.displayName,
+            code: `${bonus.codeName}-level`,
+            label: `Level ${level} / ${bonus.maxLevel}`,
+            formatNumber: (n) => String(n)
+          })
         };
       });
     }

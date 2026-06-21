@@ -205,7 +205,6 @@ export default {
             :generators="generators" :multiplier="state.ui.purchaseMultiplier"
             :multiplier-options="config.framework.ui.purchaseMultipliers"
             :format-number="formatNumber"
-            :format-cost-entries="formatCostEntries"
             :primary-currency-label="primaryCurrencyLabel"
             @buy="onBuyGenerator" @multiplier-change="onMultiplierChange"
             @more-info="onMoreInfo" />

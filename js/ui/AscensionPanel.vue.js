@@ -1,5 +1,9 @@
+import ProgressBar from './components/ProgressBar.vue.js';
+import ResourceProgressList from './components/ResourceProgressList.vue.js';
+
 export default {
   name: 'AscensionPanel',
+  components: { ProgressBar, ResourceProgressList },
   props: {
     tierName: String, currentTier: Number, prestigeCount: Number,
     lifetimePrestiges: Number, projectedGain: Number, canPrestige: Boolean,
@@ -43,8 +47,9 @@ export default {
             <span class="card-owned">Lv {{ bonus.level }}/{{ bonus.maxLevel }}</span>
           </div>
           <p style="font-size:0.75rem;color:var(--color-muted)">{{ bonus.description }}</p>
+          <ResourceProgressList v-if="bonus.levelProgress" :entries="[bonus.levelProgress]" />
+          <ResourceProgressList v-if="!bonus.locked && !bonus.maxed" :entries="bonus.costProgress" />
           <div class="card-actions">
-            <span style="font-size:0.75rem">Cost: {{ bonusCost(bonus) }} shards</span>
             <button class="btn btn-primary btn-sm" :disabled="!bonus.canBuy" @click="$emit('buy-bonus', bonus.codeName)">Buy</button>
           </div>
           <div v-if="bonus.locked" class="locked-conditions" style="margin-top:0.25rem">🔒 {{ bonus.lockReason }}</div>
@@ -53,9 +58,9 @@ export default {
 
       <div class="card" v-if="!maxTierReached" style="margin-top:0.5rem">
         <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Ascend to {{ nextTierName }}</h3>
-        <div v-for="(m, i) in milestones" :key="i" style="font-size:0.8rem;margin-bottom:0.35rem">
-          <div>{{ m.label }} — {{ m.met ? '✓' : Math.round(m.progress * 100) + '%' }}</div>
-          <div class="milestone-bar"><div class="milestone-fill" :style="{ width: (m.progress * 100) + '%' }"></div></div>
+        <div v-for="(m, i) in milestones" :key="i" class="resource-progress-row">
+          <div class="resource-progress-label" :class="{ met: m.met }">{{ m.label }}</div>
+          <ProgressBar :progress="m.progress" :met="m.met" />
         </div>
         <div v-if="featurePreview.length" style="font-size:0.75rem;margin-top:0.5rem;color:var(--color-accent)">
           Unlocks: {{ featurePreview.join(', ') }}

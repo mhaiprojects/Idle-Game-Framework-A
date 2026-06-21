@@ -38,9 +38,57 @@ AFK_UI.EventBanner = {
   `
 };
 
+// --- js/ui/components/ProgressBar.vue.js ---
+AFK_UI.ProgressBar = {
+  name: 'ProgressBar',
+  props: {
+    progress: { type: Number, default: 0 },
+    met: { type: Boolean, default: false }
+  },
+  computed: {
+    widthPct() {
+      const value = this.met ? 1 : this.progress;
+      return Math.round(Math.min(1, Math.max(0, value)) * 100);
+    }
+  },
+  template: `
+    <div class="progress-bar" :class="{ met }">
+      <div class="progress-bar-fill" :style="{ width: widthPct + '%' }"></div>
+    </div>
+  `
+};
+
+// --- js/ui/components/ResourceProgressList.vue.js ---
+const ProgressBar = AFK_UI.ProgressBar;
+
+AFK_UI.ResourceProgressList = {
+  name: 'ResourceProgressList',
+  components: { ProgressBar },
+  props: {
+    entries: { type: Array, default: () => [] }
+  },
+  methods: {
+    entryLabel(entry) {
+      if (entry.label) return entry.label;
+      const parts = [entry.formattedHeld, entry.formattedRequired].filter(Boolean).join(' / ');
+      return `${parts} ${entry.icon || ''} ${entry.name || ''}`.trim();
+    }
+  },
+  template: `
+    <div v-if="entries.length" class="resource-progress-list">
+      <div v-for="entry in entries" :key="entry.code" class="resource-progress-row">
+        <div class="resource-progress-label" :class="{ met: entry.met }">{{ entryLabel(entry) }}</div>
+        <ProgressBar :progress="entry.progress" :met="entry.met" />
+      </div>
+    </div>
+  `
+};
+
 // --- js/ui/components/UnlockRequirementsList.vue.js ---
+
 AFK_UI.UnlockRequirementsList = {
   name: 'UnlockRequirementsList',
+  components: { ProgressBar },
   props: {
     requirements: { type: Array, default: () => [] },
     heading: { type: String, default: 'Unlock requirements:' }
@@ -50,13 +98,12 @@ AFK_UI.UnlockRequirementsList = {
       <p class="unlock-heading">{{ heading }}</p>
       <div v-for="(req, i) in requirements" :key="i" class="unlock-req-row">
         <span class="unlock-req-icon">{{ req.icon }}</span>
-        <div style="flex:1">
-          <div :style="{ color: req.met ? 'var(--color-success)' : 'var(--color-text)' }">
+        <div class="unlock-req-body">
+          <div class="unlock-req-label" :class="{ met: req.met }">
             {{ req.met ? '✓' : '✗' }} {{ req.label }}
           </div>
-          <div v-if="req.progress != null && !req.met" class="milestone-bar" style="margin-top:0.25rem">
-            <div class="milestone-fill" :style="{ width: Math.round(req.progress * 100) + '%' }"></div>
-          </div>
+          <ProgressBar v-if="typeof req.progress === 'number'"
+            :progress="req.progress" :met="req.met" />
         </div>
       </div>
     </div>
@@ -301,16 +348,16 @@ AFK_UI.ResourceBar = {
 
 // --- js/ui/GeneratorPanel.vue.js ---
 const PurchaseMultiplier = AFK_UI.PurchaseMultiplier;
+const ResourceProgressList = AFK_UI.ResourceProgressList;
 
 AFK_UI.GeneratorPanel = {
   name: 'GeneratorPanel',
-  components: { PurchaseMultiplier, UnlockRequirementsList, MoreInfoButton },
+  components: { PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList, MoreInfoButton },
   props: {
     generators: Array,
     multiplier: [Number, String],
     multiplierOptions: Array,
     formatNumber: Function,
-    formatCostEntries: Function,
     primaryCurrencyLabel: { type: String, default: 'Primary currency' }
   },
   emits: ['buy', 'multiplier-change', 'more-info'],
@@ -337,14 +384,11 @@ AFK_UI.GeneratorPanel = {
             {{ primaryCurrencyLabel }}: {{ formatNumber(gen.primaryCurrencyRate) }}/s
             <span v-if="gen.primaryCurrencyPercent > 0" class="efficiency-tag">{{ gen.primaryCurrencyPercent.toFixed(1) }}%</span>
           </div>
-          <div class="card-actions">
-            <span style="font-size:0.75rem;display:flex;align-items:center;gap:0.25rem;flex-wrap:wrap">
-              Cost:
-              <span v-for="(entry, i) in formatCostEntries(gen.nextCost)" :key="entry.code">
-                <span v-if="i"> · </span>{{ entry.formattedAmount }} {{ entry.icon }} {{ entry.name }}
-              </span>
-            </span>
-            <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
+          <div class="card-actions" style="flex-direction:column;align-items:stretch">
+            <ResourceProgressList :entries="gen.costProgress" />
+            <div style="display:flex;justify-content:flex-end;margin-top:0.35rem">
+              <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
+            </div>
           </div>
         </div>
         <template v-else>
@@ -388,14 +432,18 @@ AFK_UI.UpgradePanel = {
           <MoreInfoButton @click="$emit('more-info', 'upgrade', upg.codeName)" />
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ upg.description }}</p>
-        <div v-if="upg.unlocked && !upg.maxed" class="card-actions">
-          <span style="font-size:0.75rem">
-            Cost: {{ formatNumber(upg.cost) }} {{ resourceMeta(upg.costResource).icon }} {{ resourceMeta(upg.costResource).name }}
-          </span>
-          <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
+        <div v-if="upg.unlocked && !upg.maxed" class="card-actions" style="flex-direction:column;align-items:stretch">
+          <ResourceProgressList v-if="upg.levelProgress" :entries="[upg.levelProgress]" />
+          <ResourceProgressList :entries="upg.costProgress" />
+          <div style="display:flex;justify-content:flex-end;margin-top:0.35rem">
+            <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
+          </div>
         </div>
         <UnlockRequirementsList v-else-if="!upg.unlocked" :requirements="upg.unlockRequirements" />
-        <div v-else class="locked-conditions">Max level reached</div>
+        <div v-else class="locked-conditions">
+          <ResourceProgressList v-if="upg.levelProgress" :entries="[upg.levelProgress]" />
+          Max level reached
+        </div>
       </div>
     </div>
   `
@@ -565,8 +613,10 @@ AFK_UI.AchievementPanel = {
 };
 
 // --- js/ui/AscensionPanel.vue.js ---
+
 AFK_UI.AscensionPanel = {
   name: 'AscensionPanel',
+  components: { ProgressBar, ResourceProgressList },
   props: {
     tierName: String, currentTier: Number, prestigeCount: Number,
     lifetimePrestiges: Number, projectedGain: Number, canPrestige: Boolean,
@@ -610,8 +660,9 @@ AFK_UI.AscensionPanel = {
             <span class="card-owned">Lv {{ bonus.level }}/{{ bonus.maxLevel }}</span>
           </div>
           <p style="font-size:0.75rem;color:var(--color-muted)">{{ bonus.description }}</p>
+          <ResourceProgressList v-if="bonus.levelProgress" :entries="[bonus.levelProgress]" />
+          <ResourceProgressList v-if="!bonus.locked && !bonus.maxed" :entries="bonus.costProgress" />
           <div class="card-actions">
-            <span style="font-size:0.75rem">Cost: {{ bonusCost(bonus) }} shards</span>
             <button class="btn btn-primary btn-sm" :disabled="!bonus.canBuy" @click="$emit('buy-bonus', bonus.codeName)">Buy</button>
           </div>
           <div v-if="bonus.locked" class="locked-conditions" style="margin-top:0.25rem">🔒 {{ bonus.lockReason }}</div>
@@ -620,9 +671,9 @@ AFK_UI.AscensionPanel = {
 
       <div class="card" v-if="!maxTierReached" style="margin-top:0.5rem">
         <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Ascend to {{ nextTierName }}</h3>
-        <div v-for="(m, i) in milestones" :key="i" style="font-size:0.8rem;margin-bottom:0.35rem">
-          <div>{{ m.label }} — {{ m.met ? '✓' : Math.round(m.progress * 100) + '%' }}</div>
-          <div class="milestone-bar"><div class="milestone-fill" :style="{ width: (m.progress * 100) + '%' }"></div></div>
+        <div v-for="(m, i) in milestones" :key="i" class="resource-progress-row">
+          <div class="resource-progress-label" :class="{ met: m.met }">{{ m.label }}</div>
+          <ProgressBar :progress="m.progress" :met="m.met" />
         </div>
         <div v-if="featurePreview.length" style="font-size:0.75rem;margin-top:0.5rem;color:var(--color-accent)">
           Unlocks: {{ featurePreview.join(', ') }}
@@ -995,7 +1046,6 @@ AFK_UI.App = {
             :generators="generators" :multiplier="state.ui.purchaseMultiplier"
             :multiplier-options="config.framework.ui.purchaseMultipliers"
             :format-number="formatNumber"
-            :format-cost-entries="formatCostEntries"
             :primary-currency-label="primaryCurrencyLabel"
             @buy="onBuyGenerator" @multiplier-change="onMultiplierChange"
             @more-info="onMoreInfo" />

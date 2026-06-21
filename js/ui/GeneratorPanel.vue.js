@@ -1,16 +1,16 @@
 import PurchaseMultiplier from './components/PurchaseMultiplier.vue.js';
 import UnlockRequirementsList from './components/UnlockRequirementsList.vue.js';
+import ResourceProgressList from './components/ResourceProgressList.vue.js';
 import MoreInfoButton from './components/MoreInfoButton.vue.js';
 
 export default {
   name: 'GeneratorPanel',
-  components: { PurchaseMultiplier, UnlockRequirementsList, MoreInfoButton },
+  components: { PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList, MoreInfoButton },
   props: {
     generators: Array,
     multiplier: [Number, String],
     multiplierOptions: Array,
     formatNumber: Function,
-    formatCostEntries: Function,
     primaryCurrencyLabel: { type: String, default: 'Primary currency' }
   },
   emits: ['buy', 'multiplier-change', 'more-info'],
@@ -37,14 +37,11 @@ export default {
             {{ primaryCurrencyLabel }}: {{ formatNumber(gen.primaryCurrencyRate) }}/s
             <span v-if="gen.primaryCurrencyPercent > 0" class="efficiency-tag">{{ gen.primaryCurrencyPercent.toFixed(1) }}%</span>
           </div>
-          <div class="card-actions">
-            <span style="font-size:0.75rem;display:flex;align-items:center;gap:0.25rem;flex-wrap:wrap">
-              Cost:
-              <span v-for="(entry, i) in formatCostEntries(gen.nextCost)" :key="entry.code">
-                <span v-if="i"> · </span>{{ entry.formattedAmount }} {{ entry.icon }} {{ entry.name }}
-              </span>
-            </span>
-            <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
+          <div class="card-actions" style="flex-direction:column;align-items:stretch">
+            <ResourceProgressList :entries="gen.costProgress" />
+            <div style="display:flex;justify-content:flex-end;margin-top:0.35rem">
+              <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
+            </div>
           </div>
         </div>
         <template v-else>

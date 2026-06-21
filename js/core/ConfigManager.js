@@ -194,6 +194,39 @@ export const ConfigManager = {
     return entries.map(e => `${e.formattedAmount} ${e.icon} ${e.name}`.trim()).join(' · ');
   },
 
+  buildProgressEntry({ current, required, icon, name, code, label, formatNumber }) {
+    const fmt = formatNumber || (n => n);
+    const progress = required > 0 ? Math.min(1, current / required) : 1;
+    return {
+      code: code || name || label || 'progress',
+      icon: icon || '',
+      name: name || '',
+      label: label || null,
+      held: current,
+      required,
+      formattedHeld: fmt(current),
+      formattedRequired: fmt(required),
+      progress,
+      met: current >= required
+    };
+  },
+
+  buildCostProgressEntries(costs, state, formatNumber) {
+    if (!costs) return [];
+    return Object.entries(costs).map(([code, required]) => {
+      const held = state?.resources[code]?.quantity || 0;
+      const meta = this.getResourceMeta(code);
+      return this.buildProgressEntry({
+        current: held,
+        required,
+        icon: meta.icon,
+        name: meta.name,
+        code,
+        formatNumber
+      });
+    });
+  },
+
   formatFirstPurchaseCostLabel(generatorCode, state, formatNumber) {
     const gen = this.getGenerator(generatorCode);
     const fmt = formatNumber || (n => n);
@@ -205,7 +238,7 @@ export const ConfigManager = {
 
   formatUnlockConditionDetail(cond, state, formatNumber) {
     const fmt = formatNumber || (n => n);
-    const progress = state ? FormulaEngine.getConditionProgress(cond, state, config) : null;
+    const progress = state ? FormulaEngine.getConditionProgress(cond, state, config) : 0;
     const met = state ? FormulaEngine.evaluateUnlockConditions(
       { operator: 'AND', conditions: [cond] }, state, config
     ).met : false;

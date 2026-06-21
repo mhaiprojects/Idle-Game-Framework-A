@@ -234,6 +234,20 @@
 
 ---
 
+### 2026-6-21-20-0-0 — Animated progress bars for requirements and costs
+
+**Request:** Unlock requirements, buy costs, levels, and progress numbers should show animated progress bars linked to resource/object availability.
+
+**Implemented:**
+- Shared `ProgressBar` and `ResourceProgressList` components with animated fill transitions
+- `UnlockRequirementsList` always shows progress bars (including when met, green at 100%)
+- Generator buy costs: per-resource held/required bars on unlocked cards
+- Upgrade buy costs and level progress bars; prestige shop cost/level bars
+- Ascension milestone checklist uses shared `ProgressBar`
+- `ConfigManager.buildProgressEntry` / `buildCostProgressEntries` helpers
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec
