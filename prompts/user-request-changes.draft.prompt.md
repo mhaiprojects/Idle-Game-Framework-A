@@ -248,6 +248,19 @@
 
 ---
 
+### 2026-6-21-21-0-0 — Per-resource generator bars, equip modal, rarity stacks
+
+**Request:** Generator unlock/purchase requirements each get their own progress bar; equipment selection via modal sorted by rarity; stackable equipment with copy-based power; rarity multiplies base values.
+
+**Implemented:**
+- `canAffordFirstPurchase` expands to one progress row per cost resource in unlock lists
+- `EquipSlotModal` on character grid slots — items sorted by rarity with effect preview
+- `framework.equipment`: rarity multipliers, stack bonus per copy (+2% default)
+- All equipables have rarity + `stackable: true`; power = base × rarity × stack copies
+- Multiple characters can equip same item if enough inventory copies exist
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec
