@@ -1,9 +1,10 @@
 import ProgressBar from './components/ProgressBar.vue.js';
 import ResourceProgressList from './components/ResourceProgressList.vue.js';
+import CardSection from './components/CardSection.vue.js';
 
 export default {
   name: 'AscensionPanel',
-  components: { ProgressBar, ResourceProgressList },
+  components: { ProgressBar, ResourceProgressList, CardSection },
   props: {
     tierName: String, currentTier: Number, prestigeCount: Number,
     lifetimePrestiges: Number, projectedGain: Number, canPrestige: Boolean,
@@ -24,56 +25,78 @@ export default {
   template: `
     <div class="panel">
       <h2 class="panel-title">🔄 Ascension</h2>
-      <div class="stats-grid" style="margin-bottom:1rem">
-        <div class="stat-box">{{ tierName }}</div>
-        <div class="stat-box">Prestiges: {{ prestigeCount }}</div>
-        <div class="stat-box">Lifetime: {{ lifetimePrestiges }}</div>
-        <div class="stat-box">Shards: {{ formatNumber(prestigeCurrency) }}</div>
-      </div>
 
-      <div class="card">
-        <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Prestige (Soft Reset)</h3>
-        <p style="font-size:0.8rem;margin-bottom:0.5rem">Gain: +{{ projectedGain }} Prestige Shards</p>
-        <p style="font-size:0.75rem;color:var(--color-muted)">Cost mult: {{ difficulty?.costMultiplier?.toFixed(2) }}× | {{ primaryCurrencyLabel }}: {{ difficulty?.primaryCurrencyMultiplier?.toFixed(2) }}×</p>
-        <button class="btn btn-accent" style="margin-top:0.5rem" :disabled="!canPrestige" @click="showPrestigeModal = true">Prestige</button>
-      </div>
+      <CardSection title="Overview" level="panel" :first="true">
+        <div class="stats-grid">
+          <div class="stat-box">{{ tierName }}</div>
+          <div class="stat-box">Prestiges: {{ prestigeCount }}</div>
+          <div class="stat-box">Lifetime: {{ lifetimePrestiges }}</div>
+          <div class="stat-box">Shards: {{ formatNumber(prestigeCurrency) }}</div>
+        </div>
+      </CardSection>
 
-      <div class="card" style="margin-top:0.5rem">
-        <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Prestige Shop</h3>
-        <div v-for="bonus in prestigeBonuses" :key="bonus.codeName" class="card" style="margin-top:0.35rem;padding:0.5rem">
+      <CardSection title="Prestige (Soft Reset)" level="panel">
+        <div class="card">
+          <CardSection title="Rewards" :first="true">
+            <p class="section-text">Gain: +{{ projectedGain }} Prestige Shards</p>
+            <p class="section-text muted">Cost mult: {{ difficulty?.costMultiplier?.toFixed(2) }}× | {{ primaryCurrencyLabel }}: {{ difficulty?.primaryCurrencyMultiplier?.toFixed(2) }}×</p>
+          </CardSection>
+          <div class="section-actions section-actions-start">
+            <button class="btn btn-accent" :disabled="!canPrestige" @click="showPrestigeModal = true">Prestige</button>
+          </div>
+        </div>
+      </CardSection>
+
+      <CardSection title="Prestige Shop" level="panel">
+        <div v-for="bonus in prestigeBonuses" :key="bonus.codeName" class="card nested-card">
           <div class="card-header">
             <span class="card-icon">{{ bonus.icon }}</span>
             <span class="card-name">{{ bonus.displayName }}</span>
             <span class="card-owned">Lv {{ bonus.level }}/{{ bonus.maxLevel }}</span>
           </div>
           <p style="font-size:0.75rem;color:var(--color-muted)">{{ bonus.description }}</p>
-          <ResourceProgressList v-if="bonus.levelProgress" :entries="[bonus.levelProgress]" />
-          <ResourceProgressList v-if="!bonus.locked && !bonus.maxed" :entries="bonus.costProgress" />
-          <div class="card-actions">
-            <button class="btn btn-primary btn-sm" :disabled="!bonus.canBuy" @click="$emit('buy-bonus', bonus.codeName)">Buy</button>
-          </div>
-          <div v-if="bonus.locked" class="locked-conditions" style="margin-top:0.25rem">🔒 {{ bonus.lockReason }}</div>
+          <CardSection v-if="bonus.levelProgress" title="Level Progress" :first="true">
+            <ResourceProgressList :entries="[bonus.levelProgress]" />
+          </CardSection>
+          <CardSection v-if="!bonus.locked && !bonus.maxed" title="Purchase Requirements" :first="!bonus.levelProgress">
+            <ResourceProgressList :entries="bonus.costProgress" />
+            <div class="section-actions">
+              <button class="btn btn-primary btn-sm" :disabled="!bonus.canBuy" @click="$emit('buy-bonus', bonus.codeName)">Buy</button>
+            </div>
+          </CardSection>
+          <CardSection v-else-if="bonus.locked" title="Unlock Requirements" :first="!bonus.levelProgress">
+            <p class="hint-text" style="margin-bottom:0">🔒 {{ bonus.lockReason }}</p>
+          </CardSection>
         </div>
-      </div>
+      </CardSection>
 
-      <div class="card" v-if="!maxTierReached" style="margin-top:0.5rem">
-        <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Ascend to {{ nextTierName }}</h3>
-        <div v-for="(m, i) in milestones" :key="i" class="resource-progress-row">
-          <div class="resource-progress-label" :class="{ met: m.met }">{{ m.label }}</div>
-          <ProgressBar :progress="m.progress" :met="m.met" />
+      <CardSection v-if="!maxTierReached" title="Ascension" level="panel">
+        <div class="card">
+          <CardSection :title="'Ascend to ' + nextTierName" :first="true">
+            <div v-for="(m, i) in milestones" :key="i" class="resource-progress-row">
+              <div class="resource-progress-label" :class="{ met: m.met }">{{ m.label }}</div>
+              <ProgressBar :progress="m.progress" :met="m.met" />
+            </div>
+            <CardSection v-if="featurePreview.length" title="Unlocks Preview">
+              <p class="section-text accent">{{ featurePreview.join(', ') }}</p>
+            </CardSection>
+          </CardSection>
+          <div class="section-actions section-actions-start">
+            <button class="btn btn-primary" :disabled="!canAscend" @click="showAscendModal = true">Ascend</button>
+          </div>
         </div>
-        <div v-if="featurePreview.length" style="font-size:0.75rem;margin-top:0.5rem;color:var(--color-accent)">
-          Unlocks: {{ featurePreview.join(', ') }}
-        </div>
-        <button class="btn btn-primary" style="margin-top:0.5rem" :disabled="!canAscend" @click="showAscendModal = true">Ascend</button>
-      </div>
+      </CardSection>
 
       <div v-if="showPrestigeModal" class="modal-overlay" @click.self="showPrestigeModal = false">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Confirm Prestige</h3>
           <div class="modal-columns">
-            <div class="lost"><h4>LOST</h4><div v-for="l in prestigeLost" :key="l">• {{ l }}</div></div>
-            <div class="kept"><h4>KEPT</h4><div v-for="k in prestigeKept" :key="k">• {{ k }}</div></div>
+            <CardSection title="Lost" :first="true" class="lost">
+              <div v-for="l in prestigeLost" :key="l" class="section-text">• {{ l }}</div>
+            </CardSection>
+            <CardSection title="Kept" :first="true" class="kept">
+              <div v-for="k in prestigeKept" :key="k" class="section-text">• {{ k }}</div>
+            </CardSection>
           </div>
           <div class="modal-actions">
             <button class="btn btn-ghost" @click="showPrestigeModal = false">Cancel</button>
@@ -85,10 +108,16 @@ export default {
       <div v-if="showAscendModal" class="modal-overlay" @click.self="showAscendModal = false">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Ascend to {{ nextTierName }}</h3>
-          <p style="color:var(--color-danger);font-size:0.85rem;margin-bottom:0.5rem">This cannot be undone.</p>
+          <CardSection title="Warning" :first="true">
+            <p class="section-text danger">This cannot be undone.</p>
+          </CardSection>
           <div class="modal-columns">
-            <div class="lost"><h4>LOST</h4><div v-for="l in ascendLost" :key="l">• {{ l }}</div></div>
-            <div class="kept"><h4>KEPT</h4><div v-for="k in ascendKept" :key="k">• {{ k }}</div></div>
+            <CardSection title="Lost" class="lost">
+              <div v-for="l in ascendLost" :key="l" class="section-text">• {{ l }}</div>
+            </CardSection>
+            <CardSection title="Kept" class="kept">
+              <div v-for="k in ascendKept" :key="k" class="section-text">• {{ k }}</div>
+            </CardSection>
           </div>
           <div class="modal-actions">
             <button class="btn btn-ghost" @click="showAscendModal = false">Cancel</button>

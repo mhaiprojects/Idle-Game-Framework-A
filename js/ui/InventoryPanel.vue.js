@@ -1,7 +1,9 @@
 import MoreInfoButton from './components/MoreInfoButton.vue.js';
+import CardSection from './components/CardSection.vue.js';
 
 export default {
   name: 'InventoryPanel',
+  components: { MoreInfoButton, CardSection },
   props: {
     items: Array,
     inventory: Object,
@@ -31,41 +33,45 @@ export default {
     <div class="panel">
       <h2 class="panel-title">🎒 Inventory</h2>
 
-      <h3 class="section-subtitle">Consumables</h3>
-      <div class="inventory-grid">
-        <div v-for="item in items.filter(i => i.type === 'consumable')" :key="item.codeName" class="inv-item">
-          <div class="inv-item-top">
-            <div class="icon">{{ item.icon }}</div>
+      <CardSection title="Consumables" level="panel" :first="true">
+        <div class="inventory-grid">
+          <div v-for="item in items.filter(i => i.type === 'consumable')" :key="item.codeName" class="inv-item">
+            <div class="inv-item-top">
+              <div class="icon">{{ item.icon }}</div>
+              <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
+            </div>
+            <div class="inv-item-name">{{ item.displayName }}</div>
+            <p class="inv-item-desc">{{ item.description }}</p>
+            <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
+            <div class="inv-item-qty">Owned: {{ inventory[item.codeName] || 0 }}</div>
+            <button v-if="item.actionBarEligible && (inventory[item.codeName] || 0) > 0"
+              class="btn btn-primary btn-sm" style="margin-top:0.35rem"
+              @click="$emit('use-boost', item.codeName)">Use</button>
+          </div>
+        </div>
+        <p v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text" style="margin-bottom:0">No consumables yet.</p>
+      </CardSection>
+
+      <CardSection title="Equipment" level="panel">
+        <p class="hint-text">Equip items on the Characters tab. Stackable gear — each copy owned boosts equipped power.</p>
+        <div v-for="item in equipableItems" :key="item.codeName" class="card">
+          <div class="card-header">
+            <span class="card-icon">{{ item.icon }}</span>
+            <span class="card-name">{{ item.displayName }}</span>
+            <span class="card-owned">×{{ inventory[item.codeName] || 0 }}</span>
             <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
           </div>
-          <div class="inv-item-name">{{ item.displayName }}</div>
-          <p class="inv-item-desc">{{ item.description }}</p>
-          <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
-          <div class="inv-item-qty">Owned: {{ inventory[item.codeName] || 0 }}</div>
-          <button v-if="item.actionBarEligible && (inventory[item.codeName] || 0) > 0"
-            class="btn btn-primary btn-sm" style="margin-top:0.35rem"
-            @click="$emit('use-boost', item.codeName)">Use</button>
+          <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }}</p>
+          <CardSection title="Details" :first="true">
+            <span v-if="item.rarity" class="rarity-badge" :class="'rarity-' + (item.rarity || 'common')">{{ formatRarity(item.rarity) }}</span>
+            <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
+            <p class="section-text muted">{{ slotLabel(item.slot) }} slot</p>
+            <p v-if="equippedOn(item.codeName).length" class="section-text accent">
+              Equipped on: {{ equippedOn(item.codeName).map(c => c.icon + ' ' + c.displayName).join(', ') }}
+            </p>
+          </CardSection>
         </div>
-      </div>
-      <div v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text">No consumables yet.</div>
-
-      <h3 class="section-subtitle">Equipment</h3>
-      <p class="hint-text">Equip items on the Characters tab. Stackable gear — each copy owned boosts equipped power.</p>
-      <div v-for="item in equipableItems" :key="item.codeName" class="card">
-        <div class="card-header">
-          <span class="card-icon">{{ item.icon }}</span>
-          <span class="card-name">{{ item.displayName }}</span>
-          <span class="card-owned">×{{ inventory[item.codeName] || 0 }}</span>
-          <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
-        </div>
-        <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }}</p>
-        <span v-if="item.rarity" class="rarity-badge" :class="'rarity-' + (item.rarity || 'common')">{{ formatRarity(item.rarity) }}</span>
-        <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
-        <div style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-muted)">{{ slotLabel(item.slot) }} slot</div>
-        <div v-if="equippedOn(item.codeName).length" style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-accent)">
-          Equipped on: {{ equippedOn(item.codeName).map(c => c.icon + ' ' + c.displayName).join(', ') }}
-        </div>
-      </div>
+      </CardSection>
     </div>
   `
 };

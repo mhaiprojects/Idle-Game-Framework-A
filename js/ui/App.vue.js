@@ -14,6 +14,7 @@ import Toast from './components/Toast.vue.js';
 import EventBanner from './components/EventBanner.vue.js';
 import UnlockModal from './components/UnlockModal.vue.js';
 import InfoModal from './components/InfoModal.vue.js';
+import CardSection from './components/CardSection.vue.js';
 
 export default {
   name: 'App',
@@ -21,7 +22,7 @@ export default {
     ResourceBar, GeneratorPanel, UpgradePanel, CharacterPanel,
     InventoryPanel, ArtifactPanel, AchievementPanel, AscensionPanel,
     SettingsPanel, StatsPanel, ProgressPanel, ActionBar, Toast, EventBanner,
-    UnlockModal, InfoModal
+    UnlockModal, InfoModal, CardSection
   },
   props: {
     game: Object
@@ -243,19 +244,22 @@ export default {
           <ProgressPanel v-if="state.ui.activeTab === 'progress'" :progress="progressData" />
           <div v-if="state.settings.devMode && state.ui.activeTab !== 'progress'" class="dev-tools panel">
             <h3 class="panel-title">Dev Tools</h3>
-            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.75rem">
-              <button v-for="s in config.framework.devTools.speedMultipliers" :key="s"
-                class="btn btn-ghost" @click="game.setSpeed(s)">{{ s }}×</button>
-              <button class="btn btn-ghost" @click="game.devAddResources()">+1000 Shards</button>
-              <button class="btn btn-ghost" @click="game.devForceEvent()">Force Event</button>
-              <button class="btn btn-ghost" @click="game.devExportState()">Log State</button>
-            </div>
-            <div v-if="formulaInspector" style="font-size:0.75rem;background:var(--color-bg-card);padding:0.5rem;border-radius:6px">
-              <strong>Formula Inspector</strong>
-              <div>Tap gain: {{ formatNumber(formulaInspector.tapGain) }}</div>
-              <div>{{ primaryCurrencyLabel }} rate: {{ formatNumber(formulaInspector.primaryRate) }}/s</div>
-              <div>Tap %: {{ formulaInspector.tapPercent }}</div>
-            </div>
+            <CardSection title="Speed Controls" level="panel" :first="true">
+              <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+                <button v-for="s in config.framework.devTools.speedMultipliers" :key="s"
+                  class="btn btn-ghost" @click="game.setSpeed(s)">{{ s }}×</button>
+                <button class="btn btn-ghost" @click="game.devAddResources()">+1000 Shards</button>
+                <button class="btn btn-ghost" @click="game.devForceEvent()">Force Event</button>
+                <button class="btn btn-ghost" @click="game.devExportState()">Log State</button>
+              </div>
+            </CardSection>
+            <CardSection v-if="formulaInspector" title="Formula Inspector" level="panel">
+              <div style="font-size:0.75rem;background:var(--color-bg-card);padding:0.5rem;border-radius:6px">
+                <div>Tap gain: {{ formatNumber(formulaInspector.tapGain) }}</div>
+                <div>{{ primaryCurrencyLabel }} rate: {{ formatNumber(formulaInspector.primaryRate) }}/s</div>
+                <div>Tap %: {{ formulaInspector.tapPercent }}</div>
+              </div>
+            </CardSection>
           </div>
         </div>
         <nav class="tab-sidebar">
@@ -276,10 +280,14 @@ export default {
       <div v-if="offlineModal" class="modal-overlay" @click.self="dismissOffline">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Welcome Back!</h3>
-          <p style="font-size:0.85rem;margin-bottom:0.5rem">You were away for {{ Math.floor(offlineModal.elapsed) }}s</p>
-          <div v-for="(amt, res) in offlineModal.gains" :key="res" style="font-size:0.8rem">
-            {{ game.getResourceMeta(res).icon }} {{ game.getResourceLabel(res) }}: +{{ formatNumber(amt) }}
-          </div>
+          <CardSection title="Time Away" :first="true">
+            <p class="section-text">You were away for {{ Math.floor(offlineModal.elapsed) }}s</p>
+          </CardSection>
+          <CardSection title="Offline Gains">
+            <div v-for="(amt, res) in offlineModal.gains" :key="res" class="section-text">
+              {{ game.getResourceMeta(res).icon }} {{ game.getResourceLabel(res) }}: +{{ formatNumber(amt) }}
+            </div>
+          </CardSection>
           <button class="btn btn-primary" style="margin-top:1rem" @click="dismissOffline">Collect</button>
         </div>
       </div>

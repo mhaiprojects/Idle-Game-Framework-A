@@ -1,15 +1,16 @@
 import ProgressBar from './ProgressBar.vue.js';
+import CardSection from './CardSection.vue.js';
 
 export default {
   name: 'UnlockRequirementsList',
-  components: { ProgressBar },
+  components: { ProgressBar, CardSection },
   props: {
     requirements: { type: Array, default: () => [] },
-    heading: { type: String, default: 'Unlock requirements:' }
+    heading: { type: String, default: 'Unlock Requirements' },
+    first: { type: Boolean, default: false }
   },
   template: `
-    <div v-if="requirements.length" class="unlock-requirements-inline">
-      <p class="unlock-heading">{{ heading }}</p>
+    <CardSection v-if="requirements.length" :title="heading" :first="first">
       <div v-for="(req, i) in requirements" :key="i" class="unlock-req-row">
         <span class="unlock-req-icon">{{ req.icon }}</span>
         <div class="unlock-req-body">
@@ -20,6 +21,6 @@ export default {
             :progress="req.progress" :met="req.met" />
         </div>
       </div>
-    </div>
+    </CardSection>
   `
 };

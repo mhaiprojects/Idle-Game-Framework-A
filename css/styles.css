@@ -197,22 +197,82 @@ html, body {
   border-top: 1px dashed rgba(100, 116, 139, 0.4);
 }
 
-.unlock-heading {
-  font-size: 0.75rem;
-  color: var(--color-muted);
+/* Shared section grouping — cards, modals, and tabs */
+.card-section {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.panel-section {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+.card-section.section-first,
+.panel-section.section-first {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.card-section-heading {
+  font-size: 0.8rem;
+  font-weight: 600;
   margin-bottom: 0.35rem;
+  color: var(--color-muted);
+  letter-spacing: 0.02em;
+}
+
+.panel-section-heading {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-muted);
+  letter-spacing: 0.02em;
+}
+
+.section-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.section-text {
+  font-size: 0.8rem;
+  color: var(--color-text);
+  line-height: 1.45;
+  margin-bottom: 0.35rem;
+}
+
+.section-text.muted { color: var(--color-muted); }
+.section-text.accent { color: var(--color-accent); }
+.section-text.danger { color: var(--color-danger); }
+
+.section-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.35rem;
+}
+
+.section-actions-start {
+  justify-content: flex-start;
+}
+
+.nested-card {
+  margin-top: 0.35rem;
+  padding: 0.5rem;
+}
+
+.progress-summary {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-accent);
 }
 
 .equipment-section {
   margin-top: 0.75rem;
   padding-top: 0.5rem;
   border-top: 1px solid rgba(99, 102, 241, 0.2);
-}
-
-.equipment-heading {
-  font-size: 0.8rem;
-  margin-bottom: 0.35rem;
-  color: var(--color-muted);
 }
 
 .equip-slot-row {
@@ -263,22 +323,6 @@ html, body {
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
-}
-
-.info-section {
-  margin-bottom: 0.75rem;
-}
-
-.info-section h4 {
-  font-size: 0.8rem;
-  color: var(--color-accent);
-  margin-bottom: 0.25rem;
-}
-
-.info-section p {
-  font-size: 0.8rem;
-  color: var(--color-text);
-  line-height: 1.45;
 }
 
 .equip-assign-list {
@@ -640,8 +684,8 @@ html, body {
 }
 
 .modal-columns h4 { font-size: 0.75rem; margin-bottom: 0.35rem; }
-.modal-columns .lost h4 { color: var(--color-danger); }
-.modal-columns .kept h4 { color: var(--color-success); }
+.modal-columns .lost .card-section-heading { color: var(--color-danger); }
+.modal-columns .kept .card-section-heading { color: var(--color-success); }
 
 .modal-actions {
   display: flex;
@@ -671,14 +715,6 @@ html, body {
 
 .progress-item.pass { color: var(--color-success); }
 .progress-item.fail { color: var(--color-danger); }
-
-.progress-section { margin-bottom: 1rem; }
-.progress-section h4 {
-  font-size: 0.75rem;
-  color: var(--color-muted);
-  text-transform: uppercase;
-  margin-bottom: 0.35rem;
-}
 
 .unlock-req-row {
   display: flex;
@@ -761,18 +797,6 @@ html, body {
   color: var(--color-accent);
   background: rgba(99, 102, 241, 0.15);
   border: 1px solid rgba(99, 102, 241, 0.25);
-}
-
-.production-section {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid rgba(99, 102, 241, 0.2);
-}
-
-.production-heading {
-  font-size: 0.8rem;
-  margin-bottom: 0.35rem;
-  color: var(--color-muted);
 }
 
 .production-row {

@@ -1,9 +1,11 @@
 import UnlockRequirementsList from './components/UnlockRequirementsList.vue.js';
 import ResourceProgressList from './components/ResourceProgressList.vue.js';
 import MoreInfoButton from './components/MoreInfoButton.vue.js';
+import CardSection from './components/CardSection.vue.js';
 
 export default {
   name: 'UpgradePanel',
+  components: { UnlockRequirementsList, ResourceProgressList, MoreInfoButton, CardSection },
   props: {
     upgrades: Array,
     formatNumber: Function,
@@ -31,18 +33,22 @@ export default {
           <MoreInfoButton @click="$emit('more-info', 'upgrade', upg.codeName)" />
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ upg.description }}</p>
-        <div v-if="upg.unlocked && !upg.maxed" class="card-actions" style="flex-direction:column;align-items:stretch">
+        <template v-if="upg.unlocked && !upg.maxed">
+          <CardSection v-if="upg.levelProgress" title="Level Progress" :first="true">
+            <ResourceProgressList :entries="[upg.levelProgress]" />
+          </CardSection>
+          <CardSection title="Purchase Requirements" :first="!upg.levelProgress">
+            <ResourceProgressList :entries="upg.costProgress" />
+            <div class="section-actions">
+              <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
+            </div>
+          </CardSection>
+        </template>
+        <UnlockRequirementsList v-else-if="!upg.unlocked" :requirements="upg.unlockRequirements" :first="true" />
+        <CardSection v-else title="Status" :first="true">
           <ResourceProgressList v-if="upg.levelProgress" :entries="[upg.levelProgress]" />
-          <ResourceProgressList :entries="upg.costProgress" />
-          <div style="display:flex;justify-content:flex-end;margin-top:0.35rem">
-            <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
-          </div>
-        </div>
-        <UnlockRequirementsList v-else-if="!upg.unlocked" :requirements="upg.unlockRequirements" />
-        <div v-else class="locked-conditions">
-          <ResourceProgressList v-if="upg.levelProgress" :entries="[upg.levelProgress]" />
-          Max level reached
-        </div>
+          <p class="hint-text" style="margin-bottom:0">Max level reached</p>
+        </CardSection>
       </div>
     </div>
   `

@@ -333,7 +333,7 @@
             if (qty > 0) {
               const effective = AFK.ConfigManager.getEffectiveItemEffect(item, qty);
               sections.push({
-                heading: 'Effective power',
+                heading: 'Effective Power',
                 body: `${this.describeEffect(effective)} · ${qty} stacked (+${stackPct}% per extra copy)`
               });
             }
@@ -342,7 +342,7 @@
               .map(([code]) => this.config.characters.characters.find(c => c.codeName === code))
               .filter(Boolean);
             sections.push({
-              heading: 'Equipment slot',
+              heading: 'Equipment Slot',
               body: `${slotLabel || item.slot}${wearers.length ? ` · equipped on ${wearers.map(c => c.icon + ' ' + c.displayName).join(', ')}` : ''}`
             });
           }
@@ -364,10 +364,10 @@
             const cm = char.baseStats.categoryMultiplier;
             benefits.push(`+${Math.round((cm.multiplier - 1) * 100)}% ${cm.category} generator output when active.`);
           }
-          sections.push({ heading: 'Benefits (when active)', body: benefits.length ? benefits.join(' ') : 'No passive bonuses.' });
+          sections.push({ heading: 'Benefits When Active', body: benefits.length ? benefits.join(' ') : 'No passive bonuses.' });
           if (char.activeSkill) {
             sections.push({
-              heading: 'Active skill — ' + char.activeSkill.displayName,
+              heading: 'Active Skill — ' + char.activeSkill.displayName,
               body: `${this.describeEffect(char.activeSkill.effect)} Cooldown: ${char.activeSkill.cooldownSeconds}s.`
             });
           }
@@ -377,7 +377,7 @@
               const slotLabel = AFK.ConfigManager.getEquipmentSlotLabel(slot);
               return `${slotLabel}: ${item?.icon || ''} ${item?.displayName || code}`;
             });
-            sections.push({ heading: 'Currently equipped', body: equipped.join(' · ') || 'Nothing equipped.' });
+            sections.push({ heading: 'Currently Equipped', body: equipped.join(' · ') || 'Nothing equipped.' });
           }
           const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
             { unlockConditions: char.unlockConditions }, this.state, fmt
@@ -428,8 +428,8 @@
             sections: [
               { heading: 'Description', body: upg.description || 'No description.' },
               { heading: 'Effect', body: this.describeEffect(upg.effect) },
-              { heading: 'Cost', body: `${fmt(upg.cost)} ${res?.icon || ''} ${res?.displayName || upg.costResource} per level` },
-              { heading: 'Progress', body: `Level ${us?.purchaseCount || 0}${upg.maxPurchases != null ? ' / ' + upg.maxPurchases : ''}` }
+              { heading: 'Purchase Requirements', body: `${fmt(upg.cost)} ${res?.icon || ''} ${res?.displayName || upg.costResource} per level` },
+              { heading: 'Level Progress', body: `Level ${us?.purchaseCount || 0}${upg.maxPurchases != null ? ' / ' + upg.maxPurchases : ''}` }
             ],
             requirements: requirements.length ? requirements : undefined
           };
@@ -443,7 +443,7 @@
             sections: [
               { heading: 'Description', body: art.description || 'No description.' },
               { heading: 'Rarity', body: art.rarity || 'Unknown' },
-              { heading: 'Permanent bonus', body: this.describeEffect(art.effect).replace(/ while equipped or active\.?$/, ' permanently once collected.') }
+              { heading: 'Permanent Bonus', body: this.describeEffect(art.effect).replace(/ while equipped or active\.?$/, ' permanently once collected.') }
             ]
           };
         }

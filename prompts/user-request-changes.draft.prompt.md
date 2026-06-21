@@ -271,6 +271,18 @@
 
 ---
 
+### 2026-6-21-22-30-0 — Consistent section labeling across UI
+
+**Request:** Clearly label sections (e.g. Purchase Requirements, Production) on generator cards and apply the same grouping standard everywhere including modals and tabs.
+
+**Implemented:**
+- New `CardSection` component with `card-section` / `panel-section` styles and shared headings
+- Generator cards: Production, Purchase Requirements, Unlock Requirements
+- Upgrade/character/ascension/inventory/stats/settings/progress/artifact/achievement panels use labeled sections
+- Info, unlock, equip, prestige/ascend, and offline modals use the same section pattern
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec

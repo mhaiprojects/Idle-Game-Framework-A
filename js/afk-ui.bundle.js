@@ -58,6 +58,35 @@ AFK_UI.ProgressBar = {
   `
 };
 
+// --- js/ui/components/CardSection.vue.js ---
+AFK_UI.CardSection = {
+  name: 'CardSection',
+  props: {
+    title: { type: String, required: true },
+    level: { type: String, default: 'card' },
+    first: { type: Boolean, default: false }
+  },
+  computed: {
+    sectionClass() {
+      return this.level === 'panel' ? 'panel-section' : 'card-section';
+    },
+    headingClass() {
+      return this.level === 'panel' ? 'panel-section-heading' : 'card-section-heading';
+    },
+    headingTag() {
+      return this.level === 'panel' ? 'h3' : 'h4';
+    }
+  },
+  template: `
+    <div :class="[sectionClass, { 'section-first': first }]">
+      <component :is="headingTag" :class="headingClass">{{ title }}</component>
+      <div class="section-body">
+        <slot></slot>
+      </div>
+    </div>
+  `
+};
+
 // --- js/ui/components/ResourceProgressList.vue.js ---
 const ProgressBar = AFK_UI.ProgressBar;
 
@@ -85,17 +114,18 @@ AFK_UI.ResourceProgressList = {
 };
 
 // --- js/ui/components/UnlockRequirementsList.vue.js ---
+const CardSection = AFK_UI.CardSection;
 
 AFK_UI.UnlockRequirementsList = {
   name: 'UnlockRequirementsList',
-  components: { ProgressBar },
+  components: { ProgressBar, CardSection },
   props: {
     requirements: { type: Array, default: () => [] },
-    heading: { type: String, default: 'Unlock requirements:' }
+    heading: { type: String, default: 'Unlock Requirements' },
+    first: { type: Boolean, default: false }
   },
   template: `
-    <div v-if="requirements.length" class="unlock-requirements-inline">
-      <p class="unlock-heading">{{ heading }}</p>
+    <CardSection v-if="requirements.length" :title="heading" :first="first">
       <div v-for="(req, i) in requirements" :key="i" class="unlock-req-row">
         <span class="unlock-req-icon">{{ req.icon }}</span>
         <div class="unlock-req-body">
@@ -106,7 +136,7 @@ AFK_UI.UnlockRequirementsList = {
             :progress="req.progress" :met="req.met" />
         </div>
       </div>
-    </div>
+    </CardSection>
   `
 };
 
@@ -124,7 +154,7 @@ const MoreInfoButton = AFK_UI.MoreInfoButton;
 
 AFK_UI.EquipSlotModal = {
   name: 'EquipSlotModal',
-  components: { MoreInfoButton },
+  components: { MoreInfoButton, CardSection },
   props: {
     open: Boolean,
     slot: Object,
@@ -145,29 +175,31 @@ AFK_UI.EquipSlotModal = {
           <h3>{{ slot?.label || 'Equipment' }}</h3>
           <p class="hint-text">{{ characterName }} · sorted by rarity</p>
         </div>
-        <div v-if="items.length" class="equip-modal-list">
-          <button v-for="item in items" :key="item.codeName"
-            class="equip-modal-item"
-            :class="[rarityClass(item.rarity), { selected: equippedCode === item.codeName, disabled: !item.canEquip && equippedCode !== item.codeName }]"
-            :disabled="!item.canEquip && equippedCode !== item.codeName"
-            @click="$emit('equip', item.codeName)">
-            <div class="equip-modal-item-top">
-              <span class="equip-modal-icon">{{ item.icon }}</span>
-              <div class="equip-modal-meta">
-                <div class="equip-modal-name">{{ item.displayName }}</div>
-                <div class="equip-modal-sub">
-                  <span class="rarity-badge" :class="rarityClass(item.rarity)">{{ item.rarityLabel }}</span>
-                  <span>Owned ×{{ item.owned }}</span>
-                  <span v-if="item.available !== item.owned">Free ×{{ item.available }}</span>
+        <CardSection title="Available Items" :first="true">
+          <div v-if="items.length" class="equip-modal-list">
+            <button v-for="item in items" :key="item.codeName"
+              class="equip-modal-item"
+              :class="[rarityClass(item.rarity), { selected: equippedCode === item.codeName, disabled: !item.canEquip && equippedCode !== item.codeName }]"
+              :disabled="!item.canEquip && equippedCode !== item.codeName"
+              @click="$emit('equip', item.codeName)">
+              <div class="equip-modal-item-top">
+                <span class="equip-modal-icon">{{ item.icon }}</span>
+                <div class="equip-modal-meta">
+                  <div class="equip-modal-name">{{ item.displayName }}</div>
+                  <div class="equip-modal-sub">
+                    <span class="rarity-badge" :class="rarityClass(item.rarity)">{{ item.rarityLabel }}</span>
+                    <span>Owned ×{{ item.owned }}</span>
+                    <span v-if="item.available !== item.owned">Free ×{{ item.available }}</span>
+                  </div>
                 </div>
+                <MoreInfoButton @click.stop="$emit('more-info', 'item', item.codeName)" />
               </div>
-              <MoreInfoButton @click.stop="$emit('more-info', 'item', item.codeName)" />
-            </div>
-            <div class="equip-modal-effect">{{ item.effectSummary }}</div>
-            <div v-if="equippedCode === item.codeName" class="equip-modal-equipped-tag">Equipped</div>
-          </button>
-        </div>
-        <p v-else class="hint-text">No items owned for this slot.</p>
+              <div class="equip-modal-effect">{{ item.effectSummary }}</div>
+              <div v-if="equippedCode === item.codeName" class="equip-modal-equipped-tag">Equipped</div>
+            </button>
+          </div>
+          <p v-else class="hint-text" style="margin-bottom:0">No items owned for this slot.</p>
+        </CardSection>
         <div class="modal-actions" style="margin-top:1rem">
           <button v-if="equippedCode" class="btn btn-ghost" @click="$emit('unequip')">Unequip</button>
           <button class="btn btn-primary" @click="$emit('close')">Close</button>
@@ -269,7 +301,7 @@ AFK_UI.UnlockModal = {
     <div class="modal-overlay" @click.self="$emit('close')">
       <div class="modal animate__animated animate__fadeIn">
         <h3>🔒 {{ info.title }}</h3>
-        <UnlockRequirementsList :requirements="info.requirements" />
+        <UnlockRequirementsList :requirements="info.requirements" :first="true" />
         <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">OK</button>
       </div>
     </div>
@@ -280,7 +312,7 @@ AFK_UI.UnlockModal = {
 
 AFK_UI.InfoModal = {
   name: 'InfoModal',
-  components: { UnlockRequirementsList },
+  components: { UnlockRequirementsList, CardSection },
   props: { info: Object },
   emits: ['close'],
   template: `
@@ -290,12 +322,11 @@ AFK_UI.InfoModal = {
           <span v-if="info.icon" class="card-icon">{{ info.icon }}</span>
           <h3>{{ info.title }}</h3>
         </div>
-        <div v-for="(section, i) in info.sections" :key="i" class="info-section">
-          <h4>{{ section.heading }}</h4>
-          <p>{{ section.body }}</p>
-        </div>
-        <UnlockRequirementsList v-if="info.requirements?.length"
-          :requirements="info.requirements" heading="Unlock requirements:" />
+        <CardSection v-for="(section, i) in info.sections" :key="i"
+          :title="section.heading" :first="i === 0">
+          <p class="section-text">{{ section.body }}</p>
+        </CardSection>
+        <UnlockRequirementsList v-if="info.requirements?.length" :requirements="info.requirements" />
         <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">Close</button>
       </div>
     </div>
@@ -410,7 +441,7 @@ const ResourceProgressList = AFK_UI.ResourceProgressList;
 
 AFK_UI.GeneratorPanel = {
   name: 'GeneratorPanel',
-  components: { PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList, MoreInfoButton },
+  components: { PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList, MoreInfoButton, CardSection },
   props: {
     generators: Array,
     multiplier: [Number, String],
@@ -428,7 +459,9 @@ AFK_UI.GeneratorPanel = {
   template: `
     <div class="panel">
       <h2 class="panel-title">⚙️ Generators</h2>
-      <PurchaseMultiplier :options="multiplierOptions" :active="multiplier" @change="$emit('multiplier-change', $event)" />
+      <CardSection title="Bulk Purchase" level="panel" :first="true">
+        <PurchaseMultiplier :options="multiplierOptions" :active="multiplier" @change="$emit('multiplier-change', $event)" />
+      </CardSection>
       <div v-for="gen in generators" :key="gen.codeName" class="card">
         <div class="card-header">
           <span class="card-icon">{{ gen.icon }}</span>
@@ -438,8 +471,7 @@ AFK_UI.GeneratorPanel = {
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ gen.description }}</p>
         <div v-if="gen.isUnlocked">
-          <div v-if="gen.production?.length" class="production-section">
-            <h4 class="production-heading">Production</h4>
+          <CardSection v-if="gen.production?.length" title="Production" :first="true">
             <div v-for="row in gen.production" :key="row.resource" class="production-row">
               <span class="production-resource">
                 <span>{{ row.icon }}</span>
@@ -450,19 +482,17 @@ AFK_UI.GeneratorPanel = {
                 <span class="efficiency-tag">{{ row.percent.toFixed(1) }}%</span>
               </span>
             </div>
-          </div>
-          <div class="card-actions" style="flex-direction:column;align-items:stretch;margin-top:0.5rem">
+          </CardSection>
+          <CardSection title="Purchase Requirements">
             <ResourceProgressList :entries="gen.costProgress" />
-            <div style="display:flex;justify-content:flex-end;margin-top:0.35rem">
+            <div class="section-actions">
               <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
             </div>
-          </div>
+          </CardSection>
         </div>
-        <template v-else>
-          <UnlockRequirementsList v-if="gen.unlockRequirements?.length"
-            :requirements="gen.unlockRequirements" />
-          <p v-else class="hint-text">Requirements unavailable.</p>
-        </template>
+        <UnlockRequirementsList v-else-if="gen.unlockRequirements?.length"
+          :requirements="gen.unlockRequirements" :first="true" />
+        <p v-else class="hint-text">Requirements unavailable.</p>
       </div>
     </div>
   `
@@ -472,6 +502,7 @@ AFK_UI.GeneratorPanel = {
 
 AFK_UI.UpgradePanel = {
   name: 'UpgradePanel',
+  components: { UnlockRequirementsList, ResourceProgressList, MoreInfoButton, CardSection },
   props: {
     upgrades: Array,
     formatNumber: Function,
@@ -499,18 +530,22 @@ AFK_UI.UpgradePanel = {
           <MoreInfoButton @click="$emit('more-info', 'upgrade', upg.codeName)" />
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ upg.description }}</p>
-        <div v-if="upg.unlocked && !upg.maxed" class="card-actions" style="flex-direction:column;align-items:stretch">
+        <template v-if="upg.unlocked && !upg.maxed">
+          <CardSection v-if="upg.levelProgress" title="Level Progress" :first="true">
+            <ResourceProgressList :entries="[upg.levelProgress]" />
+          </CardSection>
+          <CardSection title="Purchase Requirements" :first="!upg.levelProgress">
+            <ResourceProgressList :entries="upg.costProgress" />
+            <div class="section-actions">
+              <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
+            </div>
+          </CardSection>
+        </template>
+        <UnlockRequirementsList v-else-if="!upg.unlocked" :requirements="upg.unlockRequirements" :first="true" />
+        <CardSection v-else title="Status" :first="true">
           <ResourceProgressList v-if="upg.levelProgress" :entries="[upg.levelProgress]" />
-          <ResourceProgressList :entries="upg.costProgress" />
-          <div style="display:flex;justify-content:flex-end;margin-top:0.35rem">
-            <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
-          </div>
-        </div>
-        <UnlockRequirementsList v-else-if="!upg.unlocked" :requirements="upg.unlockRequirements" />
-        <div v-else class="locked-conditions">
-          <ResourceProgressList v-if="upg.levelProgress" :entries="[upg.levelProgress]" />
-          Max level reached
-        </div>
+          <p class="hint-text" style="margin-bottom:0">Max level reached</p>
+        </CardSection>
       </div>
     </div>
   `
@@ -521,7 +556,7 @@ const EquipmentGrid = AFK_UI.EquipmentGrid;
 
 AFK_UI.CharacterPanel = {
   name: 'CharacterPanel',
-  components: { UnlockRequirementsList, MoreInfoButton, EquipmentGrid },
+  components: { UnlockRequirementsList, MoreInfoButton, EquipmentGrid, CardSection },
   props: {
     characters: Array,
     maxActive: Number,
@@ -533,7 +568,9 @@ AFK_UI.CharacterPanel = {
   template: `
     <div class="panel">
       <h2 class="panel-title">👤 Characters</h2>
-      <p class="hint-text">Active: {{ activeCount }}/{{ maxActive }} · Equipment stacks in inventory; each copy boosts power.</p>
+      <CardSection title="Overview" level="panel" :first="true">
+        <p class="hint-text" style="margin-bottom:0">Active: {{ activeCount }}/{{ maxActive }} · Equipment stacks in inventory; each copy boosts power.</p>
+      </CardSection>
       <div v-for="char in characters" :key="char.codeName" class="card">
         <div class="card-header">
           <span class="card-icon">{{ char.icon }}</span>
@@ -542,15 +579,16 @@ AFK_UI.CharacterPanel = {
           <MoreInfoButton @click="$emit('more-info', 'character', char.codeName)" />
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ char.description }}</p>
-        <UnlockRequirementsList v-if="!char.unlocked" :requirements="char.unlockRequirements" />
-        <div v-else>
-          <div class="card-actions">
-            <button class="btn" :class="char.activated ? 'btn-ghost' : 'btn-primary'" @click="$emit('toggle', char.codeName)">
-              {{ char.activated ? 'Deactivate' : 'Activate' }}
-            </button>
-          </div>
-          <div class="equipment-section">
-            <h4 class="equipment-heading">Equipment</h4>
+        <UnlockRequirementsList v-if="!char.unlocked" :requirements="char.unlockRequirements" :first="true" />
+        <template v-else>
+          <CardSection title="Activation" :first="true">
+            <div class="section-actions section-actions-start">
+              <button class="btn" :class="char.activated ? 'btn-ghost' : 'btn-primary'" @click="$emit('toggle', char.codeName)">
+                {{ char.activated ? 'Deactivate' : 'Activate' }}
+              </button>
+            </div>
+          </CardSection>
+          <CardSection title="Equipment">
             <EquipmentGrid
               :character="char"
               :slot-layout="equipmentSlotLayout"
@@ -558,8 +596,8 @@ AFK_UI.CharacterPanel = {
               @equip="(c, s, i) => $emit('equip', c, s, i)"
               @unequip="(c, s) => $emit('unequip', c, s)"
               @more-info="(type, code) => $emit('more-info', type, code)" />
-          </div>
-        </div>
+          </CardSection>
+        </template>
       </div>
     </div>
   `
@@ -569,6 +607,7 @@ AFK_UI.CharacterPanel = {
 
 AFK_UI.InventoryPanel = {
   name: 'InventoryPanel',
+  components: { MoreInfoButton, CardSection },
   props: {
     items: Array,
     inventory: Object,
@@ -598,41 +637,45 @@ AFK_UI.InventoryPanel = {
     <div class="panel">
       <h2 class="panel-title">🎒 Inventory</h2>
 
-      <h3 class="section-subtitle">Consumables</h3>
-      <div class="inventory-grid">
-        <div v-for="item in items.filter(i => i.type === 'consumable')" :key="item.codeName" class="inv-item">
-          <div class="inv-item-top">
-            <div class="icon">{{ item.icon }}</div>
+      <CardSection title="Consumables" level="panel" :first="true">
+        <div class="inventory-grid">
+          <div v-for="item in items.filter(i => i.type === 'consumable')" :key="item.codeName" class="inv-item">
+            <div class="inv-item-top">
+              <div class="icon">{{ item.icon }}</div>
+              <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
+            </div>
+            <div class="inv-item-name">{{ item.displayName }}</div>
+            <p class="inv-item-desc">{{ item.description }}</p>
+            <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
+            <div class="inv-item-qty">Owned: {{ inventory[item.codeName] || 0 }}</div>
+            <button v-if="item.actionBarEligible && (inventory[item.codeName] || 0) > 0"
+              class="btn btn-primary btn-sm" style="margin-top:0.35rem"
+              @click="$emit('use-boost', item.codeName)">Use</button>
+          </div>
+        </div>
+        <p v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text" style="margin-bottom:0">No consumables yet.</p>
+      </CardSection>
+
+      <CardSection title="Equipment" level="panel">
+        <p class="hint-text">Equip items on the Characters tab. Stackable gear — each copy owned boosts equipped power.</p>
+        <div v-for="item in equipableItems" :key="item.codeName" class="card">
+          <div class="card-header">
+            <span class="card-icon">{{ item.icon }}</span>
+            <span class="card-name">{{ item.displayName }}</span>
+            <span class="card-owned">×{{ inventory[item.codeName] || 0 }}</span>
             <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
           </div>
-          <div class="inv-item-name">{{ item.displayName }}</div>
-          <p class="inv-item-desc">{{ item.description }}</p>
-          <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
-          <div class="inv-item-qty">Owned: {{ inventory[item.codeName] || 0 }}</div>
-          <button v-if="item.actionBarEligible && (inventory[item.codeName] || 0) > 0"
-            class="btn btn-primary btn-sm" style="margin-top:0.35rem"
-            @click="$emit('use-boost', item.codeName)">Use</button>
+          <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }}</p>
+          <CardSection title="Details" :first="true">
+            <span v-if="item.rarity" class="rarity-badge" :class="'rarity-' + (item.rarity || 'common')">{{ formatRarity(item.rarity) }}</span>
+            <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
+            <p class="section-text muted">{{ slotLabel(item.slot) }} slot</p>
+            <p v-if="equippedOn(item.codeName).length" class="section-text accent">
+              Equipped on: {{ equippedOn(item.codeName).map(c => c.icon + ' ' + c.displayName).join(', ') }}
+            </p>
+          </CardSection>
         </div>
-      </div>
-      <div v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text">No consumables yet.</div>
-
-      <h3 class="section-subtitle">Equipment</h3>
-      <p class="hint-text">Equip items on the Characters tab. Stackable gear — each copy owned boosts equipped power.</p>
-      <div v-for="item in equipableItems" :key="item.codeName" class="card">
-        <div class="card-header">
-          <span class="card-icon">{{ item.icon }}</span>
-          <span class="card-name">{{ item.displayName }}</span>
-          <span class="card-owned">×{{ inventory[item.codeName] || 0 }}</span>
-          <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
-        </div>
-        <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }}</p>
-        <span v-if="item.rarity" class="rarity-badge" :class="'rarity-' + (item.rarity || 'common')">{{ formatRarity(item.rarity) }}</span>
-        <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
-        <div style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-muted)">{{ slotLabel(item.slot) }} slot</div>
-        <div v-if="equippedOn(item.codeName).length" style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-accent)">
-          Equipped on: {{ equippedOn(item.codeName).map(c => c.icon + ' ' + c.displayName).join(', ') }}
-        </div>
-      </div>
+      </CardSection>
     </div>
   `
 };
@@ -641,42 +684,51 @@ AFK_UI.InventoryPanel = {
 
 AFK_UI.ArtifactPanel = {
   name: 'ArtifactPanel',
+  components: { MoreInfoButton, CardSection },
   props: { artifacts: Array },
   emits: ['more-info'],
   template: `
     <div class="panel">
       <h2 class="panel-title">🔮 Artifacts</h2>
-      <p class="hint-text">Permanent collection bonuses — kept through prestige and ascension.</p>
-      <div v-for="art in artifacts" :key="art.codeName" class="card" :class="{ acquired: art.acquired }">
-        <div class="card-header">
-          <span class="card-icon">{{ art.icon }}</span>
-          <span class="card-name">{{ art.acquired ? art.displayName : '???' }}</span>
-          <span v-if="art.acquired" class="efficiency-tag" style="color:var(--color-success)">✓ Collected</span>
-          <span v-else style="font-size:0.7rem;color:var(--color-muted)">{{ art.rarity }}</span>
-          <MoreInfoButton v-if="art.acquired" @click="$emit('more-info', 'artifact', art.codeName)" />
+      <CardSection title="Overview" level="panel" :first="true">
+        <p class="hint-text" style="margin-bottom:0">Permanent collection bonuses — kept through prestige and ascension.</p>
+      </CardSection>
+      <CardSection title="Collection" level="panel">
+        <div v-for="art in artifacts" :key="art.codeName" class="card" :class="{ acquired: art.acquired }">
+          <div class="card-header">
+            <span class="card-icon">{{ art.icon }}</span>
+            <span class="card-name">{{ art.acquired ? art.displayName : '???' }}</span>
+            <span v-if="art.acquired" class="efficiency-tag" style="color:var(--color-success)">✓ Collected</span>
+            <span v-else style="font-size:0.7rem;color:var(--color-muted)">{{ art.rarity }}</span>
+            <MoreInfoButton v-if="art.acquired" @click="$emit('more-info', 'artifact', art.codeName)" />
+          </div>
+          <p v-if="art.acquired" style="font-size:0.75rem;color:var(--color-muted)">{{ art.description }}</p>
+          <p v-else style="font-size:0.75rem;color:var(--color-muted)">Discover this artifact through play.</p>
         </div>
-        <p v-if="art.acquired" style="font-size:0.75rem;color:var(--color-muted)">{{ art.description }}</p>
-        <p v-else style="font-size:0.75rem;color:var(--color-muted)">Discover this artifact through play.</p>
-      </div>
+      </CardSection>
     </div>
   `
 };
 
 // --- js/ui/AchievementPanel.vue.js ---
+
 AFK_UI.AchievementPanel = {
   name: 'AchievementPanel',
+  components: { CardSection },
   props: { achievements: Array },
   template: `
     <div class="panel">
       <h2 class="panel-title">🏆 Achievements</h2>
-      <div v-for="ach in achievements" :key="ach.codeName" class="card achievement-badge" :class="{ unlocked: ach.unlocked, 'animate__animated animate__bounceIn': ach.unlocked }">
-        <div class="card-header">
-          <span class="card-icon">{{ ach.icon }}</span>
-          <span class="card-name">{{ ach.displayName }}</span>
-          <span v-if="ach.unlocked">✓</span>
+      <CardSection title="All Achievements" level="panel" :first="true">
+        <div v-for="ach in achievements" :key="ach.codeName" class="card achievement-badge" :class="{ unlocked: ach.unlocked, 'animate__animated animate__bounceIn': ach.unlocked }">
+          <div class="card-header">
+            <span class="card-icon">{{ ach.icon }}</span>
+            <span class="card-name">{{ ach.displayName }}</span>
+            <span v-if="ach.unlocked">✓</span>
+          </div>
+          <p style="font-size:0.75rem;color:var(--color-muted)">{{ ach.description }}</p>
         </div>
-        <p style="font-size:0.75rem;color:var(--color-muted)">{{ ach.description }}</p>
-      </div>
+      </CardSection>
     </div>
   `
 };
@@ -685,7 +737,7 @@ AFK_UI.AchievementPanel = {
 
 AFK_UI.AscensionPanel = {
   name: 'AscensionPanel',
-  components: { ProgressBar, ResourceProgressList },
+  components: { ProgressBar, ResourceProgressList, CardSection },
   props: {
     tierName: String, currentTier: Number, prestigeCount: Number,
     lifetimePrestiges: Number, projectedGain: Number, canPrestige: Boolean,
@@ -706,56 +758,78 @@ AFK_UI.AscensionPanel = {
   template: `
     <div class="panel">
       <h2 class="panel-title">🔄 Ascension</h2>
-      <div class="stats-grid" style="margin-bottom:1rem">
-        <div class="stat-box">{{ tierName }}</div>
-        <div class="stat-box">Prestiges: {{ prestigeCount }}</div>
-        <div class="stat-box">Lifetime: {{ lifetimePrestiges }}</div>
-        <div class="stat-box">Shards: {{ formatNumber(prestigeCurrency) }}</div>
-      </div>
 
-      <div class="card">
-        <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Prestige (Soft Reset)</h3>
-        <p style="font-size:0.8rem;margin-bottom:0.5rem">Gain: +{{ projectedGain }} Prestige Shards</p>
-        <p style="font-size:0.75rem;color:var(--color-muted)">Cost mult: {{ difficulty?.costMultiplier?.toFixed(2) }}× | {{ primaryCurrencyLabel }}: {{ difficulty?.primaryCurrencyMultiplier?.toFixed(2) }}×</p>
-        <button class="btn btn-accent" style="margin-top:0.5rem" :disabled="!canPrestige" @click="showPrestigeModal = true">Prestige</button>
-      </div>
+      <CardSection title="Overview" level="panel" :first="true">
+        <div class="stats-grid">
+          <div class="stat-box">{{ tierName }}</div>
+          <div class="stat-box">Prestiges: {{ prestigeCount }}</div>
+          <div class="stat-box">Lifetime: {{ lifetimePrestiges }}</div>
+          <div class="stat-box">Shards: {{ formatNumber(prestigeCurrency) }}</div>
+        </div>
+      </CardSection>
 
-      <div class="card" style="margin-top:0.5rem">
-        <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Prestige Shop</h3>
-        <div v-for="bonus in prestigeBonuses" :key="bonus.codeName" class="card" style="margin-top:0.35rem;padding:0.5rem">
+      <CardSection title="Prestige (Soft Reset)" level="panel">
+        <div class="card">
+          <CardSection title="Rewards" :first="true">
+            <p class="section-text">Gain: +{{ projectedGain }} Prestige Shards</p>
+            <p class="section-text muted">Cost mult: {{ difficulty?.costMultiplier?.toFixed(2) }}× | {{ primaryCurrencyLabel }}: {{ difficulty?.primaryCurrencyMultiplier?.toFixed(2) }}×</p>
+          </CardSection>
+          <div class="section-actions section-actions-start">
+            <button class="btn btn-accent" :disabled="!canPrestige" @click="showPrestigeModal = true">Prestige</button>
+          </div>
+        </div>
+      </CardSection>
+
+      <CardSection title="Prestige Shop" level="panel">
+        <div v-for="bonus in prestigeBonuses" :key="bonus.codeName" class="card nested-card">
           <div class="card-header">
             <span class="card-icon">{{ bonus.icon }}</span>
             <span class="card-name">{{ bonus.displayName }}</span>
             <span class="card-owned">Lv {{ bonus.level }}/{{ bonus.maxLevel }}</span>
           </div>
           <p style="font-size:0.75rem;color:var(--color-muted)">{{ bonus.description }}</p>
-          <ResourceProgressList v-if="bonus.levelProgress" :entries="[bonus.levelProgress]" />
-          <ResourceProgressList v-if="!bonus.locked && !bonus.maxed" :entries="bonus.costProgress" />
-          <div class="card-actions">
-            <button class="btn btn-primary btn-sm" :disabled="!bonus.canBuy" @click="$emit('buy-bonus', bonus.codeName)">Buy</button>
-          </div>
-          <div v-if="bonus.locked" class="locked-conditions" style="margin-top:0.25rem">🔒 {{ bonus.lockReason }}</div>
+          <CardSection v-if="bonus.levelProgress" title="Level Progress" :first="true">
+            <ResourceProgressList :entries="[bonus.levelProgress]" />
+          </CardSection>
+          <CardSection v-if="!bonus.locked && !bonus.maxed" title="Purchase Requirements" :first="!bonus.levelProgress">
+            <ResourceProgressList :entries="bonus.costProgress" />
+            <div class="section-actions">
+              <button class="btn btn-primary btn-sm" :disabled="!bonus.canBuy" @click="$emit('buy-bonus', bonus.codeName)">Buy</button>
+            </div>
+          </CardSection>
+          <CardSection v-else-if="bonus.locked" title="Unlock Requirements" :first="!bonus.levelProgress">
+            <p class="hint-text" style="margin-bottom:0">🔒 {{ bonus.lockReason }}</p>
+          </CardSection>
         </div>
-      </div>
+      </CardSection>
 
-      <div class="card" v-if="!maxTierReached" style="margin-top:0.5rem">
-        <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Ascend to {{ nextTierName }}</h3>
-        <div v-for="(m, i) in milestones" :key="i" class="resource-progress-row">
-          <div class="resource-progress-label" :class="{ met: m.met }">{{ m.label }}</div>
-          <ProgressBar :progress="m.progress" :met="m.met" />
+      <CardSection v-if="!maxTierReached" title="Ascension" level="panel">
+        <div class="card">
+          <CardSection :title="'Ascend to ' + nextTierName" :first="true">
+            <div v-for="(m, i) in milestones" :key="i" class="resource-progress-row">
+              <div class="resource-progress-label" :class="{ met: m.met }">{{ m.label }}</div>
+              <ProgressBar :progress="m.progress" :met="m.met" />
+            </div>
+            <CardSection v-if="featurePreview.length" title="Unlocks Preview">
+              <p class="section-text accent">{{ featurePreview.join(', ') }}</p>
+            </CardSection>
+          </CardSection>
+          <div class="section-actions section-actions-start">
+            <button class="btn btn-primary" :disabled="!canAscend" @click="showAscendModal = true">Ascend</button>
+          </div>
         </div>
-        <div v-if="featurePreview.length" style="font-size:0.75rem;margin-top:0.5rem;color:var(--color-accent)">
-          Unlocks: {{ featurePreview.join(', ') }}
-        </div>
-        <button class="btn btn-primary" style="margin-top:0.5rem" :disabled="!canAscend" @click="showAscendModal = true">Ascend</button>
-      </div>
+      </CardSection>
 
       <div v-if="showPrestigeModal" class="modal-overlay" @click.self="showPrestigeModal = false">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Confirm Prestige</h3>
           <div class="modal-columns">
-            <div class="lost"><h4>LOST</h4><div v-for="l in prestigeLost" :key="l">• {{ l }}</div></div>
-            <div class="kept"><h4>KEPT</h4><div v-for="k in prestigeKept" :key="k">• {{ k }}</div></div>
+            <CardSection title="Lost" :first="true" class="lost">
+              <div v-for="l in prestigeLost" :key="l" class="section-text">• {{ l }}</div>
+            </CardSection>
+            <CardSection title="Kept" :first="true" class="kept">
+              <div v-for="k in prestigeKept" :key="k" class="section-text">• {{ k }}</div>
+            </CardSection>
           </div>
           <div class="modal-actions">
             <button class="btn btn-ghost" @click="showPrestigeModal = false">Cancel</button>
@@ -767,10 +841,16 @@ AFK_UI.AscensionPanel = {
       <div v-if="showAscendModal" class="modal-overlay" @click.self="showAscendModal = false">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Ascend to {{ nextTierName }}</h3>
-          <p style="color:var(--color-danger);font-size:0.85rem;margin-bottom:0.5rem">This cannot be undone.</p>
+          <CardSection title="Warning" :first="true">
+            <p class="section-text danger">This cannot be undone.</p>
+          </CardSection>
           <div class="modal-columns">
-            <div class="lost"><h4>LOST</h4><div v-for="l in ascendLost" :key="l">• {{ l }}</div></div>
-            <div class="kept"><h4>KEPT</h4><div v-for="k in ascendKept" :key="k">• {{ k }}</div></div>
+            <CardSection title="Lost" class="lost">
+              <div v-for="l in ascendLost" :key="l" class="section-text">• {{ l }}</div>
+            </CardSection>
+            <CardSection title="Kept" class="kept">
+              <div v-for="k in ascendKept" :key="k" class="section-text">• {{ k }}</div>
+            </CardSection>
           </div>
           <div class="modal-actions">
             <button class="btn btn-ghost" @click="showAscendModal = false">Cancel</button>
@@ -783,8 +863,10 @@ AFK_UI.AscensionPanel = {
 };
 
 // --- js/ui/SettingsPanel.vue.js ---
+
 AFK_UI.SettingsPanel = {
   name: 'SettingsPanel',
+  components: { CardSection },
   props: { settings: Object },
   emits: ['update-setting', 'export-save', 'import-save', 'reset-game'],
   methods: {
@@ -796,40 +878,46 @@ AFK_UI.SettingsPanel = {
   template: `
     <div class="panel">
       <h2 class="panel-title">🛠️ Settings</h2>
-      <div class="settings-row">
-        <span>Sidebar Position</span>
-        <div class="toggle-group">
-          <button class="btn btn-ghost" :class="{ 'btn-primary': settings.sidebarPosition === 'left' }" @click="$emit('update-setting', 'sidebarPosition', 'left')">Left</button>
-          <button class="btn btn-ghost" :class="{ 'btn-primary': settings.sidebarPosition === 'right' }" @click="$emit('update-setting', 'sidebarPosition', 'right')">Right</button>
+      <CardSection title="Display" level="panel" :first="true">
+        <div class="settings-row">
+          <span>Sidebar Position</span>
+          <div class="toggle-group">
+            <button class="btn btn-ghost" :class="{ 'btn-primary': settings.sidebarPosition === 'left' }" @click="$emit('update-setting', 'sidebarPosition', 'left')">Left</button>
+            <button class="btn btn-ghost" :class="{ 'btn-primary': settings.sidebarPosition === 'right' }" @click="$emit('update-setting', 'sidebarPosition', 'right')">Right</button>
+          </div>
         </div>
-      </div>
-      <div class="settings-row">
-        <span>Sound</span>
-        <button class="btn btn-ghost" @click="$emit('update-setting', 'soundEnabled', !settings.soundEnabled)">{{ settings.soundEnabled ? 'On' : 'Off' }}</button>
-      </div>
-      <div class="settings-row">
-        <span>Notifications</span>
-        <button class="btn btn-ghost" @click="$emit('update-setting', 'notificationsEnabled', !settings.notificationsEnabled)">{{ settings.notificationsEnabled ? 'On' : 'Off' }}</button>
-      </div>
-      <div class="settings-row">
-        <span>Tutorial</span>
-        <button class="btn btn-ghost" @click="$emit('update-setting', 'showTutorial', !settings.showTutorial)">{{ settings.showTutorial ? 'On' : 'Off' }}</button>
-      </div>
-      <div style="margin-top:1rem;display:flex;flex-direction:column;gap:0.5rem">
-        <button class="btn btn-ghost" @click="$emit('export-save')">Export Save</button>
-        <label class="btn btn-ghost" style="text-align:center;cursor:pointer">
-          Import Save
-          <input type="file" accept=".json" style="display:none" @change="onImport" />
-        </label>
-        <button class="btn btn-danger" @click="$emit('reset-game')">Reset Game</button>
-      </div>
+        <div class="settings-row">
+          <span>Sound</span>
+          <button class="btn btn-ghost" @click="$emit('update-setting', 'soundEnabled', !settings.soundEnabled)">{{ settings.soundEnabled ? 'On' : 'Off' }}</button>
+        </div>
+        <div class="settings-row">
+          <span>Notifications</span>
+          <button class="btn btn-ghost" @click="$emit('update-setting', 'notificationsEnabled', !settings.notificationsEnabled)">{{ settings.notificationsEnabled ? 'On' : 'Off' }}</button>
+        </div>
+        <div class="settings-row">
+          <span>Tutorial</span>
+          <button class="btn btn-ghost" @click="$emit('update-setting', 'showTutorial', !settings.showTutorial)">{{ settings.showTutorial ? 'On' : 'Off' }}</button>
+        </div>
+      </CardSection>
+      <CardSection title="Save Data" level="panel">
+        <div class="section-actions section-actions-start" style="flex-direction:column;align-items:stretch">
+          <button class="btn btn-ghost" @click="$emit('export-save')">Export Save</button>
+          <label class="btn btn-ghost" style="text-align:center;cursor:pointer">
+            Import Save
+            <input type="file" accept=".json" style="display:none" @change="onImport" />
+          </label>
+          <button class="btn btn-danger" @click="$emit('reset-game')">Reset Game</button>
+        </div>
+      </CardSection>
     </div>
   `
 };
 
 // --- js/ui/StatsPanel.vue.js ---
+
 AFK_UI.StatsPanel = {
   name: 'StatsPanel',
+  components: { CardSection },
   props: {
     stats: Object,
     primaryBreakdown: Object,
@@ -841,46 +929,52 @@ AFK_UI.StatsPanel = {
   template: `
     <div class="panel">
       <h2 class="panel-title">📊 Stats</h2>
-      <div class="stats-grid">
-        <div class="stat-box">Total Taps: {{ stats.totalTaps }}</div>
-        <div class="stat-box">Play Time: {{ Math.floor(stats.playTimeSeconds) }}s</div>
-        <div class="stat-box">Peak {{ primaryCurrencyLabel }}: {{ formatNumber(stats.peakPrimaryCurrencyRate) }}/s</div>
-        <div class="stat-box">Current {{ primaryCurrencyLabel }}: {{ formatNumber(primaryBreakdown.total) }}/s</div>
-      </div>
-      <h3 style="font-size:0.85rem;margin:1rem 0 0.5rem;color:var(--color-muted)">{{ primaryCurrencyLabel }} by Generator</h3>
-      <div v-for="item in primaryBreakdown.breakdown" :key="item.generator" class="card" style="padding:0.5rem">
-        <div style="display:flex;justify-content:space-between;font-size:0.8rem">
-          <span>{{ getGeneratorLabel ? getGeneratorLabel(item.generator) : item.generator }}</span>
-          <span>{{ formatNumber(item.amount) }}/s ({{ item.percent.toFixed(1) }}%)</span>
+      <CardSection title="Overview" level="panel" :first="true">
+        <div class="stats-grid">
+          <div class="stat-box">Total Taps: {{ stats.totalTaps }}</div>
+          <div class="stat-box">Play Time: {{ Math.floor(stats.playTimeSeconds) }}s</div>
+          <div class="stat-box">Peak {{ primaryCurrencyLabel }}: {{ formatNumber(stats.peakPrimaryCurrencyRate) }}/s</div>
+          <div class="stat-box">Current {{ primaryCurrencyLabel }}: {{ formatNumber(primaryBreakdown.total) }}/s</div>
         </div>
-      </div>
-      <div v-if="activeEvents.length" style="margin-top:1rem">
-        <h3 style="font-size:0.85rem;margin-bottom:0.5rem;color:var(--color-muted)">Active Events</h3>
-        <div v-for="evt in activeEvents" :key="evt.codeName" class="card">
+      </CardSection>
+      <CardSection :title="primaryCurrencyLabel + ' by Generator'" level="panel">
+        <div v-for="item in primaryBreakdown.breakdown" :key="item.generator" class="card nested-card">
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem">
+            <span>{{ getGeneratorLabel ? getGeneratorLabel(item.generator) : item.generator }}</span>
+            <span>{{ formatNumber(item.amount) }}/s ({{ item.percent.toFixed(1) }}%)</span>
+          </div>
+        </div>
+      </CardSection>
+      <CardSection v-if="activeEvents.length" title="Active Events" level="panel">
+        <div v-for="evt in activeEvents" :key="evt.codeName" class="card nested-card">
           {{ evt.icon }} {{ evt.displayName }}
         </div>
-      </div>
+      </CardSection>
     </div>
   `
 };
 
 // --- js/ui/ProgressPanel.vue.js ---
+
 AFK_UI.ProgressPanel = {
   name: 'ProgressPanel',
+  components: { CardSection },
   props: { progress: Object },
   template: `
     <div class="panel">
       <h2 class="panel-title">🔧 Progress Tracker</h2>
-      <div style="font-size:1.2rem;font-weight:700;margin-bottom:1rem;color:var(--color-accent)">
-        {{ progress.percentage }}% Complete ({{ progress.passed }}/{{ progress.total }})
-      </div>
-      <div v-for="(items, section) in progress.sections" :key="section" class="progress-section">
-        <h4>{{ section }}</h4>
+      <CardSection title="Summary" level="panel" :first="true">
+        <div class="progress-summary">
+          {{ progress.percentage }}% Complete ({{ progress.passed }}/{{ progress.total }})
+        </div>
+      </CardSection>
+      <CardSection v-for="(items, section, index) in progress.sections" :key="section"
+        :title="section" level="panel">
         <div v-for="item in items" :key="item.id" class="progress-item" :class="item.passed ? 'pass' : 'fail'">
           <span>{{ item.passed ? '✓' : '✗' }}</span>
           <span>{{ item.label }}</span>
         </div>
-      </div>
+      </CardSection>
     </div>
   `
 };
@@ -931,7 +1025,7 @@ AFK_UI.App = {
     ResourceBar, GeneratorPanel, UpgradePanel, CharacterPanel,
     InventoryPanel, ArtifactPanel, AchievementPanel, AscensionPanel,
     SettingsPanel, StatsPanel, ProgressPanel, ActionBar, Toast, EventBanner,
-    UnlockModal, InfoModal
+    UnlockModal, InfoModal, CardSection
   },
   props: {
     game: Object
@@ -1153,19 +1247,22 @@ AFK_UI.App = {
           <ProgressPanel v-if="state.ui.activeTab === 'progress'" :progress="progressData" />
           <div v-if="state.settings.devMode && state.ui.activeTab !== 'progress'" class="dev-tools panel">
             <h3 class="panel-title">Dev Tools</h3>
-            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.75rem">
-              <button v-for="s in config.framework.devTools.speedMultipliers" :key="s"
-                class="btn btn-ghost" @click="game.setSpeed(s)">{{ s }}×</button>
-              <button class="btn btn-ghost" @click="game.devAddResources()">+1000 Shards</button>
-              <button class="btn btn-ghost" @click="game.devForceEvent()">Force Event</button>
-              <button class="btn btn-ghost" @click="game.devExportState()">Log State</button>
-            </div>
-            <div v-if="formulaInspector" style="font-size:0.75rem;background:var(--color-bg-card);padding:0.5rem;border-radius:6px">
-              <strong>Formula Inspector</strong>
-              <div>Tap gain: {{ formatNumber(formulaInspector.tapGain) }}</div>
-              <div>{{ primaryCurrencyLabel }} rate: {{ formatNumber(formulaInspector.primaryRate) }}/s</div>
-              <div>Tap %: {{ formulaInspector.tapPercent }}</div>
-            </div>
+            <CardSection title="Speed Controls" level="panel" :first="true">
+              <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+                <button v-for="s in config.framework.devTools.speedMultipliers" :key="s"
+                  class="btn btn-ghost" @click="game.setSpeed(s)">{{ s }}×</button>
+                <button class="btn btn-ghost" @click="game.devAddResources()">+1000 Shards</button>
+                <button class="btn btn-ghost" @click="game.devForceEvent()">Force Event</button>
+                <button class="btn btn-ghost" @click="game.devExportState()">Log State</button>
+              </div>
+            </CardSection>
+            <CardSection v-if="formulaInspector" title="Formula Inspector" level="panel">
+              <div style="font-size:0.75rem;background:var(--color-bg-card);padding:0.5rem;border-radius:6px">
+                <div>Tap gain: {{ formatNumber(formulaInspector.tapGain) }}</div>
+                <div>{{ primaryCurrencyLabel }} rate: {{ formatNumber(formulaInspector.primaryRate) }}/s</div>
+                <div>Tap %: {{ formulaInspector.tapPercent }}</div>
+              </div>
+            </CardSection>
           </div>
         </div>
         <nav class="tab-sidebar">
@@ -1186,10 +1283,14 @@ AFK_UI.App = {
       <div v-if="offlineModal" class="modal-overlay" @click.self="dismissOffline">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Welcome Back!</h3>
-          <p style="font-size:0.85rem;margin-bottom:0.5rem">You were away for {{ Math.floor(offlineModal.elapsed) }}s</p>
-          <div v-for="(amt, res) in offlineModal.gains" :key="res" style="font-size:0.8rem">
-            {{ game.getResourceMeta(res).icon }} {{ game.getResourceLabel(res) }}: +{{ formatNumber(amt) }}
-          </div>
+          <CardSection title="Time Away" :first="true">
+            <p class="section-text">You were away for {{ Math.floor(offlineModal.elapsed) }}s</p>
+          </CardSection>
+          <CardSection title="Offline Gains">
+            <div v-for="(amt, res) in offlineModal.gains" :key="res" class="section-text">
+              {{ game.getResourceMeta(res).icon }} {{ game.getResourceLabel(res) }}: +{{ formatNumber(amt) }}
+            </div>
+          </CardSection>
           <button class="btn btn-primary" style="margin-top:1rem" @click="dismissOffline">Collect</button>
         </div>
       </div>

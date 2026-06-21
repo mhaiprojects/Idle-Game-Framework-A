@@ -9,7 +9,7 @@ export default {
     <div class="modal-overlay" @click.self="$emit('close')">
       <div class="modal animate__animated animate__fadeIn">
         <h3>🔒 {{ info.title }}</h3>
-        <UnlockRequirementsList :requirements="info.requirements" />
+        <UnlockRequirementsList :requirements="info.requirements" :first="true" />
         <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">OK</button>
       </div>
     </div>
