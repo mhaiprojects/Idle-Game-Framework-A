@@ -1,0 +1,47 @@
+{
+  "items": [
+    {
+      "codeName": "energyCell",
+      "displayName": "Energy Cell",
+      "description": "A compact cell of cosmic energy. Restores production briefly.",
+      "icon": "🔋",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": { "type": "globalMultiplier", "multiplier": 1.5, "durationSeconds": 30 }
+    },
+    {
+      "codeName": "rareCrystal",
+      "displayName": "Rare Crystal",
+      "description": "A shimmering crystal that boosts click power.",
+      "icon": "💠",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": { "type": "clickMultiplier", "multiplier": 3, "durationSeconds": 15 }
+    },
+    {
+      "codeName": "temporalLens",
+      "displayName": "Temporal Lens",
+      "description": "Equipment that focuses temporal energy.",
+      "icon": "🔍",
+      "type": "equipable",
+      "slot": "accessory",
+      "effect": { "type": "globalMultiplier", "multiplier": 1.1 }
+    },
+    {
+      "codeName": "chronoBlade",
+      "displayName": "Chrono Blade",
+      "description": "A weapon forged from frozen time.",
+      "icon": "⚔️",
+      "type": "equipable",
+      "slot": "weapon",
+      "effect": { "type": "clickMultiplier", "multiplier": 1.2 }
+    },
+    {
+      "codeName": "voidShard",
+      "displayName": "Void Shard",
+      "description": "Ingredient for advanced crafting.",
+      "icon": "🧩",
+      "type": "ingredient"
+    }
+  ]
+}

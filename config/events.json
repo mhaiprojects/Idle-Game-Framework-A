@@ -1,0 +1,34 @@
+{
+  "events": [
+    {
+      "codeName": "solarFlare",
+      "displayName": "Solar Flare",
+      "description": "All stellar generators ×2 for 30s",
+      "icon": "☀️",
+      "duration": 30,
+      "minInterval": 120,
+      "maxInterval": 300,
+      "effect": { "type": "categoryMultiplier", "category": "stellar", "multiplier": 2 }
+    },
+    {
+      "codeName": "temporalRift",
+      "displayName": "Temporal Rift",
+      "description": "All generators ×1.5 for 20s",
+      "icon": "🌀",
+      "duration": 20,
+      "minInterval": 180,
+      "maxInterval": 360,
+      "effect": { "type": "globalMultiplier", "multiplier": 1.5 }
+    },
+    {
+      "codeName": "quantumStorm",
+      "displayName": "Quantum Storm",
+      "description": "Click power ×3 for 15s",
+      "icon": "⚡",
+      "duration": 15,
+      "minInterval": 150,
+      "maxInterval": 400,
+      "effect": { "type": "clickMultiplier", "multiplier": 3 }
+    }
+  ]
+}

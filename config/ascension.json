@@ -1,0 +1,86 @@
+{
+  "maxTier": 3,
+  "ascensionTiers": [
+    {
+      "tier": 0,
+      "codeName": "mortal",
+      "displayName": "Mortal Realm",
+      "isStartingTier": true,
+      "difficultyProfile": "tier0",
+      "unlockedFeatures": ["tab:generators", "tab:upgrades", "tab:achievements", "tab:stats", "tab:settings", "tab:ascension"]
+    },
+    {
+      "tier": 1,
+      "codeName": "awakened",
+      "displayName": "Awakened Realm",
+      "difficultyProfile": "tier1",
+      "ascensionRequirements": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "prestigeCount", "min": 3 },
+          { "type": "lifetimeResourcesGenerated", "resource": "timeShards", "min": 1000000 },
+          { "type": "lifetimeGeneratorPurchases", "min": 100 }
+        ]
+      },
+      "onAscend": {
+        "clearCurrency": true,
+        "clearGeneratorQuantities": true,
+        "keepGeneratorUnlocks": true,
+        "clearUpgrades": false,
+        "clearInventory": false,
+        "clearArtifacts": false
+      },
+      "unlockedFeatures": [
+        "systems:drops",
+        "generators:quantumProcessor",
+        "resources:quantumFlux"
+      ]
+    },
+    {
+      "tier": 2,
+      "codeName": "transcendent",
+      "displayName": "Transcendent Realm",
+      "difficultyProfile": "tier2",
+      "ascensionRequirements": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "prestigeCount", "min": 5 },
+          { "type": "lifetimeResourcesGenerated", "resource": "timeShards", "min": 1000000000 },
+          { "type": "lifetimeGeneratorPurchases", "min": 500 }
+        ]
+      },
+      "onAscend": {
+        "clearCurrency": true,
+        "clearGeneratorQuantities": true,
+        "keepGeneratorUnlocks": true,
+        "clearUpgrades": false,
+        "clearInventory": false,
+        "clearArtifacts": false
+      },
+      "unlockedFeatures": ["systems:randomEvents", "prestigeShop:tier2"]
+    },
+    {
+      "tier": 3,
+      "codeName": "cosmic",
+      "displayName": "Cosmic Realm",
+      "difficultyProfile": "tier3",
+      "ascensionRequirements": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "prestigeCount", "min": 10 },
+          { "type": "lifetimeResourcesGenerated", "resource": "timeShards", "min": 1000000000000 },
+          { "type": "lifetimeGeneratorPurchases", "min": 2000 }
+        ]
+      },
+      "onAscend": {
+        "clearCurrency": true,
+        "clearGeneratorQuantities": true,
+        "keepGeneratorUnlocks": true,
+        "clearUpgrades": false,
+        "clearInventory": false,
+        "clearArtifacts": false
+      },
+      "unlockedFeatures": ["systems:allGenerators"]
+    }
+  ]
+}

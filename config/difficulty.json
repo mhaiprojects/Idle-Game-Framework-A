@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "tier0": { "costMultiplier": 1.0, "primaryCurrencyMultiplier": 1.0, "offlineEfficiency": 1.0 },
+    "tier1": { "costMultiplier": 1.15, "primaryCurrencyMultiplier": 0.98, "offlineEfficiency": 0.95 },
+    "tier2": { "costMultiplier": 1.30, "primaryCurrencyMultiplier": 0.95, "offlineEfficiency": 0.90 },
+    "tier3": { "costMultiplier": 1.50, "primaryCurrencyMultiplier": 0.90, "offlineEfficiency": 0.85 }
+  },
+  "stacking": "multiplicative",
+  "prestigeDifficultyPerCount": {
+    "costIncreasePerPrestige": 0.02,
+    "primaryCurrencyDecreasePerPrestige": 0.01
+  }
+}

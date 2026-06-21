@@ -1,0 +1,1014 @@
+// Generated UI bundle for file:// support
+(function () {
+window.AFK_UI = window.AFK_UI || {};
+const AFK_UI = window.AFK_UI;
+
+// --- js/ui/components/Toast.vue.js ---
+AFK_UI.Toast = {
+  name: 'Toast',
+  props: { toasts: Array },
+  template: `
+    <div class="toast-container">
+      <div v-for="t in toasts" :key="t.id" class="toast animate__animated animate__fadeInDown">{{ t.message }}</div>
+    </div>
+  `
+};
+
+// --- js/ui/components/Tooltip.vue.js ---
+AFK_UI.Tooltip = {
+  name: 'Tooltip',
+  props: { text: String, visible: Boolean },
+  template: `
+    <div v-if="visible && text" class="tooltip-popup" style="position:absolute;background:var(--color-bg-card);border:1px solid var(--color-primary);padding:0.5rem;border-radius:6px;font-size:0.75rem;z-index:150;max-width:200px;">{{ text }}</div>
+  `
+};
+
+// --- js/ui/components/EventBanner.vue.js ---
+AFK_UI.EventBanner = {
+  name: 'EventBanner',
+  props: { events: Array },
+  template: `
+    <div v-if="events.length" class="event-banner animate__animated animate__fadeInDown">
+      <div v-for="evt in events" :key="evt.codeName" class="event-banner-item">
+        <span>{{ evt.icon }}</span>
+        <span>{{ evt.displayName }}</span>
+        <span class="event-timer">{{ Math.ceil(evt.remainingSeconds) }}s</span>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/components/UnlockModal.vue.js ---
+const UnlockRequirementsList = AFK_UI.UnlockRequirementsList;
+
+AFK_UI.UnlockModal = {
+  name: 'UnlockModal',
+  components: { UnlockRequirementsList },
+  props: { info: Object },
+  emits: ['close'],
+  template: `
+    <div class="modal-overlay" @click.self="$emit('close')">
+      <div class="modal animate__animated animate__fadeIn">
+        <h3>🔒 {{ info.title }}</h3>
+        <UnlockRequirementsList :requirements="info.requirements" />
+        <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">OK</button>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/components/InfoModal.vue.js ---
+AFK_UI.InfoModal = {
+  name: 'InfoModal',
+  props: { info: Object },
+  emits: ['close'],
+  template: `
+    <div class="modal-overlay" @click.self="$emit('close')">
+      <div class="modal info-modal animate__animated animate__fadeIn">
+        <div class="info-modal-header">
+          <span v-if="info.icon" class="card-icon">{{ info.icon }}</span>
+          <h3>{{ info.title }}</h3>
+        </div>
+        <div v-for="(section, i) in info.sections" :key="i" class="info-section">
+          <h4>{{ section.heading }}</h4>
+          <p>{{ section.body }}</p>
+        </div>
+        <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">Close</button>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/components/UnlockRequirementsList.vue.js ---
+AFK_UI.UnlockRequirementsList = {
+  name: 'UnlockRequirementsList',
+  props: {
+    requirements: { type: Array, default: () => [] },
+    heading: { type: String, default: 'Unlock requirements:' }
+  },
+  template: `
+    <div v-if="requirements.length" class="unlock-requirements-inline">
+      <p class="unlock-heading">{{ heading }}</p>
+      <div v-for="(req, i) in requirements" :key="i" class="unlock-req-row">
+        <span class="unlock-req-icon">{{ req.icon }}</span>
+        <div style="flex:1">
+          <div :style="{ color: req.met ? 'var(--color-success)' : 'var(--color-text)' }">
+            {{ req.met ? '✓' : '✗' }} {{ req.label }}
+          </div>
+          <div v-if="req.progress != null && !req.met" class="milestone-bar" style="margin-top:0.25rem">
+            <div class="milestone-fill" :style="{ width: Math.round(req.progress * 100) + '%' }"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/components/MoreInfoButton.vue.js ---
+AFK_UI.MoreInfoButton = {
+  name: 'MoreInfoButton',
+  emits: ['click'],
+  template: `
+    <button type="button" class="more-info-btn" title="More info" aria-label="More info" @click.stop="$emit('click')">!</button>
+  `
+};
+
+// --- js/ui/components/TapButton.vue.js ---
+AFK_UI.TapButton = {
+  name: 'TapButton',
+  props: { gain: Number, gainFormatted: String, primaryIcon: String },
+  emits: ['tap'],
+  methods: {
+    onTap(e) {
+      this.$emit('tap');
+      e.target.classList.add('animate__animated', 'animate__pulse');
+      setTimeout(() => e.target.classList.remove('animate__animated', 'animate__pulse'), 500);
+    }
+  },
+  template: `
+    <button class="tap-btn" @click="onTap" :title="'Tap for ' + gainFormatted">
+      <span>{{ primaryIcon || '⏱️' }}</span>
+      <small>+{{ gainFormatted }}</small>
+    </button>
+  `
+};
+
+// --- js/ui/components/SkillSlot.vue.js ---
+AFK_UI.SkillSlot = {
+  name: 'SkillSlot',
+  props: { skill: Object },
+  emits: ['activate'],
+  computed: {
+    disabled() { return this.skill.cooldownRemaining > 0; },
+    cooldownText() { return Math.ceil(this.skill.cooldownRemaining) + 's'; }
+  },
+  template: `
+    <div class="skill-slot" :class="{ disabled }" @click="!disabled && $emit('activate', skill.codeName)" :title="skill.displayName">
+      <span>{{ skill.icon }}</span>
+      <div v-if="disabled" class="cooldown-overlay">{{ cooldownText }}</div>
+    </div>
+  `
+};
+
+// --- js/ui/components/BoostSlot.vue.js ---
+AFK_UI.BoostSlot = {
+  name: 'BoostSlot',
+  props: { boost: Object },
+  emits: ['use'],
+  template: `
+    <div class="boost-slot" :class="{ disabled: boost.quantity <= 0 }" @click="boost.quantity > 0 && $emit('use', boost.codeName)" :title="boost.displayName">
+      <span>{{ boost.icon }}</span>
+      <span class="slot-qty">{{ boost.quantity }}</span>
+    </div>
+  `
+};
+
+// --- js/ui/components/PurchaseMultiplier.vue.js ---
+AFK_UI.PurchaseMultiplier = {
+  name: 'PurchaseMultiplier',
+  props: { options: Array, active: [Number, String] },
+  emits: ['change'],
+  template: `
+    <div class="multiplier-bar">
+      <button v-for="opt in options" :key="opt"
+        class="multiplier-btn" :class="{ active: active === opt }"
+        @click="$emit('change', opt)">{{ opt }}</button>
+    </div>
+  `
+};
+
+// --- js/ui/ResourceBar.vue.js ---
+AFK_UI.ResourceBar = {
+  name: 'ResourceBar',
+  props: {
+    resources: Array,
+    primaryCurrencyRate: String,
+    primaryIcon: String,
+    deltas: Array,
+    getResourceLabel: Function,
+    formatNumber: Function
+  },
+  methods: {
+    deltaLabel(d) {
+      const label = this.getResourceLabel ? this.getResourceLabel(d.resource) : d.resource;
+      const sign = d.amount >= 0 ? '+' : '';
+      const amt = this.formatNumber ? this.formatNumber(Math.abs(d.amount)) : Math.abs(d.amount);
+      return `${sign}${amt} ${label}`;
+    }
+  },
+  template: `
+    <div class="resource-bar">
+      <div v-for="r in resources" :key="r.codeName"
+        class="resource-item" :class="{ primary: r.isPrimary }" style="position:relative">
+        <span>{{ r.icon }}</span>
+        <span>{{ r.formatted }}</span>
+        <span v-if="r.isPrimary && primaryCurrencyRate" style="font-size:0.7rem;color:var(--color-muted)">(+{{ primaryCurrencyRate }}/s)</span>
+        <span v-for="d in deltas.filter(x => x.resource === r.codeName)" :key="d.id"
+          class="resource-delta" :class="d.amount >= 0 ? 'positive' : 'negative'">
+          {{ deltaLabel(d) }}
+        </span>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/GeneratorPanel.vue.js ---
+const PurchaseMultiplier = AFK_UI.PurchaseMultiplier;
+const MoreInfoButton = AFK_UI.MoreInfoButton;
+
+AFK_UI.GeneratorPanel = {
+  name: 'GeneratorPanel',
+  components: { PurchaseMultiplier, UnlockRequirementsList, MoreInfoButton },
+  props: {
+    generators: Array,
+    multiplier: [Number, String],
+    multiplierOptions: Array,
+    formatNumber: Function,
+    formatCostEntries: Function,
+    primaryCurrencyLabel: { type: String, default: 'Primary currency' }
+  },
+  emits: ['buy', 'multiplier-change', 'more-info'],
+  methods: {
+    buyLabel(gen) {
+      if (gen.buyQuantity > 1) return `Buy ×${gen.buyQuantity}`;
+      return 'Buy';
+    }
+  },
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">⚙️ Generators</h2>
+      <PurchaseMultiplier :options="multiplierOptions" :active="multiplier" @change="$emit('multiplier-change', $event)" />
+      <div v-for="gen in generators" :key="gen.codeName" class="card">
+        <div class="card-header">
+          <span class="card-icon">{{ gen.icon }}</span>
+          <span class="card-name">{{ gen.displayName }}</span>
+          <span class="card-owned">×{{ gen.owned }}</span>
+          <MoreInfoButton @click="$emit('more-info', 'generator', gen.codeName)" />
+        </div>
+        <p style="font-size:0.75rem;color:var(--color-muted)">{{ gen.description }}</p>
+        <div v-if="gen.isUnlocked">
+          <div style="font-size:0.8rem;margin-top:0.35rem">
+            {{ primaryCurrencyLabel }}: {{ formatNumber(gen.primaryCurrencyRate) }}/s
+            <span v-if="gen.primaryCurrencyPercent > 0" class="efficiency-tag">{{ gen.primaryCurrencyPercent.toFixed(1) }}%</span>
+          </div>
+          <div class="card-actions">
+            <span style="font-size:0.75rem;display:flex;align-items:center;gap:0.25rem;flex-wrap:wrap">
+              Cost:
+              <span v-for="(entry, i) in formatCostEntries(gen.nextCost)" :key="entry.code">
+                <span v-if="i"> · </span>{{ entry.formattedAmount }} {{ entry.icon }} {{ entry.name }}
+              </span>
+            </span>
+            <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
+          </div>
+        </div>
+        <UnlockRequirementsList v-else :requirements="gen.unlockRequirements" />
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/UpgradePanel.vue.js ---
+
+AFK_UI.UpgradePanel = {
+  name: 'UpgradePanel',
+  props: {
+    upgrades: Array,
+    formatNumber: Function,
+    getResourceMeta: Function,
+    bestUpgradeCode: String,
+    primaryCurrencyLabel: { type: String, default: 'Primary currency' }
+  },
+  emits: ['buy', 'more-info'],
+  methods: {
+    resourceMeta(code) {
+      return this.getResourceMeta ? this.getResourceMeta(code) : { icon: '', name: code };
+    }
+  },
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">⬆️ Upgrades</h2>
+      <div v-for="upg in upgrades" :key="upg.codeName" class="card"
+        :class="{ 'best-upgrade': upg.codeName === bestUpgradeCode && upg.canBuy }">
+        <div class="card-header">
+          <span class="card-icon">{{ upg.icon }}</span>
+          <span class="card-name">{{ upg.displayName }}</span>
+          <span class="card-owned" v-if="upg.maxPurchases">{{ upg.purchaseCount }}/{{ upg.maxPurchases }}</span>
+          <span class="card-owned" v-else>Lv {{ upg.purchaseCount }}</span>
+          <span v-if="upg.codeName === bestUpgradeCode && upg.canBuy" class="efficiency-tag">Best</span>
+          <MoreInfoButton @click="$emit('more-info', 'upgrade', upg.codeName)" />
+        </div>
+        <p style="font-size:0.75rem;color:var(--color-muted)">{{ upg.description }}</p>
+        <div v-if="upg.unlocked && !upg.maxed" class="card-actions">
+          <span style="font-size:0.75rem">
+            Cost: {{ formatNumber(upg.cost) }} {{ resourceMeta(upg.costResource).icon }} {{ resourceMeta(upg.costResource).name }}
+          </span>
+          <button class="btn btn-primary" :disabled="!upg.canBuy" @click="$emit('buy', upg.codeName)">Buy</button>
+        </div>
+        <UnlockRequirementsList v-else-if="!upg.unlocked" :requirements="upg.unlockRequirements" />
+        <div v-else class="locked-conditions">Max level reached</div>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/CharacterPanel.vue.js ---
+
+AFK_UI.CharacterPanel = {
+  name: 'CharacterPanel',
+  props: {
+    characters: Array,
+    maxActive: Number,
+    activeCount: Number,
+    inventory: Object,
+    equipableItems: Array,
+    equipmentSlots: Array
+  },
+  emits: ['toggle', 'equip', 'unequip', 'more-info'],
+  methods: {
+    equippedItem(char, slot) {
+      const code = char.equipment?.[slot];
+      if (!code) return null;
+      return this.equipableItems.find(i => i.codeName === code) || { codeName: code, displayName: code, icon: '❓' };
+    },
+    ownedForSlot(slot) {
+      return this.equipableItems.filter(i =>
+        i.slot === slot && (this.inventory[i.codeName] || 0) > 0
+      );
+    },
+    onEquipSelect(char, slot, event) {
+      const code = event.target.value;
+      if (code) {
+        this.$emit('equip', char.codeName, slot, code);
+        event.target.value = '';
+      }
+    },
+    slotLabel(slot) {
+      return slot.charAt(0).toUpperCase() + slot.slice(1);
+    }
+  },
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">👤 Characters</h2>
+      <p class="hint-text">Active: {{ activeCount }}/{{ maxActive }}</p>
+      <div v-for="char in characters" :key="char.codeName" class="card">
+        <div class="card-header">
+          <span class="card-icon">{{ char.icon }}</span>
+          <span class="card-name">{{ char.displayName }}</span>
+          <span v-if="char.activated" style="color:var(--color-success)">● Active</span>
+          <MoreInfoButton @click="$emit('more-info', 'character', char.codeName)" />
+        </div>
+        <p style="font-size:0.75rem;color:var(--color-muted)">{{ char.description }}</p>
+        <div v-if="char.unlocked">
+          <div class="card-actions">
+            <button class="btn" :class="char.activated ? 'btn-ghost' : 'btn-primary'" @click="$emit('toggle', char.codeName)">
+              {{ char.activated ? 'Deactivate' : 'Activate' }}
+            </button>
+          </div>
+          <div class="equipment-section">
+            <h4 class="equipment-heading">Equipment</h4>
+            <div v-for="slot in equipmentSlots" :key="slot" class="equip-slot-row">
+              <span class="slot-label">{{ slotLabel(slot) }}</span>
+              <template v-if="equippedItem(char, slot)">
+                <span class="equipped-item">{{ equippedItem(char, slot).icon }} {{ equippedItem(char, slot).displayName }}</span>
+                <button class="btn btn-ghost btn-sm" @click="$emit('unequip', char.codeName, slot)">Unequip</button>
+              </template>
+              <template v-else>
+                <select class="equip-select" @change="onEquipSelect(char, slot, $event)">
+                  <option value="">— Equip item —</option>
+                  <option v-for="item in ownedForSlot(slot)" :key="item.codeName" :value="item.codeName">
+                    {{ item.icon }} {{ item.displayName }} (×{{ inventory[item.codeName] }})
+                  </option>
+                </select>
+              </template>
+            </div>
+          </div>
+        </div>
+        <UnlockRequirementsList v-else :requirements="char.unlockRequirements" />
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/InventoryPanel.vue.js ---
+
+AFK_UI.InventoryPanel = {
+  name: 'InventoryPanel',
+  props: {
+    items: Array,
+    inventory: Object,
+    characters: Array,
+    equipableItems: Array,
+    equipmentSlots: Array
+  },
+  emits: ['use-boost', 'equip', 'unequip', 'more-info'],
+  methods: {
+    slotLabel(slot) {
+      return slot.charAt(0).toUpperCase() + slot.slice(1);
+    },
+    equippedOn(code) {
+      return this.characters.filter(c =>
+        c.unlocked && Object.values(c.equipment || {}).includes(code)
+      );
+    }
+  },
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">🎒 Inventory</h2>
+
+      <h3 class="section-subtitle">Consumables</h3>
+      <div class="inventory-grid">
+        <div v-for="item in items.filter(i => i.type === 'consumable')" :key="item.codeName" class="inv-item">
+          <div class="inv-item-top">
+            <div class="icon">{{ item.icon }}</div>
+            <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
+          </div>
+          <div>{{ item.displayName }}</div>
+          <div style="font-weight:700">{{ inventory[item.codeName] || 0 }}</div>
+          <button v-if="item.actionBarEligible && (inventory[item.codeName] || 0) > 0"
+            class="btn btn-primary btn-sm" style="margin-top:0.35rem"
+            @click="$emit('use-boost', item.codeName)">Use</button>
+        </div>
+      </div>
+      <div v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text">No consumables yet.</div>
+
+      <h3 class="section-subtitle">Equipment</h3>
+      <p class="hint-text">Equip items on the Characters tab, or use the controls below.</p>
+      <div v-for="item in equipableItems" :key="item.codeName" class="card">
+        <div class="card-header">
+          <span class="card-icon">{{ item.icon }}</span>
+          <span class="card-name">{{ item.displayName }}</span>
+          <span class="card-owned">×{{ inventory[item.codeName] || 0 }}</span>
+          <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
+        </div>
+        <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }} · {{ slotLabel(item.slot) }}</p>
+        <div v-if="equippedOn(item.codeName).length" style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-accent)">
+          Equipped on: {{ equippedOn(item.codeName).map(c => c.displayName).join(', ') }}
+        </div>
+        <div v-if="characters.filter(c => c.unlocked).length" class="equip-assign-list">
+          <div v-for="char in characters.filter(c => c.unlocked)" :key="char.codeName" class="equip-slot-row">
+            <span>{{ char.icon }} {{ char.displayName }}</span>
+            <button v-if="char.equipment?.[item.slot] === item.codeName" class="btn btn-ghost btn-sm"
+              @click="$emit('unequip', char.codeName, item.slot)">Unequip</button>
+            <button v-else-if="(inventory[item.codeName] || 0) > 0" class="btn btn-primary btn-sm"
+              @click="$emit('equip', char.codeName, item.slot, item.codeName)">Equip</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/ArtifactPanel.vue.js ---
+
+AFK_UI.ArtifactPanel = {
+  name: 'ArtifactPanel',
+  props: { artifacts: Array },
+  emits: ['more-info'],
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">🔮 Artifacts</h2>
+      <p class="hint-text">Permanent collection bonuses — kept through prestige and ascension.</p>
+      <div v-for="art in artifacts" :key="art.codeName" class="card" :class="{ acquired: art.acquired }">
+        <div class="card-header">
+          <span class="card-icon">{{ art.icon }}</span>
+          <span class="card-name">{{ art.acquired ? art.displayName : '???' }}</span>
+          <span v-if="art.acquired" class="efficiency-tag" style="color:var(--color-success)">✓ Collected</span>
+          <span v-else style="font-size:0.7rem;color:var(--color-muted)">{{ art.rarity }}</span>
+          <MoreInfoButton v-if="art.acquired" @click="$emit('more-info', 'artifact', art.codeName)" />
+        </div>
+        <p v-if="art.acquired" style="font-size:0.75rem;color:var(--color-muted)">{{ art.description }}</p>
+        <p v-else style="font-size:0.75rem;color:var(--color-muted)">Discover this artifact through play.</p>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/AchievementPanel.vue.js ---
+AFK_UI.AchievementPanel = {
+  name: 'AchievementPanel',
+  props: { achievements: Array },
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">🏆 Achievements</h2>
+      <div v-for="ach in achievements" :key="ach.codeName" class="card achievement-badge" :class="{ unlocked: ach.unlocked, 'animate__animated animate__bounceIn': ach.unlocked }">
+        <div class="card-header">
+          <span class="card-icon">{{ ach.icon }}</span>
+          <span class="card-name">{{ ach.displayName }}</span>
+          <span v-if="ach.unlocked">✓</span>
+        </div>
+        <p style="font-size:0.75rem;color:var(--color-muted)">{{ ach.description }}</p>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/AscensionPanel.vue.js ---
+AFK_UI.AscensionPanel = {
+  name: 'AscensionPanel',
+  props: {
+    tierName: String, currentTier: Number, prestigeCount: Number,
+    lifetimePrestiges: Number, projectedGain: Number, canPrestige: Boolean,
+    canAscend: Boolean, nextTierName: String, milestones: Array,
+    prestigeLost: Array, prestigeKept: Array, ascendLost: Array, ascendKept: Array,
+    featurePreview: Array, prestigeCurrency: Number, formatNumber: Function,
+    maxTierReached: Boolean, difficulty: Object, primaryCurrencyLabel: String,
+    prestigeBonuses: Array, canBuyPrestigeShop: Boolean
+  },
+  emits: ['prestige', 'ascend', 'buy-bonus'],
+  data() { return { showPrestigeModal: false, showAscendModal: false }; },
+  methods: {
+    bonusCost(bonus) {
+      const level = bonus.level || 0;
+      return bonus.cost * (level + 1);
+    }
+  },
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">🔄 Ascension</h2>
+      <div class="stats-grid" style="margin-bottom:1rem">
+        <div class="stat-box">Tier: {{ tierName }} ({{ currentTier }})</div>
+        <div class="stat-box">Prestiges: {{ prestigeCount }}</div>
+        <div class="stat-box">Lifetime: {{ lifetimePrestiges }}</div>
+        <div class="stat-box">Shards: {{ formatNumber(prestigeCurrency) }}</div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Prestige (Soft Reset)</h3>
+        <p style="font-size:0.8rem;margin-bottom:0.5rem">Gain: +{{ projectedGain }} Prestige Shards</p>
+        <p style="font-size:0.75rem;color:var(--color-muted)">Cost mult: {{ difficulty?.costMultiplier?.toFixed(2) }}× | {{ primaryCurrencyLabel }}: {{ difficulty?.primaryCurrencyMultiplier?.toFixed(2) }}×</p>
+        <button class="btn btn-accent" style="margin-top:0.5rem" :disabled="!canPrestige" @click="showPrestigeModal = true">Prestige</button>
+      </div>
+
+      <div class="card" style="margin-top:0.5rem">
+        <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Prestige Shop</h3>
+        <div v-for="bonus in prestigeBonuses" :key="bonus.codeName" class="card" style="margin-top:0.35rem;padding:0.5rem">
+          <div class="card-header">
+            <span class="card-icon">{{ bonus.icon }}</span>
+            <span class="card-name">{{ bonus.displayName }}</span>
+            <span class="card-owned">Lv {{ bonus.level }}/{{ bonus.maxLevel }}</span>
+          </div>
+          <p style="font-size:0.75rem;color:var(--color-muted)">{{ bonus.description }}</p>
+          <div class="card-actions">
+            <span style="font-size:0.75rem">Cost: {{ bonusCost(bonus) }} shards</span>
+            <button class="btn btn-primary btn-sm" :disabled="!bonus.canBuy" @click="$emit('buy-bonus', bonus.codeName)">Buy</button>
+          </div>
+          <div v-if="bonus.locked" class="locked-conditions" style="margin-top:0.25rem">🔒 {{ bonus.lockReason }}</div>
+        </div>
+      </div>
+
+      <div class="card" v-if="!maxTierReached" style="margin-top:0.5rem">
+        <h3 style="font-size:0.9rem;margin-bottom:0.5rem">Ascend to {{ nextTierName }}</h3>
+        <div v-for="(m, i) in milestones" :key="i" style="font-size:0.8rem;margin-bottom:0.35rem">
+          <div>{{ m.label }} — {{ m.met ? '✓' : Math.round(m.progress * 100) + '%' }}</div>
+          <div class="milestone-bar"><div class="milestone-fill" :style="{ width: (m.progress * 100) + '%' }"></div></div>
+        </div>
+        <div v-if="featurePreview.length" style="font-size:0.75rem;margin-top:0.5rem;color:var(--color-accent)">
+          Unlocks: {{ featurePreview.join(', ') }}
+        </div>
+        <button class="btn btn-primary" style="margin-top:0.5rem" :disabled="!canAscend" @click="showAscendModal = true">Ascend</button>
+      </div>
+
+      <div v-if="showPrestigeModal" class="modal-overlay" @click.self="showPrestigeModal = false">
+        <div class="modal animate__animated animate__fadeIn">
+          <h3>Confirm Prestige</h3>
+          <div class="modal-columns">
+            <div class="lost"><h4>LOST</h4><div v-for="l in prestigeLost" :key="l">• {{ l }}</div></div>
+            <div class="kept"><h4>KEPT</h4><div v-for="k in prestigeKept" :key="k">• {{ k }}</div></div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" @click="showPrestigeModal = false">Cancel</button>
+            <button class="btn btn-accent" @click="$emit('prestige'); showPrestigeModal = false">Prestige (+{{ projectedGain }})</button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="showAscendModal" class="modal-overlay" @click.self="showAscendModal = false">
+        <div class="modal animate__animated animate__fadeIn">
+          <h3>Ascend to {{ nextTierName }}</h3>
+          <p style="color:var(--color-danger);font-size:0.85rem;margin-bottom:0.5rem">This cannot be undone.</p>
+          <div class="modal-columns">
+            <div class="lost"><h4>LOST</h4><div v-for="l in ascendLost" :key="l">• {{ l }}</div></div>
+            <div class="kept"><h4>KEPT</h4><div v-for="k in ascendKept" :key="k">• {{ k }}</div></div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" @click="showAscendModal = false">Cancel</button>
+            <button class="btn btn-danger" @click="$emit('ascend'); showAscendModal = false">Ascend</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/SettingsPanel.vue.js ---
+AFK_UI.SettingsPanel = {
+  name: 'SettingsPanel',
+  props: { settings: Object },
+  emits: ['update-setting', 'export-save', 'import-save', 'reset-game'],
+  methods: {
+    onImport(e) {
+      const file = e.target.files[0];
+      if (file) this.$emit('import-save', file);
+    }
+  },
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">🛠️ Settings</h2>
+      <div class="settings-row">
+        <span>Sidebar Position</span>
+        <div class="toggle-group">
+          <button class="btn btn-ghost" :class="{ 'btn-primary': settings.sidebarPosition === 'left' }" @click="$emit('update-setting', 'sidebarPosition', 'left')">Left</button>
+          <button class="btn btn-ghost" :class="{ 'btn-primary': settings.sidebarPosition === 'right' }" @click="$emit('update-setting', 'sidebarPosition', 'right')">Right</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <span>Sound</span>
+        <button class="btn btn-ghost" @click="$emit('update-setting', 'soundEnabled', !settings.soundEnabled)">{{ settings.soundEnabled ? 'On' : 'Off' }}</button>
+      </div>
+      <div class="settings-row">
+        <span>Notifications</span>
+        <button class="btn btn-ghost" @click="$emit('update-setting', 'notificationsEnabled', !settings.notificationsEnabled)">{{ settings.notificationsEnabled ? 'On' : 'Off' }}</button>
+      </div>
+      <div class="settings-row">
+        <span>Tutorial</span>
+        <button class="btn btn-ghost" @click="$emit('update-setting', 'showTutorial', !settings.showTutorial)">{{ settings.showTutorial ? 'On' : 'Off' }}</button>
+      </div>
+      <div style="margin-top:1rem;display:flex;flex-direction:column;gap:0.5rem">
+        <button class="btn btn-ghost" @click="$emit('export-save')">Export Save</button>
+        <label class="btn btn-ghost" style="text-align:center;cursor:pointer">
+          Import Save
+          <input type="file" accept=".json" style="display:none" @change="onImport" />
+        </label>
+        <button class="btn btn-danger" @click="$emit('reset-game')">Reset Game</button>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/StatsPanel.vue.js ---
+AFK_UI.StatsPanel = {
+  name: 'StatsPanel',
+  props: {
+    stats: Object,
+    primaryBreakdown: Object,
+    primaryCurrencyLabel: String,
+    formatNumber: Function,
+    activeEvents: Array,
+    getGeneratorLabel: Function
+  },
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">📊 Stats</h2>
+      <div class="stats-grid">
+        <div class="stat-box">Total Taps: {{ stats.totalTaps }}</div>
+        <div class="stat-box">Play Time: {{ Math.floor(stats.playTimeSeconds) }}s</div>
+        <div class="stat-box">Peak {{ primaryCurrencyLabel }}: {{ formatNumber(stats.peakPrimaryCurrencyRate) }}/s</div>
+        <div class="stat-box">Current {{ primaryCurrencyLabel }}: {{ formatNumber(primaryBreakdown.total) }}/s</div>
+      </div>
+      <h3 style="font-size:0.85rem;margin:1rem 0 0.5rem;color:var(--color-muted)">{{ primaryCurrencyLabel }} by Generator</h3>
+      <div v-for="item in primaryBreakdown.breakdown" :key="item.generator" class="card" style="padding:0.5rem">
+        <div style="display:flex;justify-content:space-between;font-size:0.8rem">
+          <span>{{ getGeneratorLabel ? getGeneratorLabel(item.generator) : item.generator }}</span>
+          <span>{{ formatNumber(item.amount) }}/s ({{ item.percent.toFixed(1) }}%)</span>
+        </div>
+      </div>
+      <div v-if="activeEvents.length" style="margin-top:1rem">
+        <h3 style="font-size:0.85rem;margin-bottom:0.5rem;color:var(--color-muted)">Active Events</h3>
+        <div v-for="evt in activeEvents" :key="evt.codeName" class="card">
+          {{ evt.icon }} {{ evt.displayName }}
+        </div>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/ProgressPanel.vue.js ---
+AFK_UI.ProgressPanel = {
+  name: 'ProgressPanel',
+  props: { progress: Object },
+  template: `
+    <div class="panel">
+      <h2 class="panel-title">🔧 Progress Tracker</h2>
+      <div style="font-size:1.2rem;font-weight:700;margin-bottom:1rem;color:var(--color-accent)">
+        {{ progress.percentage }}% Complete ({{ progress.passed }}/{{ progress.total }})
+      </div>
+      <div v-for="(items, section) in progress.sections" :key="section" class="progress-section">
+        <h4>{{ section }}</h4>
+        <div v-for="item in items" :key="item.id" class="progress-item" :class="item.passed ? 'pass' : 'fail'">
+          <span>{{ item.passed ? '✓' : '✗' }}</span>
+          <span>{{ item.label }}</span>
+        </div>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/ActionBar.vue.js ---
+const TapButton = AFK_UI.TapButton;
+const SkillSlot = AFK_UI.SkillSlot;
+const BoostSlot = AFK_UI.BoostSlot;
+
+AFK_UI.ActionBar = {
+  name: 'ActionBar',
+  components: { TapButton, SkillSlot, BoostSlot },
+  props: { tapGainFormatted: String, primaryIcon: String, skills: Array, boosts: Array },
+  emits: ['tap', 'activate-skill', 'use-boost'],
+  template: `
+    <div class="action-bar">
+      <TapButton :gain-formatted="tapGainFormatted" :primary-icon="primaryIcon" @tap="$emit('tap')" />
+      <div class="action-bar-center">
+        <SkillSlot v-for="skill in skills" :key="skill.codeName" :skill="skill" @activate="$emit('activate-skill', $event)" />
+        <BoostSlot v-for="boost in boosts" :key="boost.codeName" :boost="boost" @use="$emit('use-boost', $event)" />
+      </div>
+      <TapButton :gain-formatted="tapGainFormatted" :primary-icon="primaryIcon" @tap="$emit('tap')" />
+    </div>
+  `
+};
+
+// --- js/ui/App.vue.js ---
+const ResourceBar = AFK_UI.ResourceBar;
+const GeneratorPanel = AFK_UI.GeneratorPanel;
+const UpgradePanel = AFK_UI.UpgradePanel;
+const CharacterPanel = AFK_UI.CharacterPanel;
+const InventoryPanel = AFK_UI.InventoryPanel;
+const ArtifactPanel = AFK_UI.ArtifactPanel;
+const AchievementPanel = AFK_UI.AchievementPanel;
+const AscensionPanel = AFK_UI.AscensionPanel;
+const SettingsPanel = AFK_UI.SettingsPanel;
+const StatsPanel = AFK_UI.StatsPanel;
+const ProgressPanel = AFK_UI.ProgressPanel;
+const ActionBar = AFK_UI.ActionBar;
+const Toast = AFK_UI.Toast;
+const EventBanner = AFK_UI.EventBanner;
+const UnlockModal = AFK_UI.UnlockModal;
+const InfoModal = AFK_UI.InfoModal;
+
+AFK_UI.App = {
+  name: 'App',
+  components: {
+    ResourceBar, GeneratorPanel, UpgradePanel, CharacterPanel,
+    InventoryPanel, ArtifactPanel, AchievementPanel, AscensionPanel,
+    SettingsPanel, StatsPanel, ProgressPanel, ActionBar, Toast, EventBanner,
+    UnlockModal, InfoModal
+  },
+  props: {
+    game: Object
+  },
+  data() {
+    return { unlockModal: null, infoModal: null };
+  },
+  computed: {
+    state() { return this.game.state; },
+    config() { return this.game.config; },
+    formatNumber() {
+      return (v) => this.game.formatNumber(v);
+    },
+    sidebarClass() {
+      return this.state.settings.sidebarPosition === 'left' ? 'sidebar-left' : 'sidebar-right';
+    },
+    allTabs() {
+      return [
+        { id: 'generators', icon: '⚙️', label: 'Generators', feature: 'tab:generators' },
+        { id: 'upgrades', icon: '⬆️', label: 'Upgrades', feature: 'tab:upgrades' },
+        { id: 'characters', icon: '👤', label: 'Characters', feature: 'tab:characters' },
+        { id: 'inventory', icon: '🎒', label: 'Inventory', feature: 'tab:inventory' },
+        { id: 'artifacts', icon: '🔮', label: 'Artifacts', feature: 'tab:artifacts' },
+        { id: 'achievements', icon: '🏆', label: 'Achievements', feature: 'tab:achievements' },
+        { id: 'ascension', icon: '🔄', label: 'Ascension', feature: 'tab:ascension' },
+        { id: 'stats', icon: '📊', label: 'Stats', feature: 'tab:stats' },
+        { id: 'settings', icon: '🛠️', label: 'Settings', feature: 'tab:settings' },
+        { id: 'progress', icon: '🔧', label: 'Progress', devOnly: true }
+      ];
+    },
+    tabs() {
+      return this.allTabs.filter(t => !t.devOnly || this.state.settings.devMode);
+    },
+    resourceBarItems() {
+      return this.game.getResourceBarItems();
+    },
+    resourceDeltas() {
+      void this.game._reactiveTick;
+      return this.state.ui.resourceDeltas || [];
+    },
+    primaryCurrencyLabel() {
+      return this.game.getPrimaryCurrencyLabel();
+    },
+    primaryCurrencyRate() {
+      return this.game.getPrimaryCurrencyRateFormatted();
+    },
+    primaryBreakdown() {
+      return this.game.getPrimaryCurrencyBreakdown();
+    },
+    generators() {
+      return this.game.getGeneratorDisplay();
+    },
+    upgrades() {
+      return this.game.getUpgradeDisplay();
+    },
+    bestUpgradeCode() {
+      return this.state.ui.bestUpgradeCode;
+    },
+    characters() {
+      return this.game.getCharacterDisplay();
+    },
+    achievements() {
+      return this.game.getAchievementDisplay();
+    },
+    inventoryItems() {
+      return this.game.getInventoryDisplay();
+    },
+    equipableItems() {
+      return this.game.getEquipableItems();
+    },
+    equipmentSlots() {
+      return this.game.getEquipmentSlots();
+    },
+    artifacts() {
+      return this.game.getArtifactDisplay();
+    },
+    ascensionData() {
+      return this.game.getAscensionDisplay();
+    },
+    statsData() {
+      return this.game.getStatsDisplay();
+    },
+    progressData() {
+      return this.game.getProgress();
+    },
+    skills() {
+      return this.game.getSkillSlots();
+    },
+    boosts() {
+      return this.game.getBoostSlots();
+    },
+    tapGainFormatted() {
+      return this.formatNumber(this.game.getTapGain());
+    },
+    primaryIcon() {
+      return this.game.getPrimaryIcon();
+    },
+    eventBannerItems() {
+      return this.game.getEventBannerItems();
+    },
+    formulaInspector() {
+      return this.state.ui.formulaInspector;
+    },
+    offlineModal() {
+      return this.game.offlineModal;
+    }
+  },
+  methods: {
+    isTabUnlocked(tab) {
+      if (tab.devOnly) return this.state.settings.devMode;
+      if (!tab.feature) return true;
+      return this.game.isFeatureUnlocked(tab.feature);
+    },
+    showUnlockModal(tab) {
+      this.unlockModal = this.game.getFeatureUnlockInfo(tab.feature);
+      this.unlockModal.title = this.unlockModal.title || tab.label;
+    },
+    closeUnlockModal() {
+      this.unlockModal = null;
+    },
+    showInfoModal(type, codeName) {
+      const info = this.game.getEntityInfo(type, codeName);
+      if (info) this.infoModal = info;
+    },
+    closeInfoModal() {
+      this.infoModal = null;
+    },
+    onTabClick(tab) {
+      if (this.isTabUnlocked(tab)) {
+        this.game.setTab(tab.id);
+      } else {
+        this.showUnlockModal(tab);
+      }
+    },
+    onTabLockClick(tab, event) {
+      event.stopPropagation();
+      this.showUnlockModal(tab);
+    },
+    onMoreInfo(type, codeName) {
+      this.showInfoModal(type, codeName);
+    },
+    onTap() { this.game.onTap(); },
+    onBuyGenerator(code) { this.game.onBuyGenerator(code); },
+    onBuyUpgrade(code) { this.game.onBuyUpgrade(code); },
+    onMultiplierChange(val) { this.game.setPurchaseMultiplier(val); },
+    onToggleCharacter(code) { this.game.toggleCharacter(code); },
+    onActivateSkill(code) { this.game.activateSkill(code); },
+    onUseBoost(code) { this.game.useBoost(code); },
+    onEquip(char, slot, item) { this.game.equipItem(char, slot, item); },
+    onUnequip(char, slot) { this.game.unequipItem(char, slot); },
+    onPrestige() { this.game.performPrestige(); },
+    onAscend() { this.game.performAscend(); },
+    onBuyBonus(code) { this.game.buyPrestigeBonus(code); },
+    onUpdateSetting(key, val) { this.game.updateSetting(key, val); },
+    onExportSave() { this.game.exportSave(); },
+    onImportSave(file) { this.game.importSave(file); },
+    onResetGame() { this.game.resetGame(); },
+    dismissOffline() { this.game.dismissOfflineModal(); },
+    formatCostEntries(cost) {
+      return this.game.formatCostEntries(cost);
+    },
+    getResourceMeta(code) {
+      return this.game.getResourceMeta(code);
+    }
+  },
+  template: `
+    <div class="app-container" :class="sidebarClass">
+      <ResourceBar :resources="resourceBarItems" :primary-currency-rate="primaryCurrencyRate"
+        :primary-icon="primaryIcon" :deltas="resourceDeltas"
+        :get-resource-label="game.getResourceLabel.bind(game)" :format-number="formatNumber" />
+      <EventBanner :events="eventBannerItems" />
+      <div class="main-layout">
+        <div class="content-area">
+          <GeneratorPanel v-if="state.ui.activeTab === 'generators'"
+            :generators="generators" :multiplier="state.ui.purchaseMultiplier"
+            :multiplier-options="config.framework.ui.purchaseMultipliers"
+            :format-number="formatNumber"
+            :format-cost-entries="formatCostEntries"
+            :primary-currency-label="primaryCurrencyLabel"
+            @buy="onBuyGenerator" @multiplier-change="onMultiplierChange"
+            @more-info="onMoreInfo" />
+          <UpgradePanel v-if="state.ui.activeTab === 'upgrades'"
+            :upgrades="upgrades" :format-number="formatNumber"
+            :get-resource-meta="getResourceMeta"
+            :best-upgrade-code="bestUpgradeCode"
+            :primary-currency-label="primaryCurrencyLabel"
+            @buy="onBuyUpgrade" @more-info="onMoreInfo" />
+          <CharacterPanel v-if="state.ui.activeTab === 'characters'"
+            :characters="characters" :max-active="config.framework.characters.maxActive"
+            :active-count="game.getActiveCharacterCount()"
+            :inventory="state.inventory" :equipable-items="equipableItems"
+            :equipment-slots="equipmentSlots"
+            @toggle="onToggleCharacter" @equip="onEquip" @unequip="onUnequip"
+            @more-info="onMoreInfo" />
+          <InventoryPanel v-if="state.ui.activeTab === 'inventory'"
+            :items="inventoryItems" :inventory="state.inventory"
+            :characters="characters" :equipable-items="equipableItems"
+            :equipment-slots="equipmentSlots"
+            @use-boost="onUseBoost" @equip="onEquip" @unequip="onUnequip"
+            @more-info="onMoreInfo" />
+          <ArtifactPanel v-if="state.ui.activeTab === 'artifacts'" :artifacts="artifacts"
+            @more-info="onMoreInfo" />
+          <AchievementPanel v-if="state.ui.activeTab === 'achievements'" :achievements="achievements" />
+          <AscensionPanel v-if="state.ui.activeTab === 'ascension'" v-bind="ascensionData"
+            :format-number="formatNumber" :primary-currency-label="primaryCurrencyLabel"
+            @prestige="onPrestige" @ascend="onAscend" @buy-bonus="onBuyBonus" />
+          <StatsPanel v-if="state.ui.activeTab === 'stats'"
+            :stats="statsData" :primary-breakdown="primaryBreakdown"
+            :primary-currency-label="primaryCurrencyLabel"
+            :get-generator-label="game.getGeneratorLabel.bind(game)"
+            :format-number="formatNumber" :active-events="eventBannerItems" />
+          <SettingsPanel v-if="state.ui.activeTab === 'settings'"
+            :settings="state.settings" @update-setting="onUpdateSetting"
+            @export-save="onExportSave" @import-save="onImportSave" @reset-game="onResetGame" />
+          <ProgressPanel v-if="state.ui.activeTab === 'progress'" :progress="progressData" />
+          <div v-if="state.settings.devMode && state.ui.activeTab !== 'progress'" class="dev-tools panel">
+            <h3 class="panel-title">Dev Tools</h3>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.75rem">
+              <button v-for="s in config.framework.devTools.speedMultipliers" :key="s"
+                class="btn btn-ghost" @click="game.setSpeed(s)">{{ s }}×</button>
+              <button class="btn btn-ghost" @click="game.devAddResources()">+1000 Shards</button>
+              <button class="btn btn-ghost" @click="game.devForceEvent()">Force Event</button>
+              <button class="btn btn-ghost" @click="game.devExportState()">Log State</button>
+            </div>
+            <div v-if="formulaInspector" style="font-size:0.75rem;background:var(--color-bg-card);padding:0.5rem;border-radius:6px">
+              <strong>Formula Inspector</strong>
+              <div>Tap gain: {{ formatNumber(formulaInspector.tapGain) }}</div>
+              <div>{{ primaryCurrencyLabel }} rate: {{ formatNumber(formulaInspector.primaryRate) }}/s</div>
+              <div>Tap %: {{ formulaInspector.tapPercent }}</div>
+            </div>
+          </div>
+        </div>
+        <nav class="tab-sidebar">
+          <button v-for="tab in tabs" :key="tab.id"
+            class="tab-btn" :class="{ active: state.ui.activeTab === tab.id, locked: !isTabUnlocked(tab) }"
+            @click="onTabClick(tab)" :title="tab.label">
+            {{ tab.icon }}
+            <span v-if="!isTabUnlocked(tab)" class="tab-lock" @click="onTabLockClick(tab, $event)">🔒</span>
+          </button>
+        </nav>
+      </div>
+      <ActionBar :tap-gain-formatted="tapGainFormatted" :primary-icon="primaryIcon"
+        :skills="skills" :boosts="boosts"
+        @tap="onTap" @activate-skill="onActivateSkill" @use-boost="onUseBoost" />
+      <Toast :toasts="state.ui.toasts" />
+      <UnlockModal v-if="unlockModal" :info="unlockModal" @close="closeUnlockModal" />
+      <InfoModal v-if="infoModal" :info="infoModal" @close="closeInfoModal" />
+      <div v-if="offlineModal" class="modal-overlay" @click.self="dismissOffline">
+        <div class="modal animate__animated animate__fadeIn">
+          <h3>Welcome Back!</h3>
+          <p style="font-size:0.85rem;margin-bottom:0.5rem">You were away for {{ Math.floor(offlineModal.elapsed) }}s</p>
+          <div v-for="(amt, res) in offlineModal.gains" :key="res" style="font-size:0.8rem">
+            {{ game.getResourceMeta(res).icon }} {{ game.getResourceLabel(res) }}: +{{ formatNumber(amt) }}
+          </div>
+          <button class="btn btn-primary" style="margin-top:1rem" @click="dismissOffline">Collect</button>
+        </div>
+      </div>
+    </div>
+  `
+};
+
+}).call(typeof window !== "undefined" ? window : globalThis);

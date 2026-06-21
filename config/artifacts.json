@@ -1,0 +1,36 @@
+{
+  "artifacts": [
+    {
+      "codeName": "chronoLens",
+      "displayName": "Chrono Lens",
+      "description": "All generators +10% primary currency",
+      "icon": "🔮",
+      "rarity": "rare",
+      "effect": { "type": "globalMultiplier", "multiplier": 1.10 }
+    },
+    {
+      "codeName": "starCompass",
+      "displayName": "Star Compass",
+      "description": "Stellar generators +25% primary currency",
+      "icon": "🧭",
+      "rarity": "uncommon",
+      "effect": { "type": "categoryMultiplier", "category": "stellar", "multiplier": 1.25 }
+    },
+    {
+      "codeName": "voidHeart",
+      "displayName": "Void Heart",
+      "description": "All costs reduced by 5%",
+      "icon": "💜",
+      "rarity": "legendary",
+      "effect": { "type": "costReduction", "multiplier": 0.95 }
+    },
+    {
+      "codeName": "infinityGear",
+      "displayName": "Infinity Gear",
+      "description": "Click power doubled permanently",
+      "icon": "⚙️",
+      "rarity": "legendary",
+      "effect": { "type": "clickMultiplier", "multiplier": 2 }
+    }
+  ]
+}

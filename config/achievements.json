@@ -1,0 +1,68 @@
+{
+  "achievements": [
+    {
+      "codeName": "firstSteps",
+      "displayName": "First Steps",
+      "description": "Perform your first tap.",
+      "icon": "👣",
+      "requirement": { "type": "totalTaps", "amount": 1 },
+      "reward": { "type": "resourceBonus", "resource": "timeShards", "amount": 10 }
+    },
+    {
+      "codeName": "firstGenerator",
+      "displayName": "Time Keeper",
+      "description": "Purchase your first Time Warden.",
+      "icon": "⏳",
+      "requirement": { "type": "generatorOwned", "generator": "timeWarden", "amount": 1 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "clickMultiplier", "multiplier": 1.1 } }
+    },
+    {
+      "codeName": "tenGenerators",
+      "displayName": "Assembly Line",
+      "description": "Own 10 generators total.",
+      "icon": "🏗️",
+      "requirement": { "type": "generatorCount", "amount": 10 },
+      "reward": { "type": "resourceBonus", "resource": "timeShards", "amount": 100 }
+    },
+    {
+      "codeName": "hundredTaps",
+      "displayName": "Tap Master",
+      "description": "Tap 100 times.",
+      "icon": "👆",
+      "requirement": { "type": "totalTaps", "amount": 100 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "clickMultiplier", "multiplier": 1.25 } }
+    },
+    {
+      "codeName": "firstPrestige",
+      "displayName": "Temporal Reset",
+      "description": "Perform your first prestige.",
+      "icon": "🔄",
+      "requirement": { "type": "prestigeCount", "amount": 1 },
+      "reward": { "type": "titleUnlock", "title": "Time Traveler" }
+    },
+    {
+      "codeName": "primaryRateThousand",
+      "displayName": "Production Surge",
+      "description": "Earn 1,000 Time Shards per second from generators.",
+      "icon": "📈",
+      "requirement": { "type": "primaryCurrencyRateReached", "amount": 1000 },
+      "reward": { "type": "resourceBonus", "resource": "timeShards", "amount": 5000 }
+    },
+    {
+      "codeName": "firstAscension",
+      "displayName": "Awakening",
+      "description": "Ascend to the Awakened Realm.",
+      "icon": "🌅",
+      "requirement": { "type": "ascensionCount", "amount": 1 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "globalMultiplier", "multiplier": 1.05 } }
+    },
+    {
+      "codeName": "artifactCollector",
+      "displayName": "Curator of Time",
+      "description": "Collect 3 artifacts.",
+      "icon": "🔮",
+      "requirement": { "type": "artifactCount", "amount": 3 },
+      "reward": { "type": "resourceBonus", "resource": "timeShards", "amount": 10000 }
+    }
+  ]
+}

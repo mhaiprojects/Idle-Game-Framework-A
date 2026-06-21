@@ -1,0 +1,81 @@
+{
+  "upgrades": [
+    {
+      "codeName": "clickMultiplier",
+      "displayName": "Temporal Tap",
+      "description": "Amplify the power of each manual time shard tap.",
+      "category": "global",
+      "icon": "👆",
+      "cost": 50,
+      "costResource": "timeShards",
+      "costScale": 2.5,
+      "effect": { "type": "clickMultiplier", "multiplier": 2 },
+      "unlockConditions": null,
+      "maxPurchases": 5
+    },
+    {
+      "codeName": "globalBoost",
+      "displayName": "Cosmic Resonance",
+      "description": "Harmonize all generators for increased output.",
+      "category": "global",
+      "icon": "🌟",
+      "cost": 200,
+      "costResource": "timeShards",
+      "costScale": 3,
+      "effect": { "type": "globalMultiplier", "multiplier": 1.5 },
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [{ "type": "generatorOwned", "generator": "timeWarden", "quantity": 5 }]
+      },
+      "maxPurchases": 10
+    },
+    {
+      "codeName": "stellarBoost",
+      "displayName": "Stellar Amplifier",
+      "description": "Boost all stellar category generators.",
+      "category": "stellar",
+      "icon": "☀️",
+      "cost": 1000,
+      "costResource": "timeShards",
+      "costScale": 2,
+      "effect": { "type": "categoryMultiplier", "category": "stellar", "multiplier": 2 },
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [{ "type": "generatorOwned", "generator": "starForge", "quantity": 1 }]
+      },
+      "maxPurchases": 5
+    },
+    {
+      "codeName": "costReduction",
+      "displayName": "Efficiency Protocol",
+      "description": "Reduce generator purchase costs.",
+      "category": "global",
+      "icon": "📉",
+      "cost": 5000,
+      "costResource": "timeShards",
+      "costScale": 4,
+      "effect": { "type": "costReduction", "multiplier": 0.95 },
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [{ "type": "generatorOwned", "generator": "nebulaHarvester", "quantity": 1 }]
+      },
+      "maxPurchases": 8
+    },
+    {
+      "codeName": "temporalBoost",
+      "displayName": "Temporal Overdrive",
+      "description": "Supercharge temporal category generators.",
+      "category": "temporal",
+      "icon": "⏰",
+      "cost": 25000,
+      "costResource": "timeShards",
+      "costScale": 3,
+      "effect": { "type": "categoryMultiplier", "category": "temporal", "multiplier": 3 },
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [{ "type": "generatorOwned", "generator": "temporalEngine", "quantity": 1 }]
+      },
+      "maxPurchases": 3
+    }
+  ]
+}

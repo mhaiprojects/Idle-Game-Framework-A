@@ -1,0 +1,89 @@
+{
+  "prestigeCurrency": {
+    "codeName": "prestigeShards",
+    "displayName": "Prestige Shards",
+    "gainFormula": "logarithmic",
+    "logBase": 10,
+    "minimumResourceValue": 1000,
+    "resourceWeights": { "timeShards": 1, "cosmicEnergy": 0.5, "stardust": 0.3 }
+  },
+  "prestigeMinimum": {
+    "operator": "AND",
+    "conditions": [
+      { "type": "resourceHeld", "resource": "timeShards", "amount": 1000 }
+    ]
+  },
+  "featureUnlocks": [
+    {
+      "feature": "tab:characters",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [{ "type": "lifetimePrestiges", "min": 1 }]
+      }
+    },
+    {
+      "feature": "tab:inventory",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [{ "type": "lifetimePrestiges", "min": 1 }]
+      }
+    },
+    {
+      "feature": "systems:drops",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [{ "type": "lifetimePrestiges", "min": 1 }]
+      }
+    },
+    {
+      "feature": "tab:artifacts",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [{ "type": "lifetimePrestiges", "min": 2 }]
+      }
+    }
+  ],
+  "onPrestige": {
+    "clearCurrency": true,
+    "clearGeneratorQuantities": true,
+    "keepGeneratorUnlocks": true,
+    "clearUpgrades": true,
+    "clearInventory": false,
+    "clearArtifacts": false,
+    "clearTemporaryBuffs": true,
+    "resetRunStats": true
+  },
+  "startingResourcesAfterPrestige": {
+    "timeShards": 10
+  },
+  "prestigeBonuses": [
+    {
+      "codeName": "globalBoost",
+      "displayName": "Cosmic Resonance",
+      "description": "+5% primary currency per level",
+      "icon": "🌟",
+      "cost": 1,
+      "maxLevel": 25,
+      "effect": { "type": "globalMultiplier", "multiplierPerLevel": 0.05 }
+    },
+    {
+      "codeName": "clickPower",
+      "displayName": "Tap Amplifier",
+      "description": "+10% click power per level",
+      "icon": "👆",
+      "cost": 2,
+      "maxLevel": 15,
+      "effect": { "type": "clickMultiplier", "multiplierPerLevel": 0.10 }
+    },
+    {
+      "codeName": "costEfficiency",
+      "displayName": "Efficiency Matrix",
+      "description": "-2% costs per level",
+      "icon": "📉",
+      "cost": 3,
+      "maxLevel": 10,
+      "effect": { "type": "costReduction", "multiplierPerLevel": 0.02 },
+      "requiredFeature": "prestigeShop:tier2"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "resources": [
+    {
+      "codeName": "timeShards",
+      "displayName": "Time Shards",
+      "description": "Fragments of crystallized temporal energy — the primary currency of the Cosmic Time Factory.",
+      "icon": "⏱️",
+      "color": "#6366f1",
+      "isPrimary": true,
+      "baseValue": 0
+    },
+    {
+      "codeName": "cosmicEnergy",
+      "displayName": "Cosmic Energy",
+      "description": "Raw stellar power harvested from dying stars.",
+      "icon": "⚡",
+      "color": "#f59e0b",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "stardust",
+      "displayName": "Stardust",
+      "description": "Fine particles of ancient star matter.",
+      "icon": "✨",
+      "color": "#8b5cf6",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "nebulaEssence",
+      "displayName": "Nebula Essence",
+      "description": "Condensed gas from newborn nebulae.",
+      "icon": "🌌",
+      "color": "#06b6d4",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "quantumFlux",
+      "displayName": "Quantum Flux",
+      "description": "Unstable quantum particles from collapsed timelines.",
+      "icon": "🔮",
+      "color": "#ec4899",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "voidMatter",
+      "displayName": "Void Matter",
+      "description": "Matter extracted from the space between dimensions.",
+      "icon": "🕳️",
+      "color": "#475569",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "chronoCrystals",
+      "displayName": "Chrono Crystals",
+      "description": "Perfectly structured temporal crystals.",
+      "icon": "💎",
+      "color": "#a855f7",
+      "isPrimary": false,
+      "baseValue": 0
+    }
+  ]
+}
