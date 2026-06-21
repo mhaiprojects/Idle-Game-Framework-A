@@ -38,6 +38,120 @@ AFK_UI.EventBanner = {
   `
 };
 
+// --- js/ui/components/UnlockRequirementsList.vue.js ---
+AFK_UI.UnlockRequirementsList = {
+  name: 'UnlockRequirementsList',
+  props: {
+    requirements: { type: Array, default: () => [] },
+    heading: { type: String, default: 'Unlock requirements:' }
+  },
+  template: `
+    <div v-if="requirements.length" class="unlock-requirements-inline">
+      <p class="unlock-heading">{{ heading }}</p>
+      <div v-for="(req, i) in requirements" :key="i" class="unlock-req-row">
+        <span class="unlock-req-icon">{{ req.icon }}</span>
+        <div style="flex:1">
+          <div :style="{ color: req.met ? 'var(--color-success)' : 'var(--color-text)' }">
+            {{ req.met ? '✓' : '✗' }} {{ req.label }}
+          </div>
+          <div v-if="req.progress != null && !req.met" class="milestone-bar" style="margin-top:0.25rem">
+            <div class="milestone-fill" :style="{ width: Math.round(req.progress * 100) + '%' }"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/components/MoreInfoButton.vue.js ---
+AFK_UI.MoreInfoButton = {
+  name: 'MoreInfoButton',
+  emits: ['click'],
+  template: `
+    <button type="button" class="more-info-btn" title="More info" aria-label="More info" @click.stop="$emit('click')">!</button>
+  `
+};
+
+// --- js/ui/components/EquipmentGrid.vue.js ---
+const MoreInfoButton = AFK_UI.MoreInfoButton;
+
+AFK_UI.EquipmentGrid = {
+  name: 'EquipmentGrid',
+  components: { MoreInfoButton },
+  props: {
+    character: Object,
+    equipableItems: Array,
+    inventory: Object,
+    characters: Array,
+    slotLayout: Array
+  },
+  emits: ['equip', 'unequip', 'more-info'],
+  data() {
+    return { openSlot: null };
+  },
+  methods: {
+    itemMeta(code) {
+      if (!code) return null;
+      return this.equipableItems.find(i => i.codeName === code)
+        || { codeName: code, displayName: code, icon: '❓' };
+    },
+    isItemEquipped(itemCode) {
+      return this.characters.find(c => Object.values(c.equipment || {}).includes(itemCode));
+    },
+    availableForSlot(slotId) {
+      return this.equipableItems.filter(item => {
+        if (item.slot !== slotId) return false;
+        if ((this.inventory[item.codeName] || 0) <= 0) return false;
+        return !this.isItemEquipped(item.codeName);
+      });
+    },
+    toggleSlot(slotId) {
+      this.openSlot = this.openSlot === slotId ? null : slotId;
+    },
+    pickItem(slotId, itemCode) {
+      this.$emit('equip', this.character.codeName, slotId, itemCode);
+      this.openSlot = null;
+    },
+    unequip(slotId) {
+      this.$emit('unequip', this.character.codeName, slotId);
+      this.openSlot = null;
+    }
+  },
+  template: `
+    <div class="equipment-grid-wrap">
+      <div class="equipment-grid">
+        <div v-for="slot in slotLayout" :key="slot.id"
+          class="equip-grid-cell"
+          :class="{ filled: character.equipment?.[slot.id], open: openSlot === slot.id }"
+          :style="{ gridRow: slot.row + 1, gridColumn: slot.col + 1 }"
+          @click="toggleSlot(slot.id)">
+          <span class="equip-grid-slot-label">{{ slot.label }}</span>
+          <template v-if="character.equipment?.[slot.id]">
+            <span class="equip-grid-item-icon">{{ itemMeta(character.equipment[slot.id]).icon }}</span>
+            <span class="equip-grid-item-name">{{ itemMeta(character.equipment[slot.id]).displayName }}</span>
+          </template>
+          <span v-else class="equip-grid-empty">+</span>
+        </div>
+      </div>
+      <div v-if="openSlot" class="equip-picker">
+        <div class="equip-picker-header">
+          <span>{{ slotLayout.find(s => s.id === openSlot)?.label }}</span>
+          <button v-if="character.equipment?.[openSlot]" class="btn btn-ghost btn-sm" @click="unequip(openSlot)">Unequip</button>
+        </div>
+        <div v-if="availableForSlot(openSlot).length" class="equip-picker-list">
+          <button v-for="item in availableForSlot(openSlot)" :key="item.codeName"
+            class="equip-picker-item" @click="pickItem(openSlot, item.codeName)">
+            <span>{{ item.icon }}</span>
+            <span>{{ item.displayName }}</span>
+            <MoreInfoButton @click.stop="$emit('more-info', 'item', item.codeName)" />
+          </button>
+        </div>
+        <p v-else class="hint-text">No available items for this slot.</p>
+      </div>
+    </div>
+  `
+};
+
 // --- js/ui/components/UnlockModal.vue.js ---
 const UnlockRequirementsList = AFK_UI.UnlockRequirementsList;
 
@@ -80,40 +194,6 @@ AFK_UI.InfoModal = {
         <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">Close</button>
       </div>
     </div>
-  `
-};
-
-// --- js/ui/components/UnlockRequirementsList.vue.js ---
-AFK_UI.UnlockRequirementsList = {
-  name: 'UnlockRequirementsList',
-  props: {
-    requirements: { type: Array, default: () => [] },
-    heading: { type: String, default: 'Unlock requirements:' }
-  },
-  template: `
-    <div v-if="requirements.length" class="unlock-requirements-inline">
-      <p class="unlock-heading">{{ heading }}</p>
-      <div v-for="(req, i) in requirements" :key="i" class="unlock-req-row">
-        <span class="unlock-req-icon">{{ req.icon }}</span>
-        <div style="flex:1">
-          <div :style="{ color: req.met ? 'var(--color-success)' : 'var(--color-text)' }">
-            {{ req.met ? '✓' : '✗' }} {{ req.label }}
-          </div>
-          <div v-if="req.progress != null && !req.met" class="milestone-bar" style="margin-top:0.25rem">
-            <div class="milestone-fill" :style="{ width: Math.round(req.progress * 100) + '%' }"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `
-};
-
-// --- js/ui/components/MoreInfoButton.vue.js ---
-AFK_UI.MoreInfoButton = {
-  name: 'MoreInfoButton',
-  emits: ['click'],
-  template: `
-    <button type="button" class="more-info-btn" title="More info" aria-label="More info" @click.stop="$emit('click')">!</button>
   `
 };
 
@@ -221,7 +301,6 @@ AFK_UI.ResourceBar = {
 
 // --- js/ui/GeneratorPanel.vue.js ---
 const PurchaseMultiplier = AFK_UI.PurchaseMultiplier;
-const MoreInfoButton = AFK_UI.MoreInfoButton;
 
 AFK_UI.GeneratorPanel = {
   name: 'GeneratorPanel',
@@ -268,7 +347,11 @@ AFK_UI.GeneratorPanel = {
             <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
           </div>
         </div>
-        <UnlockRequirementsList v-else :requirements="gen.unlockRequirements" />
+        <template v-else>
+          <UnlockRequirementsList v-if="gen.unlockRequirements?.length"
+            :requirements="gen.unlockRequirements" />
+          <p v-else class="hint-text">Requirements unavailable.</p>
+        </template>
       </div>
     </div>
   `

@@ -265,6 +265,7 @@
     }
 
     getEntityInfo(type, codeName) {
+      void this._reactiveTick;
       const fmt = (v) => this.formatNumber(v);
       switch (type) {
         case 'item': {

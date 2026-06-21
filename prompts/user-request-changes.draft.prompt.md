@@ -212,6 +212,16 @@
 
 ---
 
+### 2026-6-21-19-15-0 — Fix missing generator unlock requirements
+
+**Request:** Unlock requirements info missing from generators and modal.
+
+**Implemented:**
+- UI bundle load order: `UnlockRequirementsList` and `EquipmentGrid` defined before components that import them
+- `getEntityInfo` re-evaluates on UI tick so modal requirements stay current
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec

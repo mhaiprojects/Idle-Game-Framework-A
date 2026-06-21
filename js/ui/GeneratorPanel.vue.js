@@ -47,7 +47,11 @@ export default {
             <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
           </div>
         </div>
-        <UnlockRequirementsList v-else :requirements="gen.unlockRequirements" />
+        <template v-else>
+          <UnlockRequirementsList v-if="gen.unlockRequirements?.length"
+            :requirements="gen.unlockRequirements" />
+          <p v-else class="hint-text">Requirements unavailable.</p>
+        </template>
       </div>
     </div>
   `
