@@ -1,45 +1,50 @@
-import MoreInfoButton from './MoreInfoButton.vue.js';
+import EquipSlotModal from './EquipSlotModal.vue.js';
 
 export default {
   name: 'EquipmentGrid',
-  components: { MoreInfoButton },
+  components: { EquipSlotModal },
   props: {
     character: Object,
-    equipableItems: Array,
     inventory: Object,
-    characters: Array,
-    slotLayout: Array
+    slotLayout: Array,
+    getSlotItems: Function
   },
   emits: ['equip', 'unequip', 'more-info'],
   data() {
-    return { openSlot: null };
+    return { modalSlot: null };
+  },
+  computed: {
+    modalItems() {
+      if (!this.modalSlot || !this.getSlotItems) return [];
+      return this.getSlotItems(this.character.codeName, this.modalSlot);
+    },
+    activeSlotMeta() {
+      return this.slotLayout.find(s => s.id === this.modalSlot) || null;
+    },
+    equippedCode() {
+      return this.modalSlot ? this.character.equipment?.[this.modalSlot] : null;
+    }
   },
   methods: {
-    itemMeta(code) {
+    itemMeta(code, slotId) {
       if (!code) return null;
-      return this.equipableItems.find(i => i.codeName === code)
-        || { codeName: code, displayName: code, icon: '❓' };
+      const items = this.getSlotItems ? this.getSlotItems(this.character.codeName, slotId || this.modalSlot || '') : [];
+      return items.find(i => i.codeName === code)
+        || { codeName: code, displayName: code, icon: '❓', rarityLabel: '' };
     },
-    isItemEquipped(itemCode) {
-      return this.characters.find(c => Object.values(c.equipment || {}).includes(itemCode));
+    openSlot(slotId) {
+      this.modalSlot = slotId;
     },
-    availableForSlot(slotId) {
-      return this.equipableItems.filter(item => {
-        if (item.slot !== slotId) return false;
-        if ((this.inventory[item.codeName] || 0) <= 0) return false;
-        return !this.isItemEquipped(item.codeName);
-      });
+    closeModal() {
+      this.modalSlot = null;
     },
-    toggleSlot(slotId) {
-      this.openSlot = this.openSlot === slotId ? null : slotId;
+    pickItem(itemCode) {
+      this.$emit('equip', this.character.codeName, this.modalSlot, itemCode);
+      this.closeModal();
     },
-    pickItem(slotId, itemCode) {
-      this.$emit('equip', this.character.codeName, slotId, itemCode);
-      this.openSlot = null;
-    },
-    unequip(slotId) {
-      this.$emit('unequip', this.character.codeName, slotId);
-      this.openSlot = null;
+    unequipSlot() {
+      this.$emit('unequip', this.character.codeName, this.modalSlot);
+      this.closeModal();
     }
   },
   template: `
@@ -47,32 +52,27 @@ export default {
       <div class="equipment-grid">
         <div v-for="slot in slotLayout" :key="slot.id"
           class="equip-grid-cell"
-          :class="{ filled: character.equipment?.[slot.id], open: openSlot === slot.id }"
+          :class="{ filled: character.equipment?.[slot.id] }"
           :style="{ gridRow: slot.row + 1, gridColumn: slot.col + 1 }"
-          @click="toggleSlot(slot.id)">
+          @click="openSlot(slot.id)">
           <span class="equip-grid-slot-label">{{ slot.label }}</span>
           <template v-if="character.equipment?.[slot.id]">
-            <span class="equip-grid-item-icon">{{ itemMeta(character.equipment[slot.id]).icon }}</span>
-            <span class="equip-grid-item-name">{{ itemMeta(character.equipment[slot.id]).displayName }}</span>
+            <span class="equip-grid-item-icon">{{ itemMeta(character.equipment[slot.id], slot.id).icon }}</span>
+            <span class="equip-grid-item-name">{{ itemMeta(character.equipment[slot.id], slot.id).displayName }}</span>
           </template>
           <span v-else class="equip-grid-empty">+</span>
         </div>
       </div>
-      <div v-if="openSlot" class="equip-picker">
-        <div class="equip-picker-header">
-          <span>{{ slotLayout.find(s => s.id === openSlot)?.label }}</span>
-          <button v-if="character.equipment?.[openSlot]" class="btn btn-ghost btn-sm" @click="unequip(openSlot)">Unequip</button>
-        </div>
-        <div v-if="availableForSlot(openSlot).length" class="equip-picker-list">
-          <button v-for="item in availableForSlot(openSlot)" :key="item.codeName"
-            class="equip-picker-item" @click="pickItem(openSlot, item.codeName)">
-            <span>{{ item.icon }}</span>
-            <span>{{ item.displayName }}</span>
-            <MoreInfoButton @click.stop="$emit('more-info', 'item', item.codeName)" />
-          </button>
-        </div>
-        <p v-else class="hint-text">No available items for this slot.</p>
-      </div>
+      <EquipSlotModal
+        :open="!!modalSlot"
+        :slot="activeSlotMeta"
+        :character-name="character.displayName"
+        :items="modalItems"
+        :equipped-code="equippedCode"
+        @close="closeModal"
+        @equip="pickItem"
+        @unequip="unequipSlot"
+        @more-info="(type, code) => $emit('more-info', type, code)" />
     </div>
   `
 };

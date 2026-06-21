@@ -234,6 +234,28 @@
       return this.config.framework.equipmentSlots || [];
     }
 
+    getEquipSlotOptions(characterCode, slotId) {
+      void this._reactiveTick;
+      const items = AFK.ConfigManager.sortEquipablesByRarity(
+        this.config.items.items.filter(i => i.type === 'equipable' && i.slot === slotId)
+      );
+      const cs = this.state.characters[characterCode];
+      return items.map(item => {
+        const owned = this.state.inventory[item.codeName] || 0;
+        const available = AFK.ConfigManager.getAvailableEquipCount(this.state, item.codeName, characterCode, slotId);
+        const equipped = cs?.equipment?.[slotId] === item.codeName;
+        const effect = AFK.ConfigManager.getEffectiveItemEffect(item, owned);
+        return {
+          ...item,
+          owned,
+          available,
+          canEquip: available > 0 || equipped,
+          rarityLabel: AFK.ConfigManager.formatRarityLabel(item.rarity),
+          effectSummary: this.describeEffect(effect)
+        };
+      }).filter(item => item.owned > 0 || cs?.equipment?.[slotId] === item.codeName);
+    }
+
     describeEffectShort(effect) {
       if (!effect?.type) return '';
       const mult = effect.multiplier || 1;
@@ -302,15 +324,26 @@
             });
           } else if (item.type === 'equipable') {
             const slotLabel = AFK.ConfigManager.getEquipmentSlotLabel(item.slot);
-            const wearer = Object.entries(this.state.characters).find(([, cs]) =>
-              Object.values(cs.equipment || {}).includes(item.codeName)
-            );
-            const charDef = wearer
-              ? this.config.characters.characters.find(c => c.codeName === wearer[0])
-              : null;
+            const eqCfg = AFK.ConfigManager.getEquipmentConfig();
+            const stackPct = Math.round((eqCfg.stackBonusPerCopy || 0) * 100);
+            sections.push({
+              heading: 'Rarity',
+              body: `${AFK.ConfigManager.formatRarityLabel(item.rarity)} (×${AFK.ConfigManager.getRarityMultiplier(item.rarity)} base power)`
+            });
+            if (qty > 0) {
+              const effective = AFK.ConfigManager.getEffectiveItemEffect(item, qty);
+              sections.push({
+                heading: 'Effective power',
+                body: `${this.describeEffect(effective)} · ${qty} stacked (+${stackPct}% per extra copy)`
+              });
+            }
+            const wearers = Object.entries(this.state.characters)
+              .filter(([, cs]) => Object.values(cs.equipment || {}).includes(item.codeName))
+              .map(([code]) => this.config.characters.characters.find(c => c.codeName === code))
+              .filter(Boolean);
             sections.push({
               heading: 'Equipment slot',
-              body: `${slotLabel || item.slot} · one character at a time${charDef ? ` · worn by ${charDef.icon} ${charDef.displayName}` : ''}`
+              body: `${slotLabel || item.slot}${wearers.length ? ` · equipped on ${wearers.map(c => c.icon + ' ' + c.displayName).join(', ')}` : ''}`
             });
           }
           return { title: item.displayName, icon: item.icon, sections };

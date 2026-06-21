@@ -1,4 +1,5 @@
 import { FormulaEngine } from './FormulaEngine.js';
+import { ConfigManager } from '../core/ConfigManager.js';
 
 let cachedMods = null;
 let cacheKey = null;
@@ -59,15 +60,16 @@ export const ModifierSystem = {
       }
     }
 
-    for (const [itemCode, qty] of Object.entries(state.inventory)) {
-      if (qty <= 0) continue;
-      const item = config.items.items.find(i => i.codeName === itemCode);
-      if (!item || item.type !== 'equipable') continue;
-      const equipped = Object.values(state.characters).some(c =>
-        Object.values(c.equipment || {}).includes(itemCode)
-      );
-      if (equipped && item.effect) {
-        this._addEffectMods(mods, item.effect, `equip:${itemCode}`, null, null, 1);
+    for (const char of config.characters.characters) {
+      const cs = state.characters[char.codeName];
+      if (!cs) continue;
+      for (const itemCode of Object.values(cs.equipment || {})) {
+        if (!itemCode) continue;
+        const item = config.items.items.find(i => i.codeName === itemCode);
+        if (!item?.effect) continue;
+        const stackQty = state.inventory[itemCode] || 1;
+        const effect = ConfigManager.getEffectiveItemEffect(item, stackQty);
+        this._addEffectMods(mods, effect, `equip:${char.codeName}:${itemCode}`, null, null, 1);
       }
     }
 

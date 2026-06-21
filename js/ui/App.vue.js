@@ -217,8 +217,8 @@ export default {
           <CharacterPanel v-if="state.ui.activeTab === 'characters'"
             :characters="characters" :max-active="config.framework.characters.maxActive"
             :active-count="game.getActiveCharacterCount()"
-            :inventory="state.inventory" :equipable-items="equipableItems"
             :equipment-slot-layout="equipmentSlotLayout"
+            :get-equip-slot-items="game.getEquipSlotOptions.bind(game)"
             @toggle="onToggleCharacter" @equip="onEquip" @unequip="onUnequip"
             @more-info="onMoreInfo" />
           <InventoryPanel v-if="state.ui.activeTab === 'inventory'"

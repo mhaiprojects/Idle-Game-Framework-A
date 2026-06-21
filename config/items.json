@@ -25,6 +25,8 @@
       "icon": "🧣",
       "type": "equipable",
       "slot": "cape",
+      "rarity": "common",
+      "stackable": true,
       "effect": { "type": "globalMultiplier", "multiplier": 1.05 }
     },
     {
@@ -34,6 +36,8 @@
       "icon": "⛑️",
       "type": "equipable",
       "slot": "helmet",
+      "rarity": "uncommon",
+      "stackable": true,
       "effect": { "type": "costReduction", "multiplier": 0.95 }
     },
     {
@@ -43,6 +47,8 @@
       "icon": "🔍",
       "type": "equipable",
       "slot": "amulet",
+      "rarity": "rare",
+      "stackable": true,
       "effect": { "type": "globalMultiplier", "multiplier": 1.1 }
     },
     {
@@ -52,6 +58,8 @@
       "icon": "⚔️",
       "type": "equipable",
       "slot": "mainHand",
+      "rarity": "rare",
+      "stackable": true,
       "effect": { "type": "clickMultiplier", "multiplier": 1.2 }
     },
     {
@@ -61,6 +69,8 @@
       "icon": "🛡️",
       "type": "equipable",
       "slot": "body",
+      "rarity": "epic",
+      "stackable": true,
       "effect": { "type": "globalMultiplier", "multiplier": 1.08 }
     },
     {
@@ -70,6 +80,8 @@
       "icon": "🔰",
       "type": "equipable",
       "slot": "offHand",
+      "rarity": "uncommon",
+      "stackable": true,
       "effect": { "type": "globalMultiplier", "multiplier": 1.04 }
     },
     {
@@ -79,6 +91,8 @@
       "icon": "👢",
       "type": "equipable",
       "slot": "boots",
+      "rarity": "uncommon",
+      "stackable": true,
       "effect": { "type": "clickMultiplier", "multiplier": 1.1 }
     },
     {
@@ -88,6 +102,8 @@
       "icon": "🎗️",
       "type": "equipable",
       "slot": "belt",
+      "rarity": "rare",
+      "stackable": true,
       "effect": { "type": "costReduction", "multiplier": 0.92 }
     },
     {
@@ -97,6 +113,8 @@
       "icon": "🐾",
       "type": "equipable",
       "slot": "pet",
+      "rarity": "common",
+      "stackable": true,
       "effect": { "type": "globalMultiplier", "multiplier": 1.03 }
     },
     {

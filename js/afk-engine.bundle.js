@@ -511,6 +511,10 @@ const ConfigManager = {
     return config.upgrades.upgrades.find(u => u.codeName === codeName);
   },
 
+  getItem(codeName) {
+    return config.items.items.find(i => i.codeName === codeName);
+  },
+
   getPrimaryResource() {
     return config.resources.resources.find(r => r.isPrimary);
   },
@@ -731,9 +735,105 @@ const ConfigManager = {
     return flattenUnlockConditions(unlockConditions);
   },
 
+  getEquipmentConfig() {
+    return config.framework.equipment || {
+      defaultRarity: 'common',
+      stackBonusPerCopy: 0.02,
+      rarityMultipliers: { common: 1, uncommon: 1.15, rare: 1.35, epic: 1.6, legendary: 2 },
+      rarityOrder: ['common', 'uncommon', 'rare', 'epic', 'legendary']
+    };
+  },
+
+  getRarityMultiplier(rarity) {
+    const eq = this.getEquipmentConfig();
+    const key = rarity || eq.defaultRarity || 'common';
+    return eq.rarityMultipliers[key] ?? eq.rarityMultipliers.common ?? 1;
+  },
+
+  getRaritySortIndex(rarity) {
+    const order = this.getEquipmentConfig().rarityOrder || [];
+    const idx = order.indexOf(rarity);
+    return idx >= 0 ? idx : 0;
+  },
+
+  formatRarityLabel(rarity) {
+    const key = rarity || this.getEquipmentConfig().defaultRarity || 'common';
+    return key.charAt(0).toUpperCase() + key.slice(1);
+  },
+
+  sortEquipablesByRarity(items) {
+    return [...items].sort((a, b) => {
+      const diff = this.getRaritySortIndex(b.rarity) - this.getRaritySortIndex(a.rarity);
+      if (diff !== 0) return diff;
+      return (a.displayName || '').localeCompare(b.displayName || '');
+    });
+  },
+
+  countEquippedExceptSlot(state, itemCode, characterCode, slot) {
+    let count = 0;
+    for (const [charCode, cs] of Object.entries(state.characters || {})) {
+      for (const [s, code] of Object.entries(cs.equipment || {})) {
+        if (code === itemCode && !(charCode === characterCode && s === slot)) count++;
+      }
+    }
+    return count;
+  },
+
+  getAvailableEquipCount(state, itemCode, characterCode, slot) {
+    const owned = state.inventory[itemCode] || 0;
+    const used = this.countEquippedExceptSlot(state, itemCode, characterCode, slot);
+    return owned - used;
+  },
+
+  getEffectiveItemEffect(item, stackQty) {
+    if (!item?.effect) return null;
+    const eq = this.getEquipmentConfig();
+    const rarityMult = this.getRarityMultiplier(item.rarity || eq.defaultRarity);
+    const copies = Math.max(1, stackQty || 1);
+    const stackMult = 1 + (eq.stackBonusPerCopy || 0) * (copies - 1);
+    const mult = item.effect.multiplier || 1;
+    const scale = rarityMult * stackMult;
+    let scaledMult;
+    if (item.effect.type === 'costReduction') {
+      scaledMult = 1 - (1 - mult) * scale;
+    } else {
+      scaledMult = 1 + (mult - 1) * scale;
+    }
+    return { ...item.effect, multiplier: scaledMult };
+  },
+
+  buildRequirementRows(cond, state, formatNumber) {
+    const fmt = formatNumber || (n => n);
+    if (cond.type === 'canAffordFirstPurchase') {
+      const gen = cond.generator ? this.getGenerator(cond.generator) : null;
+      if (!gen) {
+        return [{ icon: '💰', label: 'Unknown generator cost', progress: 0, met: false }];
+      }
+      const cost = FormulaEngine.calculateGeneratorCost(gen, 0, [], config, state || {});
+      const rows = Object.entries(cost).map(([code, required]) => {
+        const held = state?.resources[code]?.quantity || 0;
+        const meta = this.getResourceMeta(code);
+        const progress = required > 0 ? Math.min(1, held / required) : 1;
+        return {
+          icon: meta.icon || '💰',
+          label: `${meta.name}: ${fmt(held)} / ${fmt(required)}`,
+          progress,
+          met: held >= required
+        };
+      });
+      return rows.length ? rows : [{
+        icon: gen.icon || '💰',
+        label: `${gen.displayName}: no cost defined`,
+        progress: 0,
+        met: false
+      }];
+    }
+    return [this.formatUnlockConditionDetail(cond, state, formatNumber)];
+  },
+
   buildUnlockRequirements(unlockConditions, state, formatNumber) {
     return this.flattenUnlockConditions(unlockConditions)
-      .map(c => this.formatUnlockConditionDetail(c, state, formatNumber));
+      .flatMap(c => this.buildRequirementRows(c, state, formatNumber));
   },
 
   getCombinedUnlockRequirements({ unlockConditions, requiredFeature }, state, formatNumber) {
@@ -1227,15 +1327,16 @@ const ModifierSystem = {
       }
     }
 
-    for (const [itemCode, qty] of Object.entries(state.inventory)) {
-      if (qty <= 0) continue;
-      const item = config.items.items.find(i => i.codeName === itemCode);
-      if (!item || item.type !== 'equipable') continue;
-      const equipped = Object.values(state.characters).some(c =>
-        Object.values(c.equipment || {}).includes(itemCode)
-      );
-      if (equipped && item.effect) {
-        this._addEffectMods(mods, item.effect, `equip:${itemCode}`, null, null, 1);
+    for (const char of config.characters.characters) {
+      const cs = state.characters[char.codeName];
+      if (!cs) continue;
+      for (const itemCode of Object.values(cs.equipment || {})) {
+        if (!itemCode) continue;
+        const item = config.items.items.find(i => i.codeName === itemCode);
+        if (!item?.effect) continue;
+        const stackQty = state.inventory[itemCode] || 1;
+        const effect = ConfigManager.getEffectiveItemEffect(item, stackQty);
+        this._addEffectMods(mods, effect, `equip:${char.codeName}:${itemCode}`, null, null, 1);
       }
     }
 
@@ -1613,11 +1714,9 @@ class GameState {
     if (!cs?.unlocked) return false;
     if (item.slot && item.slot !== slot) return false;
 
-    for (const c of Object.values(this.data.characters)) {
-      for (const [s, code] of Object.entries(c.equipment || {})) {
-        if (code === itemCode) c.equipment[s] = null;
-      }
-    }
+    const available = ConfigManager.getAvailableEquipCount(this.data, itemCode, characterCode, slot);
+    if (available <= 0 && cs.equipment?.[slot] !== itemCode) return false;
+
     cs.equipment = cs.equipment || {};
     cs.equipment[slot] = itemCode;
     this._bumpModCache();

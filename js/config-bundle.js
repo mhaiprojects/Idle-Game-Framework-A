@@ -118,6 +118,24 @@ window.AFK_CONFIG = {
         "col": 2
       }
     ],
+    "equipment": {
+      "defaultRarity": "common",
+      "stackBonusPerCopy": 0.02,
+      "rarityMultipliers": {
+        "common": 1,
+        "uncommon": 1.15,
+        "rare": 1.35,
+        "epic": 1.6,
+        "legendary": 2
+      },
+      "rarityOrder": [
+        "common",
+        "uncommon",
+        "rare",
+        "epic",
+        "legendary"
+      ]
+    },
     "devTools": {
       "speedMultipliers": [
         1,
@@ -899,6 +917,8 @@ window.AFK_CONFIG = {
         "icon": "\ud83e\udde3",
         "type": "equipable",
         "slot": "cape",
+        "rarity": "common",
+        "stackable": true,
         "effect": {
           "type": "globalMultiplier",
           "multiplier": 1.05
@@ -911,6 +931,8 @@ window.AFK_CONFIG = {
         "icon": "\u26d1\ufe0f",
         "type": "equipable",
         "slot": "helmet",
+        "rarity": "uncommon",
+        "stackable": true,
         "effect": {
           "type": "costReduction",
           "multiplier": 0.95
@@ -923,6 +945,8 @@ window.AFK_CONFIG = {
         "icon": "\ud83d\udd0d",
         "type": "equipable",
         "slot": "amulet",
+        "rarity": "rare",
+        "stackable": true,
         "effect": {
           "type": "globalMultiplier",
           "multiplier": 1.1
@@ -935,6 +959,8 @@ window.AFK_CONFIG = {
         "icon": "\u2694\ufe0f",
         "type": "equipable",
         "slot": "mainHand",
+        "rarity": "rare",
+        "stackable": true,
         "effect": {
           "type": "clickMultiplier",
           "multiplier": 1.2
@@ -947,6 +973,8 @@ window.AFK_CONFIG = {
         "icon": "\ud83d\udee1\ufe0f",
         "type": "equipable",
         "slot": "body",
+        "rarity": "epic",
+        "stackable": true,
         "effect": {
           "type": "globalMultiplier",
           "multiplier": 1.08
@@ -959,6 +987,8 @@ window.AFK_CONFIG = {
         "icon": "\ud83d\udd30",
         "type": "equipable",
         "slot": "offHand",
+        "rarity": "uncommon",
+        "stackable": true,
         "effect": {
           "type": "globalMultiplier",
           "multiplier": 1.04
@@ -971,6 +1001,8 @@ window.AFK_CONFIG = {
         "icon": "\ud83d\udc62",
         "type": "equipable",
         "slot": "boots",
+        "rarity": "uncommon",
+        "stackable": true,
         "effect": {
           "type": "clickMultiplier",
           "multiplier": 1.1
@@ -983,6 +1015,8 @@ window.AFK_CONFIG = {
         "icon": "\ud83c\udf97\ufe0f",
         "type": "equipable",
         "slot": "belt",
+        "rarity": "rare",
+        "stackable": true,
         "effect": {
           "type": "costReduction",
           "multiplier": 0.92
@@ -995,6 +1029,8 @@ window.AFK_CONFIG = {
         "icon": "\ud83d\udc3e",
         "type": "equipable",
         "slot": "pet",
+        "rarity": "common",
+        "stackable": true,
         "effect": {
           "type": "globalMultiplier",
           "multiplier": 1.03

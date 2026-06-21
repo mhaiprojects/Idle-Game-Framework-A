@@ -325,11 +325,9 @@ export class GameState {
     if (!cs?.unlocked) return false;
     if (item.slot && item.slot !== slot) return false;
 
-    for (const c of Object.values(this.data.characters)) {
-      for (const [s, code] of Object.entries(c.equipment || {})) {
-        if (code === itemCode) c.equipment[s] = null;
-      }
-    }
+    const available = ConfigManager.getAvailableEquipCount(this.data, itemCode, characterCode, slot);
+    if (available <= 0 && cs.equipment?.[slot] !== itemCode) return false;
+
     cs.equipment = cs.equipment || {};
     cs.equipment[slot] = itemCode;
     this._bumpModCache();

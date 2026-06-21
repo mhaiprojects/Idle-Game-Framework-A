@@ -54,6 +54,18 @@
     { "id": "belt", "label": "Belt", "row": 2, "col": 1 },
     { "id": "pet", "label": "Pet", "row": 2, "col": 2 }
   ],
+  "equipment": {
+    "defaultRarity": "common",
+    "stackBonusPerCopy": 0.02,
+    "rarityMultipliers": {
+      "common": 1,
+      "uncommon": 1.15,
+      "rare": 1.35,
+      "epic": 1.6,
+      "legendary": 2
+    },
+    "rarityOrder": ["common", "uncommon", "rare", "epic", "legendary"]
+  },
   "devTools": {
     "speedMultipliers": [1, 2, 5, 10],
     "resourceGrantAmount": 1000,

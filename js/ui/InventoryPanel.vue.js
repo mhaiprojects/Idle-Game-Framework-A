@@ -21,6 +21,10 @@ export default {
     },
     effectLabel(item) {
       return this.describeEffectShort ? this.describeEffectShort(item.effect) : '';
+    },
+    formatRarity(rarity) {
+      if (!rarity) return 'Common';
+      return rarity.charAt(0).toUpperCase() + rarity.slice(1);
     }
   },
   template: `
@@ -46,7 +50,7 @@ export default {
       <div v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text">No consumables yet.</div>
 
       <h3 class="section-subtitle">Equipment</h3>
-      <p class="hint-text">Equip items on the Characters tab. Each item can only be worn by one character at a time.</p>
+      <p class="hint-text">Equip items on the Characters tab. Stackable gear — each copy owned boosts equipped power.</p>
       <div v-for="item in equipableItems" :key="item.codeName" class="card">
         <div class="card-header">
           <span class="card-icon">{{ item.icon }}</span>
@@ -55,6 +59,7 @@ export default {
           <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }}</p>
+        <span v-if="item.rarity" class="rarity-badge" :class="'rarity-' + (item.rarity || 'common')">{{ formatRarity(item.rarity) }}</span>
         <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
         <div style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-muted)">{{ slotLabel(item.slot) }} slot</div>
         <div v-if="equippedOn(item.codeName).length" style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-accent)">

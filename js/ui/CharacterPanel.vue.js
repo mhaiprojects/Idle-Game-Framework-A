@@ -9,15 +9,14 @@ export default {
     characters: Array,
     maxActive: Number,
     activeCount: Number,
-    inventory: Object,
-    equipableItems: Array,
-    equipmentSlotLayout: Array
+    equipmentSlotLayout: Array,
+    getEquipSlotItems: Function
   },
   emits: ['toggle', 'equip', 'unequip', 'more-info'],
   template: `
     <div class="panel">
       <h2 class="panel-title">👤 Characters</h2>
-      <p class="hint-text">Active: {{ activeCount }}/{{ maxActive }} · Each item can be equipped on one character only.</p>
+      <p class="hint-text">Active: {{ activeCount }}/{{ maxActive }} · Equipment stacks in inventory; each copy boosts power.</p>
       <div v-for="char in characters" :key="char.codeName" class="card">
         <div class="card-header">
           <span class="card-icon">{{ char.icon }}</span>
@@ -37,10 +36,8 @@ export default {
             <h4 class="equipment-heading">Equipment</h4>
             <EquipmentGrid
               :character="char"
-              :equipable-items="equipableItems"
-              :inventory="inventory"
-              :characters="characters"
               :slot-layout="equipmentSlotLayout"
+              :get-slot-items="getEquipSlotItems"
               @equip="(c, s, i) => $emit('equip', c, s, i)"
               @unequip="(c, s) => $emit('unequip', c, s)"
               @more-info="(type, code) => $emit('more-info', type, code)" />

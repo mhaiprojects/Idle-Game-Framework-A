@@ -119,49 +119,112 @@ AFK_UI.MoreInfoButton = {
   `
 };
 
-// --- js/ui/components/EquipmentGrid.vue.js ---
+// --- js/ui/components/EquipSlotModal.vue.js ---
 const MoreInfoButton = AFK_UI.MoreInfoButton;
+
+AFK_UI.EquipSlotModal = {
+  name: 'EquipSlotModal',
+  components: { MoreInfoButton },
+  props: {
+    open: Boolean,
+    slot: Object,
+    characterName: String,
+    items: Array,
+    equippedCode: String
+  },
+  emits: ['close', 'equip', 'unequip', 'more-info'],
+  methods: {
+    rarityClass(rarity) {
+      return `rarity-${rarity || 'common'}`;
+    }
+  },
+  template: `
+    <div v-if="open" class="modal-overlay" @click.self="$emit('close')">
+      <div class="modal equip-slot-modal animate__animated animate__fadeIn">
+        <div class="equip-modal-header">
+          <h3>{{ slot?.label || 'Equipment' }}</h3>
+          <p class="hint-text">{{ characterName }} · sorted by rarity</p>
+        </div>
+        <div v-if="items.length" class="equip-modal-list">
+          <button v-for="item in items" :key="item.codeName"
+            class="equip-modal-item"
+            :class="[rarityClass(item.rarity), { selected: equippedCode === item.codeName, disabled: !item.canEquip && equippedCode !== item.codeName }]"
+            :disabled="!item.canEquip && equippedCode !== item.codeName"
+            @click="$emit('equip', item.codeName)">
+            <div class="equip-modal-item-top">
+              <span class="equip-modal-icon">{{ item.icon }}</span>
+              <div class="equip-modal-meta">
+                <div class="equip-modal-name">{{ item.displayName }}</div>
+                <div class="equip-modal-sub">
+                  <span class="rarity-badge" :class="rarityClass(item.rarity)">{{ item.rarityLabel }}</span>
+                  <span>Owned ×{{ item.owned }}</span>
+                  <span v-if="item.available !== item.owned">Free ×{{ item.available }}</span>
+                </div>
+              </div>
+              <MoreInfoButton @click.stop="$emit('more-info', 'item', item.codeName)" />
+            </div>
+            <div class="equip-modal-effect">{{ item.effectSummary }}</div>
+            <div v-if="equippedCode === item.codeName" class="equip-modal-equipped-tag">Equipped</div>
+          </button>
+        </div>
+        <p v-else class="hint-text">No items owned for this slot.</p>
+        <div class="modal-actions" style="margin-top:1rem">
+          <button v-if="equippedCode" class="btn btn-ghost" @click="$emit('unequip')">Unequip</button>
+          <button class="btn btn-primary" @click="$emit('close')">Close</button>
+        </div>
+      </div>
+    </div>
+  `
+};
+
+// --- js/ui/components/EquipmentGrid.vue.js ---
+const EquipSlotModal = AFK_UI.EquipSlotModal;
 
 AFK_UI.EquipmentGrid = {
   name: 'EquipmentGrid',
-  components: { MoreInfoButton },
+  components: { EquipSlotModal },
   props: {
     character: Object,
-    equipableItems: Array,
     inventory: Object,
-    characters: Array,
-    slotLayout: Array
+    slotLayout: Array,
+    getSlotItems: Function
   },
   emits: ['equip', 'unequip', 'more-info'],
   data() {
-    return { openSlot: null };
+    return { modalSlot: null };
+  },
+  computed: {
+    modalItems() {
+      if (!this.modalSlot || !this.getSlotItems) return [];
+      return this.getSlotItems(this.character.codeName, this.modalSlot);
+    },
+    activeSlotMeta() {
+      return this.slotLayout.find(s => s.id === this.modalSlot) || null;
+    },
+    equippedCode() {
+      return this.modalSlot ? this.character.equipment?.[this.modalSlot] : null;
+    }
   },
   methods: {
-    itemMeta(code) {
+    itemMeta(code, slotId) {
       if (!code) return null;
-      return this.equipableItems.find(i => i.codeName === code)
-        || { codeName: code, displayName: code, icon: '❓' };
+      const items = this.getSlotItems ? this.getSlotItems(this.character.codeName, slotId || this.modalSlot || '') : [];
+      return items.find(i => i.codeName === code)
+        || { codeName: code, displayName: code, icon: '❓', rarityLabel: '' };
     },
-    isItemEquipped(itemCode) {
-      return this.characters.find(c => Object.values(c.equipment || {}).includes(itemCode));
+    openSlot(slotId) {
+      this.modalSlot = slotId;
     },
-    availableForSlot(slotId) {
-      return this.equipableItems.filter(item => {
-        if (item.slot !== slotId) return false;
-        if ((this.inventory[item.codeName] || 0) <= 0) return false;
-        return !this.isItemEquipped(item.codeName);
-      });
+    closeModal() {
+      this.modalSlot = null;
     },
-    toggleSlot(slotId) {
-      this.openSlot = this.openSlot === slotId ? null : slotId;
+    pickItem(itemCode) {
+      this.$emit('equip', this.character.codeName, this.modalSlot, itemCode);
+      this.closeModal();
     },
-    pickItem(slotId, itemCode) {
-      this.$emit('equip', this.character.codeName, slotId, itemCode);
-      this.openSlot = null;
-    },
-    unequip(slotId) {
-      this.$emit('unequip', this.character.codeName, slotId);
-      this.openSlot = null;
+    unequipSlot() {
+      this.$emit('unequip', this.character.codeName, this.modalSlot);
+      this.closeModal();
     }
   },
   template: `
@@ -169,32 +232,27 @@ AFK_UI.EquipmentGrid = {
       <div class="equipment-grid">
         <div v-for="slot in slotLayout" :key="slot.id"
           class="equip-grid-cell"
-          :class="{ filled: character.equipment?.[slot.id], open: openSlot === slot.id }"
+          :class="{ filled: character.equipment?.[slot.id] }"
           :style="{ gridRow: slot.row + 1, gridColumn: slot.col + 1 }"
-          @click="toggleSlot(slot.id)">
+          @click="openSlot(slot.id)">
           <span class="equip-grid-slot-label">{{ slot.label }}</span>
           <template v-if="character.equipment?.[slot.id]">
-            <span class="equip-grid-item-icon">{{ itemMeta(character.equipment[slot.id]).icon }}</span>
-            <span class="equip-grid-item-name">{{ itemMeta(character.equipment[slot.id]).displayName }}</span>
+            <span class="equip-grid-item-icon">{{ itemMeta(character.equipment[slot.id], slot.id).icon }}</span>
+            <span class="equip-grid-item-name">{{ itemMeta(character.equipment[slot.id], slot.id).displayName }}</span>
           </template>
           <span v-else class="equip-grid-empty">+</span>
         </div>
       </div>
-      <div v-if="openSlot" class="equip-picker">
-        <div class="equip-picker-header">
-          <span>{{ slotLayout.find(s => s.id === openSlot)?.label }}</span>
-          <button v-if="character.equipment?.[openSlot]" class="btn btn-ghost btn-sm" @click="unequip(openSlot)">Unequip</button>
-        </div>
-        <div v-if="availableForSlot(openSlot).length" class="equip-picker-list">
-          <button v-for="item in availableForSlot(openSlot)" :key="item.codeName"
-            class="equip-picker-item" @click="pickItem(openSlot, item.codeName)">
-            <span>{{ item.icon }}</span>
-            <span>{{ item.displayName }}</span>
-            <MoreInfoButton @click.stop="$emit('more-info', 'item', item.codeName)" />
-          </button>
-        </div>
-        <p v-else class="hint-text">No available items for this slot.</p>
-      </div>
+      <EquipSlotModal
+        :open="!!modalSlot"
+        :slot="activeSlotMeta"
+        :character-name="character.displayName"
+        :items="modalItems"
+        :equipped-code="equippedCode"
+        @close="closeModal"
+        @equip="pickItem"
+        @unequip="unequipSlot"
+        @more-info="(type, code) => $emit('more-info', type, code)" />
     </div>
   `
 };
@@ -459,15 +517,14 @@ AFK_UI.CharacterPanel = {
     characters: Array,
     maxActive: Number,
     activeCount: Number,
-    inventory: Object,
-    equipableItems: Array,
-    equipmentSlotLayout: Array
+    equipmentSlotLayout: Array,
+    getEquipSlotItems: Function
   },
   emits: ['toggle', 'equip', 'unequip', 'more-info'],
   template: `
     <div class="panel">
       <h2 class="panel-title">👤 Characters</h2>
-      <p class="hint-text">Active: {{ activeCount }}/{{ maxActive }} · Each item can be equipped on one character only.</p>
+      <p class="hint-text">Active: {{ activeCount }}/{{ maxActive }} · Equipment stacks in inventory; each copy boosts power.</p>
       <div v-for="char in characters" :key="char.codeName" class="card">
         <div class="card-header">
           <span class="card-icon">{{ char.icon }}</span>
@@ -487,10 +544,8 @@ AFK_UI.CharacterPanel = {
             <h4 class="equipment-heading">Equipment</h4>
             <EquipmentGrid
               :character="char"
-              :equipable-items="equipableItems"
-              :inventory="inventory"
-              :characters="characters"
               :slot-layout="equipmentSlotLayout"
+              :get-slot-items="getEquipSlotItems"
               @equip="(c, s, i) => $emit('equip', c, s, i)"
               @unequip="(c, s) => $emit('unequip', c, s)"
               @more-info="(type, code) => $emit('more-info', type, code)" />
@@ -524,6 +579,10 @@ AFK_UI.InventoryPanel = {
     },
     effectLabel(item) {
       return this.describeEffectShort ? this.describeEffectShort(item.effect) : '';
+    },
+    formatRarity(rarity) {
+      if (!rarity) return 'Common';
+      return rarity.charAt(0).toUpperCase() + rarity.slice(1);
     }
   },
   template: `
@@ -549,7 +608,7 @@ AFK_UI.InventoryPanel = {
       <div v-if="!items.filter(i => i.type === 'consumable').length" class="hint-text">No consumables yet.</div>
 
       <h3 class="section-subtitle">Equipment</h3>
-      <p class="hint-text">Equip items on the Characters tab. Each item can only be worn by one character at a time.</p>
+      <p class="hint-text">Equip items on the Characters tab. Stackable gear — each copy owned boosts equipped power.</p>
       <div v-for="item in equipableItems" :key="item.codeName" class="card">
         <div class="card-header">
           <span class="card-icon">{{ item.icon }}</span>
@@ -558,6 +617,7 @@ AFK_UI.InventoryPanel = {
           <MoreInfoButton @click="$emit('more-info', 'item', item.codeName)" />
         </div>
         <p style="font-size:0.75rem;color:var(--color-muted)">{{ item.description }}</p>
+        <span v-if="item.rarity" class="rarity-badge" :class="'rarity-' + (item.rarity || 'common')">{{ formatRarity(item.rarity) }}</span>
         <span v-if="effectLabel(item)" class="effect-badge">{{ effectLabel(item) }}</span>
         <div style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-muted)">{{ slotLabel(item.slot) }} slot</div>
         <div v-if="equippedOn(item.codeName).length" style="font-size:0.75rem;margin-top:0.25rem;color:var(--color-accent)">
@@ -1058,8 +1118,8 @@ AFK_UI.App = {
           <CharacterPanel v-if="state.ui.activeTab === 'characters'"
             :characters="characters" :max-active="config.framework.characters.maxActive"
             :active-count="game.getActiveCharacterCount()"
-            :inventory="state.inventory" :equipable-items="equipableItems"
             :equipment-slot-layout="equipmentSlotLayout"
+            :get-equip-slot-items="game.getEquipSlotOptions.bind(game)"
             @toggle="onToggleCharacter" @equip="onEquip" @unequip="onUnequip"
             @more-info="onMoreInfo" />
           <InventoryPanel v-if="state.ui.activeTab === 'inventory'"
