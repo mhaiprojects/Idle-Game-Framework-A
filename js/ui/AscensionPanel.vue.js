@@ -21,7 +21,7 @@ export default {
     <div class="panel">
       <h2 class="panel-title">🔄 Ascension</h2>
       <div class="stats-grid" style="margin-bottom:1rem">
-        <div class="stat-box">Tier: {{ tierName }} ({{ currentTier }})</div>
+        <div class="stat-box">{{ tierName }}</div>
         <div class="stat-box">Prestiges: {{ prestigeCount }}</div>
         <div class="stat-box">Lifetime: {{ lifetimePrestiges }}</div>
         <div class="stat-box">Shards: {{ formatNumber(prestigeCurrency) }}</div>

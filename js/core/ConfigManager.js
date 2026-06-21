@@ -177,6 +177,32 @@ export const ConfigManager = {
     };
   },
 
+  getAscensionTierConfig(tierNumber) {
+    return config.ascension.ascensionTiers.find(t => t.tier === tierNumber) || null;
+  },
+
+  formatAscensionTierLabel(tierNumber) {
+    const tier = this.getAscensionTierConfig(tierNumber);
+    if (!tier) return `Ascension ${tierNumber}`;
+    return `Ascension ${tierNumber}: ${tier.displayName}`;
+  },
+
+  formatResourceCostLabel(costs, formatNumber) {
+    const fmt = formatNumber || (n => n);
+    const entries = this.formatResourceCostEntries(costs, fmt);
+    if (!entries.length) return '0';
+    return entries.map(e => `${e.formattedAmount} ${e.icon} ${e.name}`.trim()).join(' · ');
+  },
+
+  formatFirstPurchaseCostLabel(generatorCode, state, formatNumber) {
+    const gen = this.getGenerator(generatorCode);
+    const fmt = formatNumber || (n => n);
+    if (!gen) return 'Unknown generator cost';
+    const cost = FormulaEngine.calculateGeneratorCost(gen, 0, [], config, state || {});
+    const costLabel = this.formatResourceCostLabel(cost, fmt);
+    return `${gen.displayName} first purchase: ${costLabel}`;
+  },
+
   formatUnlockConditionDetail(cond, state, formatNumber) {
     const fmt = formatNumber || (n => n);
     const progress = state ? FormulaEngine.getConditionProgress(cond, state, config) : null;
@@ -193,41 +219,69 @@ export const ConfigManager = {
       }
       case 'resourceHeld': {
         const res = this.getResource(cond.resource);
-        detail = { icon: res?.icon || '', label: `Hold ${fmt(cond.amount)} ${res?.displayName || cond.resource}` };
+        const held = state?.resources[cond.resource]?.quantity || 0;
+        detail = {
+          icon: res?.icon || '',
+          label: `${res?.displayName || cond.resource}: ${fmt(held)} / ${fmt(cond.amount)}`
+        };
         break;
       }
       case 'generatorOwned': {
         const gen = this.getGenerator(cond.generator);
-        detail = { icon: gen?.icon || '⚙️', label: `Own ${cond.quantity || cond.amount || 1} ${gen?.displayName || cond.generator}` };
+        const need = cond.quantity || cond.amount || 1;
+        const owned = state?.generators[cond.generator]?.quantityPurchased || 0;
+        detail = {
+          icon: gen?.icon || '⚙️',
+          label: `${gen?.displayName || cond.generator}: ${owned} / ${need}`
+        };
         break;
       }
       case 'canAffordFirstPurchase': {
         const gen = cond.generator ? this.getGenerator(cond.generator) : null;
-        detail = { icon: gen?.icon || '💰', label: `Can afford ${gen?.displayName || 'first purchase'}` };
+        detail = {
+          icon: gen?.icon || '💰',
+          label: this.formatFirstPurchaseCostLabel(cond.generator, state, fmt)
+        };
         break;
       }
       case 'upgradePurchased': {
         const upg = this.getUpgrade(cond.upgrade);
-        detail = { icon: upg?.icon || '⬆️', label: `Upgrade: ${upg?.displayName || cond.upgrade}` };
+        const level = cond.level || 1;
+        const owned = state?.upgrades[cond.upgrade]?.purchaseCount || 0;
+        detail = {
+          icon: upg?.icon || '⬆️',
+          label: `${upg?.displayName || cond.upgrade}: level ${owned} / ${level}`
+        };
         break;
       }
       case 'ascensionTier':
-        detail = { icon: '🔄', label: `Ascension tier ${cond.minTier}+` };
+        detail = { icon: '🔄', label: this.formatAscensionTierLabel(cond.minTier) };
         break;
-      case 'prestigeCount':
-        detail = { icon: '🔄', label: `${cond.min} prestiges this tier` };
-        break;
-      case 'lifetimeResourcesGenerated': {
-        const res = this.getResource(cond.resource);
-        detail = { icon: res?.icon || '', label: `Lifetime ${res?.displayName || cond.resource}: ${fmt(cond.min)}` };
+      case 'prestigeCount': {
+        const tier = state?.meta?.ascension?.currentTier ?? 0;
+        const count = state?.meta?.ascension?.tiers[tier]?.prestigeCount || 0;
+        detail = { icon: '🔄', label: `Prestiges this tier: ${count} / ${cond.min}` };
         break;
       }
-      case 'lifetimeGeneratorPurchases':
-        detail = { icon: '⚙️', label: `${cond.min} lifetime generator purchases` };
+      case 'lifetimeResourcesGenerated': {
+        const res = this.getResource(cond.resource);
+        const total = state?.meta?.milestones?.lifetimeResourcesGenerated?.[cond.resource] || 0;
+        detail = {
+          icon: res?.icon || '',
+          label: `Lifetime ${res?.displayName || cond.resource}: ${fmt(total)} / ${fmt(cond.min)}`
+        };
         break;
-      case 'lifetimePrestiges':
-        detail = { icon: '🔄', label: `Prestige ${cond.min} time${cond.min === 1 ? '' : 's'}` };
+      }
+      case 'lifetimeGeneratorPurchases': {
+        const total = state?.meta?.milestones?.lifetimeGeneratorPurchases || 0;
+        detail = { icon: '⚙️', label: `Generator purchases: ${total} / ${cond.min}` };
         break;
+      }
+      case 'lifetimePrestiges': {
+        const total = state?.meta?.milestones?.lifetimePrestiges || 0;
+        detail = { icon: '🔄', label: `Prestiges: ${total} / ${cond.min}` };
+        break;
+      }
       default:
         detail = { icon: '❓', label: cond.type };
     }
@@ -301,8 +355,10 @@ export const ConfigManager = {
         met,
         requirements: [{
           icon: '🔄',
-          label: `Ascend to ${tierInfo.displayName}`,
-          progress: Math.min(1, state.meta.ascension.currentTier / tierInfo.tier),
+          label: this.formatAscensionTierLabel(tierInfo.tier),
+          progress: tierInfo.tier > 0
+            ? Math.min(1, state.meta.ascension.currentTier / tierInfo.tier)
+            : (state.meta.ascension.currentTier >= tierInfo.tier ? 1 : 0),
           met
         }]
       };
@@ -344,36 +400,41 @@ export const ConfigManager = {
     return this.getUnlockRequirementsInfo({ title, unlockConditions }, state, formatNumber);
   },
 
-  formatUnlockCondition(cond) {
+  formatUnlockCondition(cond, state, formatNumber) {
+    if (state != null) {
+      return this.formatUnlockConditionDetail(cond, state, formatNumber).label;
+    }
     switch (cond.type) {
       case 'achievement':
         return `🏆 Achievement: ${this.getAchievementDisplayName(cond.achievement)}`;
       case 'resourceHeld': {
         const res = this.getResource(cond.resource);
-        return `${res?.icon || ''} Hold ${cond.amount} ${res?.displayName || cond.resource}`.trim();
+        return `${res?.icon || ''} ${res?.displayName || cond.resource}: 0 / ${cond.amount}`.trim();
       }
       case 'generatorOwned': {
         const gen = this.getGenerator(cond.generator);
-        return `${gen?.icon || '⚙️'} Own ${cond.quantity || cond.amount || 1} ${gen?.displayName || cond.generator}`;
+        const need = cond.quantity || cond.amount || 1;
+        return `${gen?.icon || '⚙️'} ${gen?.displayName || cond.generator}: 0 / ${need}`;
       }
       case 'canAffordFirstPurchase': {
         const gen = cond.generator ? this.getGenerator(cond.generator) : null;
-        return `${gen?.icon || '💰'} Can afford ${gen?.displayName || 'first purchase'}`;
+        return `${gen?.icon || '💰'} ${gen?.displayName || cond.generator} first purchase cost`;
       }
       case 'upgradePurchased': {
         const upg = this.getUpgrade(cond.upgrade);
-        return `${upg?.icon || '⬆️'} Upgrade: ${upg?.displayName || cond.upgrade}`;
+        const level = cond.level || 1;
+        return `${upg?.icon || '⬆️'} ${upg?.displayName || cond.upgrade}: level 0 / ${level}`;
       }
       case 'ascensionTier':
-        return `Ascension tier ${cond.minTier}+`;
+        return this.formatAscensionTierLabel(cond.minTier);
       case 'prestigeCount':
-        return `${cond.min} prestiges this tier`;
+        return `Prestiges this tier: 0 / ${cond.min}`;
       case 'lifetimeResourcesGenerated':
-        return `Lifetime ${this.getResourceDisplayName(cond.resource)}: ${cond.min}`;
+        return `Lifetime ${this.getResourceDisplayName(cond.resource)}: 0 / ${cond.min}`;
       case 'lifetimeGeneratorPurchases':
-        return `${cond.min} lifetime generator purchases`;
+        return `Generator purchases: 0 / ${cond.min}`;
       case 'lifetimePrestiges':
-        return `🔄 Prestige ${cond.min} time${cond.min === 1 ? '' : 's'}`;
+        return `Prestiges: 0 / ${cond.min}`;
       default:
         return cond.type;
     }

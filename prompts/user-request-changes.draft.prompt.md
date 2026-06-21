@@ -222,6 +222,18 @@
 
 ---
 
+### 2026-6-21-19-30-0 — Numeric unlock labels and ascension naming
+
+**Request:** Use numeric unlock requirements (actual costs, not “Can afford”); consistent ascension naming as `Ascension N: Story Name`.
+
+**Implemented:**
+- `ConfigManager.formatAscensionTierLabel`, `formatFirstPurchaseCostLabel`, enhanced `formatUnlockConditionDetail` with current/required values
+- `canAffordFirstPurchase` shows full first-purchase cost breakdown
+- Ascension panel and feature unlock requirements use `Ascension 1: Awakened Realm` format
+- `FormulaEngine.getConditionProgress` extended for afford, ascension tier, upgrade, lifetime prestiges
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec

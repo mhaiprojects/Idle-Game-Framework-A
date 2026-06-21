@@ -303,10 +303,29 @@ export const FormulaEngine = {
     switch (cond.type) {
       case 'achievement':
         return state.achievements[cond.achievement]?.unlocked ? 1 : 0;
+      case 'canAffordFirstPurchase': {
+        const gen = config.generators.generators.find(g => g.codeName === cond.generator);
+        if (!gen) return 0;
+        const cost = this.calculateGeneratorCost(gen, 0, [], config, state);
+        let minRatio = 1;
+        let hasCost = false;
+        for (const [res, amt] of Object.entries(cost)) {
+          if (amt <= 0) continue;
+          hasCost = true;
+          minRatio = Math.min(minRatio, (state.resources[res]?.quantity || 0) / amt);
+        }
+        return hasCost ? Math.min(1, minRatio) : 0;
+      }
       case 'resourceHeld':
         return Math.min(1, (state.resources[cond.resource]?.quantity || 0) / cond.amount);
       case 'generatorOwned':
-        return Math.min(1, (state.generators[cond.generator]?.quantityPurchased || 0) / (cond.quantity || 1));
+        return Math.min(1, (state.generators[cond.generator]?.quantityPurchased || 0) / (cond.quantity || cond.amount || 1));
+      case 'upgradePurchased':
+        return Math.min(1, (state.upgrades[cond.upgrade]?.purchaseCount || 0) / (cond.level || 1));
+      case 'ascensionTier':
+        return cond.minTier > 0
+          ? Math.min(1, state.meta.ascension.currentTier / cond.minTier)
+          : (state.meta.ascension.currentTier >= cond.minTier ? 1 : 0);
       case 'prestigeCount': {
         const tier = state.meta.ascension.currentTier;
         return Math.min(1, (state.meta.ascension.tiers[tier]?.prestigeCount || 0) / cond.min);
@@ -315,6 +334,8 @@ export const FormulaEngine = {
         return Math.min(1, (state.meta.milestones.lifetimeResourcesGenerated[cond.resource] || 0) / cond.min);
       case 'lifetimeGeneratorPurchases':
         return Math.min(1, (state.meta.milestones.lifetimeGeneratorPurchases || 0) / cond.min);
+      case 'lifetimePrestiges':
+        return Math.min(1, (state.meta.milestones.lifetimePrestiges || 0) / cond.min);
       default:
         return 0;
     }

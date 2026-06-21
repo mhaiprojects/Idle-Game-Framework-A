@@ -435,7 +435,6 @@
     getAscensionDisplay() {
       void this._reactiveTick;
       const tier = this.state.meta.ascension.currentTier;
-      const tierConfig = this.config.ascension.ascensionTiers.find(t => t.tier === tier);
       const next = AFK.AscensionSystem.getNextTier(this.state, this.config);
       const ascendCheck = AFK.AscensionSystem.canAscend(this.state, this.config);
       const milestones = AFK.AscensionSystem.getMilestoneProgress(this.state, this.config).map(m => ({
@@ -447,14 +446,14 @@
       const lostKeptAscend = next ? AFK.AscensionSystem.getLostKept(next) : { lost: [], kept: [] };
 
       return {
-        tierName: tierConfig?.displayName || 'Unknown',
+        tierName: AFK.ConfigManager.formatAscensionTierLabel(tier),
         currentTier: tier,
         prestigeCount: this.state.meta.ascension.tiers[tier]?.prestigeCount || 0,
         lifetimePrestiges: this.state.meta.milestones.lifetimePrestiges,
         projectedGain: AFK.PrestigeSystem.getProjectedGain(this.state, this.config),
         canPrestige: AFK.PrestigeSystem.canPrestige(this.state, this.config),
         canAscend: ascendCheck.met,
-        nextTierName: next?.displayName || '',
+        nextTierName: next ? AFK.ConfigManager.formatAscensionTierLabel(next.tier) : '',
         milestones,
         prestigeLost: lostKeptPrestige.lost,
         prestigeKept: lostKeptPrestige.kept,
@@ -469,7 +468,9 @@
     }
 
     _milestoneLabel(cond) {
-      return AFK.ConfigManager.formatUnlockCondition(cond);
+      return AFK.ConfigManager.formatUnlockConditionDetail(
+        cond, this.state, (v) => this.formatNumber(v)
+      ).label;
     }
 
     getStatsDisplay() {
