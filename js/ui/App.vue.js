@@ -124,6 +124,9 @@ export default {
     },
     saveManagement() {
       return this.game.getSaveManagementDisplay();
+    },
+    uiTick() {
+      return this.game._reactiveTick;
     }
   },
   methods: {
@@ -182,6 +185,12 @@ export default {
     onDeleteCurrentSave() { this.game.deleteCurrentSave(); },
     onRevertLatestBackup() { this.game.revertToLatestBackup(); },
     onResetGame() { this.game.resetGame(); },
+    resolveItem(code) {
+      return this.game.getItemDisplay(code);
+    },
+    formatEquipEffect(effect) {
+      return this.describeEffectShort(effect) || this.game.describeEffect(effect);
+    },
     dismissOffline() { this.game.dismissOfflineModal(); },
     formatCostEntries(cost) {
       return this.game.formatCostEntries(cost);
@@ -218,7 +227,10 @@ export default {
             :characters="characters" :max-active="config.framework.characters.maxActive"
             :active-count="game.getActiveCharacterCount()"
             :equipment-slot-layout="equipmentSlotLayout"
-            :get-equip-slot-items="game.getEquipSlotOptions.bind(game)"
+            :game-state="state"
+            :ui-tick="uiTick"
+            :resolve-item="resolveItem"
+            :format-effect="formatEquipEffect"
             @toggle="onToggleCharacter" @equip="onEquip" @unequip="onUnequip"
             @more-info="onMoreInfo" />
           <InventoryPanel v-if="state.ui.activeTab === 'inventory'"

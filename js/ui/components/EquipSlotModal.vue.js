@@ -20,6 +20,10 @@ export default {
   computed: {
     slotFallback() {
       return AFK?.ConfigManager?.getDefaultLabel?.('equipmentSlotFallback') || '';
+    },
+    emptyHint() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('equipSlotEmpty')
+        || 'No matching gear in your inventory for this slot.';
     }
   },
   template: `
@@ -44,6 +48,7 @@ export default {
                     <span class="rarity-badge" :class="rarityClass(item.rarity)">{{ item.rarityLabel }}</span>
                     <span>Owned ×{{ item.owned }}</span>
                     <span v-if="item.available !== item.owned">Free ×{{ item.available }}</span>
+                    <span v-if="item.statusLabel" class="equip-modal-status">{{ item.statusLabel }}</span>
                   </div>
                 </div>
                 <MoreInfoButton @click.stop="$emit('more-info', 'item', item.codeName)" />
@@ -52,7 +57,7 @@ export default {
               <div v-if="equippedCode === item.codeName" class="equip-modal-equipped-tag">Equipped</div>
             </button>
           </div>
-          <p v-else class="hint-text" style="margin-bottom:0">No items owned for this slot.</p>
+          <p v-else class="hint-text" style="margin-bottom:0">{{ emptyHint }}</p>
         </CardSection>
         <div class="modal-actions" style="margin-top:1rem">
           <button v-if="equippedCode" class="btn btn-ghost" @click="$emit('unequip')">Unequip</button>

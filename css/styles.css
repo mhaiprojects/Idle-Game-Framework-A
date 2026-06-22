@@ -377,6 +377,10 @@ html, body {
   cursor: pointer;
   background: rgba(15, 23, 42, 0.35);
   text-align: center;
+  font: inherit;
+  color: inherit;
+  width: 100%;
+}
   transition: border-color 0.15s, background 0.15s;
 }
 
@@ -1155,6 +1159,10 @@ html, body {
   margin-top: 0.15rem;
   font-size: 0.65rem;
   color: var(--color-muted);
+}
+
+.equip-modal-status {
+  color: var(--color-warning, #f59e0b);
 }
 
 .equip-modal-effect {

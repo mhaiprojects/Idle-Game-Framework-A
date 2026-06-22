@@ -12,7 +12,10 @@ export default {
     maxActive: Number,
     activeCount: Number,
     equipmentSlotLayout: Array,
-    getEquipSlotItems: Function
+    gameState: Object,
+    uiTick: Number,
+    resolveItem: Function,
+    formatEffect: Function
   },
   emits: ['toggle', 'equip', 'unequip', 'more-info'],
   template: `
@@ -41,8 +44,11 @@ export default {
           <CardSection section-key="equipment">
             <EquipmentGrid
               :character="char"
+              :game-state="gameState"
+              :ui-tick="uiTick"
               :slot-layout="equipmentSlotLayout"
-              :get-slot-items="getEquipSlotItems"
+              :resolve-item="resolveItem"
+              :format-effect="formatEffect"
               @equip="(c, s, i) => $emit('equip', c, s, i)"
               @unequip="(c, s) => $emit('unequip', c, s)"
               @more-info="(type, code) => $emit('more-info', type, code)" />

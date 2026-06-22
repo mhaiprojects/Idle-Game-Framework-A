@@ -13,6 +13,14 @@ export default {
     describeEffectShort: Function
   },
   emits: ['use-boost', 'more-info'],
+  computed: {
+    ownedEquipables() {
+      return this.equipableItems.filter(item =>
+        (this.inventory[item.codeName] || 0) > 0
+        || this.equippedOn(item.codeName).length > 0
+      );
+    }
+  },
   methods: {
     slotLabel(slot) {
       return slot ? slot.charAt(0).toUpperCase() + slot.slice(1) : '';
@@ -54,8 +62,9 @@ export default {
       </CardSection>
 
       <CardSection section-key="equipment" level="panel">
-        <p class="hint-text">Equip items on the Characters tab. Stackable gear — each copy owned boosts equipped power.</p>
-        <div v-for="item in equipableItems" :key="item.codeName" class="card">
+        <p class="hint-text">Owned gear appears here. Equip on the Characters tab — click a slot to pick from matching inventory items.</p>
+        <p v-if="!ownedEquipables.length" class="hint-text" style="margin-bottom:0">No equipment yet — gear drops passively over time.</p>
+        <div v-for="item in ownedEquipables" :key="item.codeName" class="card">
           <div class="card-header">
             <span class="card-icon">{{ item.icon }}</span>
             <span class="card-name">{{ item.displayName }}</span>
