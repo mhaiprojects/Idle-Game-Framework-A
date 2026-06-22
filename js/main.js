@@ -805,6 +805,7 @@
 
     performPrestige() {
       if (AFK.PrestigeSystem.perform(this.state, this.config, this.gameState)) {
+        AFK.SaveManager.save(this.gameState);
         this.gameState.showToast('Prestige complete!');
         this.bumpUI();
       }
@@ -812,6 +813,7 @@
 
     performAscend() {
       if (AFK.AscensionSystem.perform(this.state, this.config, this.gameState)) {
+        AFK.SaveManager.save(this.gameState);
         this.gameState.showToast('Ascension complete!');
         this.bumpUI();
       }
@@ -824,26 +826,128 @@
 
     exportSave() { AFK.SaveManager.exportSave(this.gameState); }
 
+    saveNow() {
+      AFK.SaveManager.save(this.gameState);
+      this.bumpUI();
+      this.gameState.showToast('Game saved!');
+    }
+
+    getSaveManagementDisplay() {
+      void this._reactiveTick;
+      const fmtTime = (ts) => (ts ? new Date(ts).toLocaleString() : '—');
+      const meta = AFK.SaveManager.getCurrentMeta();
+      const backups = AFK.SaveManager.listBackups();
+      return {
+        current: meta ? {
+          timestamp: meta.timestamp,
+          formattedTime: fmtTime(meta.timestamp),
+          version: meta.version,
+          integrityValid: meta.integrity?.valid !== false,
+          integrityWarning: meta.integrity?.valid === false
+        } : null,
+        backups: backups.map(b => ({
+          storageIndex: b.storageIndex,
+          timestamp: b.timestamp,
+          formattedTime: fmtTime(b.timestamp),
+          version: b.version,
+          integrityValid: b.integrity?.valid !== false
+        })),
+        saveVersion: AFK.SaveManager.getSaveVersion(),
+        labels: {
+          lastSaved: AFK.ConfigManager.getDefaultLabel('saveLastSaved'),
+          version: AFK.ConfigManager.getDefaultLabel('saveVersion'),
+          noData: AFK.ConfigManager.getDefaultLabel('saveNoData'),
+          integrityWarning: AFK.ConfigManager.getDefaultLabel('saveIntegrityWarning'),
+          saveNow: AFK.ConfigManager.getDefaultLabel('saveNow'),
+          backupHint: AFK.ConfigManager.getDefaultLabel('saveBackupHint'),
+          backupsEmpty: AFK.ConfigManager.getDefaultLabel('saveBackupsEmpty'),
+          restore: AFK.ConfigManager.getDefaultLabel('saveRestore'),
+          revertLatest: AFK.ConfigManager.getDefaultLabel('saveRevertLatest'),
+          deleteBackup: AFK.ConfigManager.getDefaultLabel('saveDeleteBackup'),
+          deleteAllBackups: AFK.ConfigManager.getDefaultLabel('saveDeleteAllBackups'),
+          deleteCurrent: AFK.ConfigManager.getDefaultLabel('saveDeleteCurrent'),
+          export: AFK.ConfigManager.getDefaultLabel('saveExport'),
+          import: AFK.ConfigManager.getDefaultLabel('saveImport'),
+          reset: AFK.ConfigManager.getDefaultLabel('saveReset')
+        }
+      };
+    }
+
+    _applyImportedSave(data) {
+      this.gameState.data = this.gameState._mergeSave(data.state);
+      this.gameState._bumpModCache();
+      AFK.SaveManager.save(this.gameState);
+      this.bumpUI();
+      this.gameState.showToast('Save imported!');
+    }
+
     async importSave(file) {
       try {
         const data = await AFK.SaveManager.importSave(file);
-        if (data?.state) {
-          this.gameState.data = this.gameState._mergeSave(data.state);
-          this.gameState._bumpModCache();
-          AFK.SaveManager.save(this.gameState);
-          this.bumpUI();
-          this.gameState.showToast('Save imported!');
-        }
+        if (!data?.state) throw new Error('No valid state');
+        const integrityNote = data._integrity?.valid === false
+          ? '\n\nWarning: imported save failed checksum verification.'
+          : '';
+        if (!confirm(`Import this save? It will overwrite your current progress.${integrityNote}`)) return;
+        this._applyImportedSave(data);
       } catch (e) {
+        console.error('Import failed:', e);
         this.gameState.showToast('Import failed!');
       }
     }
 
-    resetGame() {
-      if (confirm('Reset all progress? This cannot be undone.')) {
-        AFK.SaveManager.clear();
+    restoreBackup(storageIndex) {
+      const display = this.getSaveManagementDisplay();
+      const entry = display.backups.find(b => b.storageIndex === storageIndex);
+      if (!entry) return;
+      if (!confirm(`Restore backup from ${entry.formattedTime}? Current progress will be replaced.`)) return;
+      try {
+        AFK.SaveManager.restoreBackup(storageIndex);
         location.reload();
+      } catch (e) {
+        console.error('Restore failed:', e);
+        this.gameState.showToast('Restore failed!');
       }
+    }
+
+    revertToLatestBackup() {
+      const display = this.getSaveManagementDisplay();
+      if (!display.backups.length) {
+        this.gameState.showToast('No backups available');
+        return;
+      }
+      this.restoreBackup(display.backups[0].storageIndex);
+    }
+
+    deleteBackup(storageIndex) {
+      const display = this.getSaveManagementDisplay();
+      const entry = display.backups.find(b => b.storageIndex === storageIndex);
+      if (!entry) return;
+      if (!confirm(`Delete backup from ${entry.formattedTime}?`)) return;
+      if (AFK.SaveManager.deleteBackup(storageIndex)) {
+        this.bumpUI();
+        this.gameState.showToast('Backup deleted');
+      }
+    }
+
+    deleteAllBackups() {
+      if (!confirm('Delete all rolling backups? Your current save will not be affected.')) return;
+      AFK.SaveManager.deleteAllBackups();
+      this.bumpUI();
+      this.gameState.showToast('All backups deleted');
+    }
+
+    deleteCurrentSave() {
+      if (!confirm('Delete the current save? The game will restart from scratch. Rolling backups are kept.')) return;
+      AFK.SaveManager.clear();
+      location.reload();
+    }
+
+    resetGame() {
+      if (!confirm('Reset all progress? This deletes your save and cannot be undone.')) return;
+      AFK.EventBus.emit(AFK.EVENTS.GAME_RESET, {});
+      AFK.SaveManager.clearAll();
+      location.reload();
     }
 
     dismissOfflineModal() { this.offlineModal = null; }
@@ -876,16 +980,23 @@
     const config = await AFK.loadAllConfigs();
     const saved = AFK.SaveManager.load();
     const gameState = new AFK.GameState(config, saved?.state);
-    if (new URLSearchParams(window.location.search).get('debug') === '1') {
-      gameState.state.settings.devMode = true;
-    }
     const gameLoop = new AFK.GameLoop(gameState, config);
     const game = reactive(new GameFacade(config, gameState, gameLoop));
 
+    if (saved?._integrity?.valid === false) {
+      gameState.showToast('Save integrity warning — data may be corrupted');
+    }
+
     if (saved?.timestamp) {
       const offline = gameLoop.applyOfflineProgress(saved.timestamp);
-      if (offline) game.offlineModal = offline;
+      if (offline?.showModal) game.offlineModal = offline;
     }
+
+    const flushSave = () => { AFK.SaveManager.save(gameState); };
+    window.addEventListener('beforeunload', flushSave);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') flushSave();
+    });
 
     AFK.EventBus.on(AFK.EVENTS.GAME_TICK, () => {
       game.bumpUI();

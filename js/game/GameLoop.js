@@ -69,7 +69,7 @@ export class GameLoop {
 
     this.backupTimer += deltaMs;
     if (this.backupTimer >= fw.save.rollingBackupIntervalMs) {
-      SaveManager.save(this.gameState);
+      SaveManager.saveWithBackup(this.gameState);
       this.backupTimer = 0;
     }
   }
@@ -77,7 +77,7 @@ export class GameLoop {
   applyOfflineProgress(lastTimestamp) {
     const fw = this.config.framework;
     const elapsedSec = (Date.now() - lastTimestamp) / 1000;
-    if (elapsedSec < fw.save.offlineModalMinSeconds) return null;
+    if (elapsedSec <= 0) return null;
 
     const mods = this.gameState.getMods();
     const result = FormulaEngine.calculateOfflineGains(
@@ -85,6 +85,10 @@ export class GameLoop {
     );
 
     this.gameState.applyOfflineGains(result.gains);
-    return result;
+    return {
+      ...result,
+      elapsedSec,
+      showModal: elapsedSec >= fw.save.offlineModalMinSeconds
+    };
   }
 }

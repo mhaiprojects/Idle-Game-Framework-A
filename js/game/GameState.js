@@ -100,7 +100,23 @@ export class GameState {
 
   _mergeSave(saved) {
     const fresh = createInitialState(this.config);
-    return deepMerge(fresh, saved);
+    const merged = deepMerge(fresh, saved);
+    this._sanitizeEphemeralUI(merged);
+    merged.settings.devMode = new URLSearchParams(window.location.search).get('debug') === '1';
+    return merged;
+  }
+
+  _sanitizeEphemeralUI(data) {
+    if (!data.ui) data.ui = {};
+    data.ui.toasts = [];
+    data.ui.modals = [];
+    data.ui.resourceDeltas = [];
+    data.ui.lastTapGain = 0;
+    data.ui.stagnationTimer = 0;
+    data.ui.lastPrimaryCurrencyRate = 0;
+    data.ui.bestUpgradeCode = null;
+    data.ui.formulaInspector = null;
+    data.ui.activeEventBanner = null;
   }
 
   _bumpModCache() {
@@ -411,7 +427,14 @@ export class GameState {
 
   toJSON() {
     const { _modCacheKey, _lastTapTime, _tickAccumulator, ...rest } = this.data;
-    return JSON.parse(JSON.stringify(rest));
+    const copy = JSON.parse(JSON.stringify(rest));
+    if (copy.ui) {
+      copy.ui = {
+        purchaseMultiplier: copy.ui.purchaseMultiplier ?? 1,
+        activeTab: copy.ui.activeTab ?? 'generators'
+      };
+    }
+    return copy;
   }
 }
 

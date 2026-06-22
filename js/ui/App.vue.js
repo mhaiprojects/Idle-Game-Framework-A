@@ -121,6 +121,9 @@ export default {
     },
     offlineModal() {
       return this.game.offlineModal;
+    },
+    saveManagement() {
+      return this.game.getSaveManagementDisplay();
     }
   },
   methods: {
@@ -172,6 +175,12 @@ export default {
     onUpdateSetting(key, val) { this.game.updateSetting(key, val); },
     onExportSave() { this.game.exportSave(); },
     onImportSave(file) { this.game.importSave(file); },
+    onSaveNow() { this.game.saveNow(); },
+    onRestoreBackup(index) { this.game.restoreBackup(index); },
+    onDeleteBackup(index) { this.game.deleteBackup(index); },
+    onDeleteAllBackups() { this.game.deleteAllBackups(); },
+    onDeleteCurrentSave() { this.game.deleteCurrentSave(); },
+    onRevertLatestBackup() { this.game.revertToLatestBackup(); },
     onResetGame() { this.game.resetGame(); },
     dismissOffline() { this.game.dismissOfflineModal(); },
     formatCostEntries(cost) {
@@ -231,8 +240,18 @@ export default {
             :get-generator-label="game.getGeneratorLabel.bind(game)"
             :format-number="formatNumber" :active-events="eventBannerItems" />
           <SettingsPanel v-if="state.ui.activeTab === 'settings'"
-            :settings="state.settings" @update-setting="onUpdateSetting"
-            @export-save="onExportSave" @import-save="onImportSave" @reset-game="onResetGame" />
+            :settings="state.settings"
+            :save-management="saveManagement"
+            @update-setting="onUpdateSetting"
+            @export-save="onExportSave"
+            @import-save="onImportSave"
+            @save-now="onSaveNow"
+            @restore-backup="onRestoreBackup"
+            @delete-backup="onDeleteBackup"
+            @delete-all-backups="onDeleteAllBackups"
+            @delete-current-save="onDeleteCurrentSave"
+            @revert-latest-backup="onRevertLatestBackup"
+            @reset-game="onResetGame" />
           <ProgressPanel v-if="state.ui.activeTab === 'progress'" :progress="progressData" />
           <div v-if="state.settings.devMode && state.ui.activeTab !== 'progress'" class="dev-tools panel">
             <PanelHeader panel-key="devTools" />

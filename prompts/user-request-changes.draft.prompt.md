@@ -308,6 +308,21 @@
 
 ---
 
+### 2026-6-21-24-0-0 — Save system hardening and save management UI
+
+**Request:** Apply save system recommendations; UI for managing, deleting, restoring, and reverting saves.
+
+**Implemented:**
+- `SaveManager`: checksum verification on load; auto-save vs rolling backup split; `listBackups`, `restoreBackup`, `deleteBackup`, `deleteAllBackups`, `getCurrentMeta`
+- Import requires confirm; integrity warnings for bad checksums; `GAME_RESET` emitted on full reset
+- Immediate save after prestige/ascension/import; flush save on tab hide / page unload
+- Offline gains always applied; welcome-back modal only when away ≥ minimum seconds
+- `GameState.toJSON()` strips ephemeral UI; load sanitizes transient UI fields; `devMode` only from `?debug=1`
+- Settings panel: current save info, Save Now, export/import, rolling backup list with restore/delete, revert to latest, delete current save, reset game
+- Labels/sections in `defaults.json`; save list styling in `css/styles.css`
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec

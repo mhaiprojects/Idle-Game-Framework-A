@@ -1743,7 +1743,22 @@ window.AFK_CONFIG = {
       "maxLevelReached": "Max level reached",
       "commonRarity": "Common",
       "ascensionTierFallback": "Ascension {tier}",
-      "unitsOwned": "{count} units"
+      "unitsOwned": "{count} units",
+      "saveLastSaved": "Last saved: {time}",
+      "saveVersion": "Version: {version}",
+      "saveNoData": "No save data found",
+      "saveIntegrityWarning": "Checksum mismatch \u2014 save may be corrupted",
+      "saveNow": "Save Now",
+      "saveBackupHint": "Rolling backups (max 5, every 5 min)",
+      "saveBackupsEmpty": "No backups yet",
+      "saveRestore": "Restore",
+      "saveRevertLatest": "Revert to Latest Backup",
+      "saveDeleteBackup": "Delete",
+      "saveDeleteAllBackups": "Delete All Backups",
+      "saveDeleteCurrent": "Delete Current Save",
+      "saveExport": "Export Save",
+      "saveImport": "Import Save",
+      "saveReset": "Reset Game"
     },
     "calculations": {
       "upgradeCostScale": 1,
@@ -1880,6 +1895,10 @@ window.AFK_CONFIG = {
       "saveData": {
         "icon": "\ud83d\udcbe",
         "title": "Save Data"
+      },
+      "saveBackups": {
+        "icon": "\ud83d\uddc4\ufe0f",
+        "title": "Rolling Backups"
       },
       "primaryByGenerator": {
         "icon": "\u2699\ufe0f",

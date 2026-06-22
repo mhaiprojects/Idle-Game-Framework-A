@@ -730,6 +730,104 @@ html, body {
 
 .toggle-group { display: flex; gap: 0.25rem; }
 
+.save-meta {
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.save-meta-row {
+  padding: 0.2rem 0;
+  color: var(--color-text-muted);
+}
+
+.save-warning {
+  margin-top: 0.35rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-danger);
+  font-size: 0.75rem;
+}
+
+.save-warning-inline {
+  color: var(--color-danger);
+  margin-left: 0.25rem;
+}
+
+.save-actions {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.save-import-label {
+  text-align: center;
+  cursor: pointer;
+  margin: 0;
+}
+
+.save-file-input {
+  display: none;
+}
+
+.save-backup-hint {
+  margin: 0 0 0.75rem;
+}
+
+.save-backup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.save-backup-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.save-backup-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.save-backup-time {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.save-backup-meta {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  margin-top: 0.15rem;
+}
+
+.save-backup-actions {
+  display: flex;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.72rem;
+}
+
+.btn-danger-ghost {
+  color: var(--color-danger);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.btn-danger-ghost:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
 .progress-item {
   display: flex;
   align-items: center;

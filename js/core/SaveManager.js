@@ -17,46 +17,163 @@ function simpleHash(str) {
   return hash.toString(36);
 }
 
+function storageKey() {
+  return ConfigManager.getFramework().save.storageKey;
+}
+
+function backupStorageKey() {
+  return `${storageKey()}_backup`;
+}
+
+function buildPayload(state) {
+  const serializable = state.toJSON();
+  const payload = {
+    version: SAVE_VERSION,
+    timestamp: Date.now(),
+    state: serializable,
+    checksum: ''
+  };
+  payload.checksum = simpleHash(JSON.stringify(serializable));
+  return payload;
+}
+
 export const SaveManager = {
+  getSaveVersion() {
+    return SAVE_VERSION;
+  },
+
+  verifyPayload(data) {
+    if (!data?.state) {
+      return { valid: false, reason: 'missing_state' };
+    }
+    if (!data.checksum) {
+      return { valid: true, skipped: true };
+    }
+    const expected = simpleHash(JSON.stringify(data.state));
+    if (expected === data.checksum) {
+      return { valid: true };
+    }
+    return { valid: false, reason: 'checksum_mismatch' };
+  },
+
   load() {
-    const fw = ConfigManager.getFramework();
-    const key = fw.save.storageKey;
+    const key = storageKey();
     try {
       const raw = localStorage.getItem(key);
       if (!raw) return null;
-      const data = JSON.parse(raw);
-      return this.migrate(data);
+      const parsed = JSON.parse(raw);
+      const data = this.migrate(parsed);
+      if (!data) return null;
+      data._integrity = this.verifyPayload(data);
+      return data;
     } catch (e) {
       console.error('Save load failed:', e);
       return null;
     }
   },
 
-  save(state) {
+  save(state, { rotateBackup = false } = {}) {
+    const key = storageKey();
     const fw = ConfigManager.getFramework();
-    const key = fw.save.storageKey;
-    const serializable = state.toJSON();
-    const payload = {
-      version: SAVE_VERSION,
-      timestamp: Date.now(),
-      state: serializable,
-      checksum: ''
-    };
-    payload.checksum = simpleHash(JSON.stringify(serializable));
+    const payload = buildPayload(state);
     localStorage.setItem(key, JSON.stringify(payload));
-    this.rotateBackup(key, payload, fw.save.maxBackups);
+    if (rotateBackup) {
+      this.rotateBackup(key, payload, fw.save.maxBackups);
+    }
     EventBus.emit(EVENTS.GAME_SAVED, payload);
     return payload;
+  },
+
+  saveWithBackup(state) {
+    return this.save(state, { rotateBackup: true });
   },
 
   rotateBackup(key, payload, maxBackups) {
     const backupKey = `${key}_backup`;
     try {
       const backups = JSON.parse(localStorage.getItem(backupKey) || '[]');
-      backups.push({ timestamp: payload.timestamp, data: payload });
+      backups.push({
+        id: `${payload.timestamp}-${simpleHash(String(payload.timestamp))}`,
+        timestamp: payload.timestamp,
+        version: payload.version,
+        data: payload
+      });
       while (backups.length > maxBackups) backups.shift();
       localStorage.setItem(backupKey, JSON.stringify(backups));
     } catch (_) { /* ignore backup errors */ }
+  },
+
+  getCurrentMeta() {
+    const key = storageKey();
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return {
+        timestamp: parsed.timestamp,
+        version: parsed.version,
+        integrity: this.verifyPayload(parsed)
+      };
+    } catch (_) {
+      return null;
+    }
+  },
+
+  listBackups() {
+    try {
+      const backups = JSON.parse(localStorage.getItem(backupStorageKey()) || '[]');
+      return backups.map((entry, index) => ({
+        index,
+        id: entry.id || String(entry.timestamp),
+        timestamp: entry.timestamp,
+        version: entry.data?.version || entry.version || 'unknown',
+        integrity: entry.data ? this.verifyPayload(entry.data) : { valid: false, reason: 'missing_data' }
+      })).reverse();
+    } catch (_) {
+      return [];
+    }
+  },
+
+  getBackup(index) {
+    try {
+      const backups = JSON.parse(localStorage.getItem(backupStorageKey()) || '[]');
+      return backups[index] || null;
+    } catch (_) {
+      return null;
+    }
+  },
+
+  restoreBackup(index) {
+    const entry = this.getBackup(index);
+    if (!entry?.data) {
+      throw new Error('Backup not found');
+    }
+    const migrated = this.migrate(entry.data);
+    if (!migrated?.state) {
+      throw new Error('Backup has no valid state');
+    }
+    const integrity = this.verifyPayload(migrated);
+    if (!integrity.valid && !integrity.skipped) {
+      throw new Error('Backup failed integrity check');
+    }
+    localStorage.setItem(storageKey(), JSON.stringify(migrated));
+    return migrated;
+  },
+
+  deleteBackup(index) {
+    try {
+      const backups = JSON.parse(localStorage.getItem(backupStorageKey()) || '[]');
+      if (index < 0 || index >= backups.length) return false;
+      backups.splice(index, 1);
+      localStorage.setItem(backupStorageKey(), JSON.stringify(backups));
+      return true;
+    } catch (_) {
+      return false;
+    }
+  },
+
+  deleteAllBackups() {
+    localStorage.removeItem(backupStorageKey());
   },
 
   migrate(data) {
@@ -113,17 +230,34 @@ export const SaveManager = {
       const reader = new FileReader();
       reader.onload = () => {
         try {
-          const data = JSON.parse(reader.result);
-          resolve(this.migrate(data));
-        } catch (e) { reject(e); }
+          const parsed = JSON.parse(reader.result);
+          const migrated = this.migrate(parsed);
+          if (!migrated?.state) {
+            reject(new Error('Import file has no valid game state'));
+            return;
+          }
+          const integrity = this.verifyPayload(migrated);
+          migrated._integrity = integrity;
+          resolve(migrated);
+        } catch (e) {
+          reject(e);
+        }
       };
-      reader.onerror = reject;
+      reader.onerror = () => reject(reader.error || new Error('Failed to read file'));
       reader.readAsText(file);
     });
   },
 
+  writeMainSlot(data) {
+    localStorage.setItem(storageKey(), JSON.stringify(data));
+  },
+
   clear() {
-    const key = ConfigManager.getFramework().save.storageKey;
-    localStorage.removeItem(key);
+    localStorage.removeItem(storageKey());
+  },
+
+  clearAll() {
+    this.clear();
+    this.deleteAllBackups();
   }
 };
