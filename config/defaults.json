@@ -42,7 +42,10 @@
     "saveDeleteCurrent": "Delete Current Save",
     "saveExport": "Export Save",
     "saveImport": "Import Save",
-    "saveReset": "Reset Game"
+    "saveReset": "Reset Game",
+    "equipSlotEmpty": "No equipment defined for this slot.",
+    "equipNotOwned": "Not in inventory",
+    "equipAllInUse": "All copies equipped"
   },
   "calculations": {
     "upgradeCostScale": 1,

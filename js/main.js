@@ -12,6 +12,8 @@
       this.gameLoop = gameLoop;
       this.offlineModal = null;
       this._reactiveTick = 0;
+      this.getEquipSlotOptions = this.getEquipSlotOptions.bind(this);
+      this.getItemDisplay = this.getItemDisplay.bind(this);
     }
 
     get state() { return this.gameState.state; }
@@ -236,6 +238,24 @@
       return this.config.items.items.filter(i => i.type === 'equipable');
     }
 
+    getItemDisplay(codeName) {
+      const item = this.config.items.items.find(i => i.codeName === codeName);
+      if (!item) {
+        return {
+          codeName,
+          displayName: codeName,
+          icon: AFK.ConfigManager.getDefaultIcon('unknown'),
+          rarityLabel: ''
+        };
+      }
+      return {
+        codeName,
+        displayName: item.displayName,
+        icon: item.icon,
+        rarityLabel: AFK.ConfigManager.formatRarityLabel(item.rarity)
+      };
+    }
+
     getEquipmentSlots() {
       return (this.config.framework.equipmentSlots || []).map(s => s.id);
     }
@@ -246,24 +266,12 @@
 
     getEquipSlotOptions(characterCode, slotId) {
       void this._reactiveTick;
-      const items = AFK.ConfigManager.sortEquipablesByRarity(
-        this.config.items.items.filter(i => i.type === 'equipable' && i.slot === slotId)
+      return AFK.ConfigManager.buildEquipSlotOptions(
+        this.state,
+        characterCode,
+        slotId,
+        (effect) => this.describeEffectShort(effect) || this.describeEffect(effect)
       );
-      const cs = this.state.characters[characterCode];
-      return items.map(item => {
-        const owned = this.state.inventory[item.codeName] || 0;
-        const available = AFK.ConfigManager.getAvailableEquipCount(this.state, item.codeName, characterCode, slotId);
-        const equipped = cs?.equipment?.[slotId] === item.codeName;
-        const effect = AFK.ConfigManager.getEffectiveItemEffect(item, owned);
-        return {
-          ...item,
-          owned,
-          available,
-          canEquip: available > 0 || equipped,
-          rarityLabel: AFK.ConfigManager.formatRarityLabel(item.rarity),
-          effectSummary: this.describeEffect(effect)
-        };
-      }).filter(item => item.owned > 0 || cs?.equipment?.[slotId] === item.codeName);
     }
 
     describeEffectShort(effect) {
@@ -1005,6 +1013,9 @@
     AFK.EventBus.on(AFK.EVENTS.RESOURCE_GAINED, () => game.bumpUI());
     AFK.EventBus.on(AFK.EVENTS.GENERATOR_PURCHASED, () => game.bumpUI());
     AFK.EventBus.on(AFK.EVENTS.ACHIEVEMENT_UNLOCKED, () => game.bumpUI());
+    AFK.EventBus.on(AFK.EVENTS.ITEM_ACQUIRED, () => game.bumpUI());
+    AFK.EventBus.on(AFK.EVENTS.ITEM_DROPPED, () => game.bumpUI());
+    AFK.EventBus.on(AFK.EVENTS.ITEM_EQUIPPED, () => game.bumpUI());
 
     if (gameState.state.settings.devMode) game._updateFormulaInspector();
 

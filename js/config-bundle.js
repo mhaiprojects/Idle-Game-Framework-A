@@ -1420,6 +1420,85 @@ window.AFK_CONFIG = {
         ]
       },
       {
+        "codeName": "equipmentDrop",
+        "trigger": "tick",
+        "chancePerSecond": 0.015,
+        "entries": [
+          {
+            "item": "starlightCape",
+            "weight": 14,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "chronoHelm",
+            "weight": 12,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "temporalLens",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "chronoBlade",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "voidPlate",
+            "weight": 8,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "fluxBuckler",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "phaseBoots",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "timekeepersBelt",
+            "weight": 8,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "quantumMote",
+            "weight": 12,
+            "quantity": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      {
         "codeName": "artifactDrop",
         "trigger": "tick",
         "chancePerSecond": 0.001,
@@ -1758,7 +1837,10 @@ window.AFK_CONFIG = {
       "saveDeleteCurrent": "Delete Current Save",
       "saveExport": "Export Save",
       "saveImport": "Import Save",
-      "saveReset": "Reset Game"
+      "saveReset": "Reset Game",
+      "equipSlotEmpty": "No equipment defined for this slot.",
+      "equipNotOwned": "Not in inventory",
+      "equipAllInUse": "All copies equipped"
     },
     "calculations": {
       "upgradeCostScale": 1,

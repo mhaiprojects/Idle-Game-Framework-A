@@ -445,6 +445,63 @@ export const ConfigManager = {
     return owned - used;
   },
 
+  getEquipableItems() {
+    return (config.items?.items || []).filter(i => i.type === 'equipable');
+  },
+
+  formatItemEffectSummary(effect) {
+    if (!effect?.type) return '';
+    const mult = effect.multiplier || 1;
+    const pct = Math.round(Math.abs(mult - 1) * 100);
+    const signed = mult >= 1 ? '+' : '-';
+    const dur = effect.durationSeconds ? ` · ${effect.durationSeconds}s` : '';
+    switch (effect.type) {
+      case 'globalMultiplier':
+        return `${signed}${pct}% production${dur}`;
+      case 'clickMultiplier':
+        return `${signed}${pct}% tap${dur}`;
+      case 'costReduction':
+        return `${pct}% cheaper purchases`;
+      default:
+        return effect.type;
+    }
+  },
+
+  buildEquipSlotOptions(state, characterCode, slotId, effectFormatter) {
+    const cs = state.characters?.[characterCode];
+    if (!cs) return [];
+    const equippedCode = cs.equipment?.[slotId];
+    const equipables = this.getEquipableItems().filter(i => i.slot === slotId);
+    const format = typeof effectFormatter === 'function'
+      ? effectFormatter
+      : (effect) => this.formatItemEffectSummary(effect);
+
+    return this.sortEquipablesByRarity(equipables).map(item => {
+      const owned = state.inventory?.[item.codeName] || 0;
+      const available = this.getAvailableEquipCount(state, item.codeName, characterCode, slotId);
+      const equipped = equippedCode === item.codeName;
+      const stackQty = Math.max(owned, this.getDefaultCalc('equipmentStackMinCopies'));
+      const effect = this.getEffectiveItemEffect(item, stackQty);
+      const canEquip = equipped || (owned > 0 && available > 0);
+      let statusLabel = '';
+      if (!owned) {
+        statusLabel = this.getDefaultLabel('equipNotOwned');
+      } else if (!available && !equipped) {
+        statusLabel = this.getDefaultLabel('equipAllInUse');
+      }
+      return {
+        ...item,
+        owned,
+        available,
+        equipped,
+        canEquip,
+        statusLabel,
+        rarityLabel: this.formatRarityLabel(item.rarity),
+        effectSummary: format(effect, item)
+      };
+    });
+  },
+
   getEffectiveItemEffect(item, stackQty) {
     if (!item?.effect) return null;
     const eq = this.getEquipmentConfig();
