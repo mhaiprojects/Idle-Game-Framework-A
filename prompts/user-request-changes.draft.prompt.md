@@ -323,6 +323,20 @@
 
 ---
 
+### 2026-6-21-24-30-0 — Character equip slot lists inventory gear
+
+**Request:** Clicking an equipment slot on the character page should list relevant available items from the Inventory tab.
+
+**Implemented:**
+- Equip slot modal reads owned equipables for that slot from `state.inventory` (same items as Inventory tab)
+- Fixed callback wiring via App/GameFacade methods (no fragile `.bind` in template)
+- Equipment grid cells are buttons; modal teleported to `body` for reliable display
+- `getItemDisplay()` for equipped item labels; empty-slot hint points to Inventory tab
+
+**Follow-up fix:** Modal now builds list via `ConfigManager.buildEquipSlotOptions` with live `uiTick` refresh; lists all slot gear (owned/unowned); equipment added to drop tables; inventory tab shows owned gear only.
+
+---
+
 ## Related files
 
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec
