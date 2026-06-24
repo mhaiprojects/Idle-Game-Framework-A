@@ -253,32 +253,33 @@ const FormulaEngine = {
 
     const gs = state.generators[genCode];
     const owned = gs?.quantityPurchased || 0;
+    const preview = owned <= 0;
     const difficulty = this.getEffectiveDifficulty(state, config);
     const primary = config.resources.resources.find(r => r.isPrimary);
-    const featureBlocked = gen.requiredFeature && !this._isFeatureUnlocked(gen.requiredFeature, state, config);
 
     return (gen.produces || []).map(prod => {
-      let rate = 0;
-      if (owned > 0 && !featureBlocked) {
-        let base = prod.amount * owned;
-        const genMods = mods.filter(m =>
-          m.target === 'global' ||
-          (m.target === 'generator' && m.targetId === gen.codeName) ||
-          (m.target === 'category' && m.targetId === gen.category)
-        );
-        const result = this.applyModifierStack(base, genMods);
-        rate = result.value;
-        if (prod.resource === primary.codeName) {
-          rate *= difficulty.primaryCurrencyMultiplier;
-        }
+      const units = preview ? 1 : owned;
+      let base = prod.amount * units;
+      const genMods = mods.filter(m =>
+        m.target === 'global' ||
+        (m.target === 'generator' && m.targetId === gen.codeName) ||
+        (m.target === 'category' && m.targetId === gen.category)
+      );
+      const result = this.applyModifierStack(base, genMods);
+      let rate = result.value;
+      if (prod.resource === primary.codeName) {
+        rate *= difficulty.primaryCurrencyMultiplier;
       }
+
       const totalForResource = this.calculateResourceRate(state, config, mods, prod.resource);
-      const percent = totalForResource > 0 ? (rate / totalForResource) * 100 : 0;
+      const percent = preview || totalForResource <= 0 ? 0 : (rate / totalForResource) * 100;
+
       return {
         resource: prod.resource,
         rate,
         percent,
-        role: prod.role
+        role: prod.role,
+        preview
       };
     });
   },
@@ -2303,6 +2304,18 @@ const GeneratorSystem = {
     return Object.entries(costs).every(([res, amt]) => (state.resources[res]?.quantity || 0) >= amt);
   },
 
+  buildProductionRows(state, config, mods, genCode) {
+    return FormulaEngine.calculateGeneratorProduction(state, config, mods, genCode)
+      .map(p => {
+        const res = ConfigManager.getResource(p.resource);
+        return {
+          ...p,
+          icon: res?.icon || '',
+          name: res?.displayName || p.resource
+        };
+      });
+  },
+
   getDisplayData(state, config, mods) {
     const multiplier = state.ui.purchaseMultiplier;
     const primaryBreakdown = FormulaEngine.calculatePrimaryCurrencyBreakdown(state, config, mods);
@@ -2320,15 +2333,7 @@ const GeneratorSystem = {
       const featureLocked = gen.requiredFeature && !ConfigManager.isFeatureUnlocked(gen.requiredFeature, state);
       const isUnlocked = gs.isUnlocked && unlock.met && !featureLocked;
       const canBuy = isUnlocked && bulkQty > 0 && this._canAffordCost(state, buyCost);
-      const production = FormulaEngine.calculateGeneratorProduction(state, config, mods, gen.codeName)
-        .map(p => {
-          const res = ConfigManager.getResource(p.resource);
-          return {
-            ...p,
-            icon: res?.icon || '',
-            name: res?.displayName || p.resource
-          };
-        });
+      const production = this.buildProductionRows(state, config, mods, gen.codeName);
 
       return {
         ...gen,

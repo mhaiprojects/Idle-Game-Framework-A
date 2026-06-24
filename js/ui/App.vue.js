@@ -299,7 +299,7 @@ export default {
         @tap="onTap" @activate-skill="onActivateSkill" @use-boost="onUseBoost" />
       <Toast :toasts="state.ui.toasts" />
       <UnlockModal v-if="unlockModal" :info="unlockModal" @close="closeUnlockModal" />
-      <InfoModal v-if="infoModal" :info="infoModal" @close="closeInfoModal" />
+      <InfoModal v-if="infoModal" :info="infoModal" :format-number="formatNumber" @close="closeInfoModal" />
       <div v-if="offlineModal" class="modal-overlay" @click.self="dismissOffline">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Welcome Back!</h3>

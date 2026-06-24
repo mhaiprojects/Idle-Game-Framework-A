@@ -192,32 +192,33 @@ export const FormulaEngine = {
 
     const gs = state.generators[genCode];
     const owned = gs?.quantityPurchased || 0;
+    const preview = owned <= 0;
     const difficulty = this.getEffectiveDifficulty(state, config);
     const primary = config.resources.resources.find(r => r.isPrimary);
-    const featureBlocked = gen.requiredFeature && !this._isFeatureUnlocked(gen.requiredFeature, state, config);
 
     return (gen.produces || []).map(prod => {
-      let rate = 0;
-      if (owned > 0 && !featureBlocked) {
-        let base = prod.amount * owned;
-        const genMods = mods.filter(m =>
-          m.target === 'global' ||
-          (m.target === 'generator' && m.targetId === gen.codeName) ||
-          (m.target === 'category' && m.targetId === gen.category)
-        );
-        const result = this.applyModifierStack(base, genMods);
-        rate = result.value;
-        if (prod.resource === primary.codeName) {
-          rate *= difficulty.primaryCurrencyMultiplier;
-        }
+      const units = preview ? 1 : owned;
+      let base = prod.amount * units;
+      const genMods = mods.filter(m =>
+        m.target === 'global' ||
+        (m.target === 'generator' && m.targetId === gen.codeName) ||
+        (m.target === 'category' && m.targetId === gen.category)
+      );
+      const result = this.applyModifierStack(base, genMods);
+      let rate = result.value;
+      if (prod.resource === primary.codeName) {
+        rate *= difficulty.primaryCurrencyMultiplier;
       }
+
       const totalForResource = this.calculateResourceRate(state, config, mods, prod.resource);
-      const percent = totalForResource > 0 ? (rate / totalForResource) * 100 : 0;
+      const percent = preview || totalForResource <= 0 ? 0 : (rate / totalForResource) * 100;
+
       return {
         resource: prod.resource,
         rate,
         percent,
-        role: prod.role
+        role: prod.role,
+        preview
       };
     });
   },

@@ -14,6 +14,18 @@ export const GeneratorSystem = {
     return Object.entries(costs).every(([res, amt]) => (state.resources[res]?.quantity || 0) >= amt);
   },
 
+  buildProductionRows(state, config, mods, genCode) {
+    return FormulaEngine.calculateGeneratorProduction(state, config, mods, genCode)
+      .map(p => {
+        const res = ConfigManager.getResource(p.resource);
+        return {
+          ...p,
+          icon: res?.icon || '',
+          name: res?.displayName || p.resource
+        };
+      });
+  },
+
   getDisplayData(state, config, mods) {
     const multiplier = state.ui.purchaseMultiplier;
     const primaryBreakdown = FormulaEngine.calculatePrimaryCurrencyBreakdown(state, config, mods);
@@ -31,15 +43,7 @@ export const GeneratorSystem = {
       const featureLocked = gen.requiredFeature && !ConfigManager.isFeatureUnlocked(gen.requiredFeature, state);
       const isUnlocked = gs.isUnlocked && unlock.met && !featureLocked;
       const canBuy = isUnlocked && bulkQty > 0 && this._canAffordCost(state, buyCost);
-      const production = FormulaEngine.calculateGeneratorProduction(state, config, mods, gen.codeName)
-        .map(p => {
-          const res = ConfigManager.getResource(p.resource);
-          return {
-            ...p,
-            icon: res?.icon || '',
-            name: res?.displayName || p.resource
-          };
-        });
+      const production = this.buildProductionRows(state, config, mods, gen.codeName);
 
       return {
         ...gen,

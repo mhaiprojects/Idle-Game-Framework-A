@@ -2,12 +2,16 @@ import PurchaseMultiplier from './components/PurchaseMultiplier.vue.js';
 import UnlockRequirementsList from './components/UnlockRequirementsList.vue.js';
 import ResourceProgressList from './components/ResourceProgressList.vue.js';
 import MoreInfoButton from './components/MoreInfoButton.vue.js';
+import GeneratorProductionList from './components/GeneratorProductionList.vue.js';
 import CardSection from './components/CardSection.vue.js';
 import PanelHeader from './components/PanelHeader.vue.js';
 
 export default {
   name: 'GeneratorPanel',
-  components: { PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList, MoreInfoButton, CardSection, PanelHeader },
+  components: {
+    PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList,
+    MoreInfoButton, GeneratorProductionList, CardSection, PanelHeader
+  },
   props: {
     generators: Array,
     multiplier: [Number, String],
@@ -36,29 +40,18 @@ export default {
           <MoreInfoButton @click="$emit('more-info', 'generator', gen.codeName)" />
         </div>
         <p class="card-description">{{ gen.description }}</p>
-        <div v-if="gen.isUnlocked">
-          <CardSection v-if="gen.production?.length" section-key="production" :first="true">
-            <div v-for="row in gen.production" :key="row.resource" class="production-row">
-              <span class="production-resource">
-                <span>{{ row.icon }}</span>
-                <span>{{ row.name }}</span>
-              </span>
-              <span class="production-stats">
-                <span>{{ formatNumber(row.rate) }}/s</span>
-                <span class="efficiency-tag">{{ row.percent.toFixed(1) }}%</span>
-              </span>
-            </div>
-          </CardSection>
-          <CardSection section-key="purchaseRequirements">
-            <ResourceProgressList :entries="gen.costProgress" />
-            <div class="section-actions">
-              <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
-            </div>
-          </CardSection>
-        </div>
-        <UnlockRequirementsList v-else-if="gen.unlockRequirements?.length"
-          :requirements="gen.unlockRequirements" :first="true" />
-        <p v-else class="hint-text">{{ requirementsUnavailable }}</p>
+        <CardSection section-key="production" :first="true">
+          <GeneratorProductionList :rows="gen.production" :format-number="formatNumber" />
+        </CardSection>
+        <UnlockRequirementsList v-if="!gen.isUnlocked && gen.unlockRequirements?.length"
+          :requirements="gen.unlockRequirements" />
+        <p v-else-if="!gen.isUnlocked" class="hint-text">{{ requirementsUnavailable }}</p>
+        <CardSection v-if="gen.isUnlocked" section-key="purchaseRequirements">
+          <ResourceProgressList :entries="gen.costProgress" />
+          <div class="section-actions">
+            <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
+          </div>
+        </CardSection>
       </div>
     </div>
   `,

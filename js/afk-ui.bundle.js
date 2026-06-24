@@ -146,6 +146,35 @@ AFK_UI.ResourceProgressList = {
   `
 };
 
+// --- js/ui/components/GeneratorProductionList.vue.js ---
+AFK_UI.GeneratorProductionList = {
+  name: 'GeneratorProductionList',
+  props: {
+    rows: Array,
+    formatNumber: Function
+  },
+  template: `
+    <div v-if="rows?.length" class="generator-production-list">
+      <div v-for="row in rows" :key="row.resource" class="production-row">
+        <span class="production-resource">
+          <span>{{ row.icon }}</span>
+          <span>{{ row.name }}</span>
+        </span>
+        <span class="production-stats">
+          <span>{{ formatNumber(row.rate) }}/s</span>
+          <span class="efficiency-tag">{{ row.percent.toFixed(1) }}%</span>
+        </span>
+      </div>
+    </div>
+    <p v-else class="hint-text" style="margin-bottom:0">{{ emptyLabel }}</p>
+  `,
+  computed: {
+    emptyLabel() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('noProductionDefined') || '';
+    }
+  }
+};
+
 // --- js/ui/components/UnlockRequirementsList.vue.js ---
 const CardSection = AFK_UI.CardSection;
 
@@ -370,11 +399,15 @@ AFK_UI.UnlockModal = {
 };
 
 // --- js/ui/components/InfoModal.vue.js ---
+const GeneratorProductionList = AFK_UI.GeneratorProductionList;
 
 AFK_UI.InfoModal = {
   name: 'InfoModal',
-  components: { UnlockRequirementsList, CardSection },
-  props: { info: Object },
+  components: { UnlockRequirementsList, GeneratorProductionList, CardSection },
+  props: {
+    info: Object,
+    formatNumber: Function
+  },
   emits: ['close'],
   template: `
     <div class="modal-overlay" @click.self="$emit('close')">
@@ -387,7 +420,11 @@ AFK_UI.InfoModal = {
           :section-key="section.sectionKey"
           :title="section.title || section.heading"
           :first="i === 0">
-          <p class="section-text">{{ section.body }}</p>
+          <GeneratorProductionList
+            v-if="section.productionRows"
+            :rows="section.productionRows"
+            :format-number="formatNumber" />
+          <p v-else class="section-text">{{ section.body }}</p>
         </CardSection>
         <UnlockRequirementsList v-if="info.requirements?.length" :requirements="info.requirements" />
         <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">Close</button>
@@ -505,7 +542,10 @@ const PanelHeader = AFK_UI.PanelHeader;
 
 AFK_UI.GeneratorPanel = {
   name: 'GeneratorPanel',
-  components: { PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList, MoreInfoButton, CardSection, PanelHeader },
+  components: {
+    PurchaseMultiplier, UnlockRequirementsList, ResourceProgressList,
+    MoreInfoButton, GeneratorProductionList, CardSection, PanelHeader
+  },
   props: {
     generators: Array,
     multiplier: [Number, String],
@@ -534,29 +574,18 @@ AFK_UI.GeneratorPanel = {
           <MoreInfoButton @click="$emit('more-info', 'generator', gen.codeName)" />
         </div>
         <p class="card-description">{{ gen.description }}</p>
-        <div v-if="gen.isUnlocked">
-          <CardSection v-if="gen.production?.length" section-key="production" :first="true">
-            <div v-for="row in gen.production" :key="row.resource" class="production-row">
-              <span class="production-resource">
-                <span>{{ row.icon }}</span>
-                <span>{{ row.name }}</span>
-              </span>
-              <span class="production-stats">
-                <span>{{ formatNumber(row.rate) }}/s</span>
-                <span class="efficiency-tag">{{ row.percent.toFixed(1) }}%</span>
-              </span>
-            </div>
-          </CardSection>
-          <CardSection section-key="purchaseRequirements">
-            <ResourceProgressList :entries="gen.costProgress" />
-            <div class="section-actions">
-              <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
-            </div>
-          </CardSection>
-        </div>
-        <UnlockRequirementsList v-else-if="gen.unlockRequirements?.length"
-          :requirements="gen.unlockRequirements" :first="true" />
-        <p v-else class="hint-text">{{ requirementsUnavailable }}</p>
+        <CardSection section-key="production" :first="true">
+          <GeneratorProductionList :rows="gen.production" :format-number="formatNumber" />
+        </CardSection>
+        <UnlockRequirementsList v-if="!gen.isUnlocked && gen.unlockRequirements?.length"
+          :requirements="gen.unlockRequirements" />
+        <p v-else-if="!gen.isUnlocked" class="hint-text">{{ requirementsUnavailable }}</p>
+        <CardSection v-if="gen.isUnlocked" section-key="purchaseRequirements">
+          <ResourceProgressList :entries="gen.costProgress" />
+          <div class="section-actions">
+            <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
+          </div>
+        </CardSection>
       </div>
     </div>
   `,
@@ -1480,7 +1509,7 @@ AFK_UI.App = {
         @tap="onTap" @activate-skill="onActivateSkill" @use-boost="onUseBoost" />
       <Toast :toasts="state.ui.toasts" />
       <UnlockModal v-if="unlockModal" :info="unlockModal" @close="closeUnlockModal" />
-      <InfoModal v-if="infoModal" :info="infoModal" @close="closeInfoModal" />
+      <InfoModal v-if="infoModal" :info="infoModal" :format-number="formatNumber" @close="closeInfoModal" />
       <div v-if="offlineModal" class="modal-overlay" @click.self="dismissOffline">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Welcome Back!</h3>

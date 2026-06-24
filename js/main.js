@@ -404,13 +404,12 @@
           const gen = this.config.generators.generators.find(g => g.codeName === codeName);
           if (!gen) return null;
           const gs = this.state.generators[codeName];
-          const produces = (gen.produces || []).map(p => {
-            const res = AFK.ConfigManager.getResource(p.resource);
-            return `${res?.icon || ''} ${res?.displayName || p.resource}: ${p.amount}/s per owned (${p.role})`;
-          }).join(' · ');
+          const productionRows = AFK.GeneratorSystem.buildProductionRows(
+            this.state, this.config, this.gameState.getMods(), codeName
+          );
           const sections = [
             section('description', gen.description || L('noDescription')),
-            section('production', produces || L('noProductionDefined')),
+            { sectionKey: 'production', productionRows },
             section('owned', L('unitsOwned', { count: gs?.quantityPurchased || 0 }))
           ];
           const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
