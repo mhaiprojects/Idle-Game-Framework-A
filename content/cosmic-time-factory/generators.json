@@ -578,9 +578,13 @@
           "forGenerator": "eternityForge"
         }
       ],
+      "requiredFeature": "generators:tier3"
+    },
+    {
+      "codeName": "eternityForge",
       "displayName": "Eternity Forge",
       "description": "Forges eternal timelines into concentrated chrono crystals.",
-      "icon": "\ud83d\udd25",
+      "icon": "🔥",
       "category": "temporal",
       "unlockConditions": {
         "operator": "AND",

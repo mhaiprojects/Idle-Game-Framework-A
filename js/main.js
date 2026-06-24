@@ -1094,7 +1094,77 @@
     gameLoop.start();
     AFK.EventBus.emit(AFK.EVENTS.GAME_LOADED, {});
 
+    window.__AFK_GAME__ = game;
+    window.__AFK_TEST__ = {
+      ready: true,
+      game,
+      getContentId: () => game.contentId,
+      getState: () => JSON.parse(JSON.stringify(gameState.toJSON())),
+      getPrimary: () => {
+        const p = AFK.ConfigManager.getPrimaryResource();
+        return game.state.resources[p.codeName]?.quantity || 0;
+      },
+      getPrimaryCode: () => AFK.ConfigManager.getPrimaryResource()?.codeName,
+      tap: () => { game.onTap(); return game.getTapGain(); },
+      addPrimary: (amount = 1000) => {
+        const code = AFK.ConfigManager.getPrimaryResource().codeName;
+        gameState.addResource(code, amount, 'test');
+        game.bumpUI();
+        return game.state.resources[code].quantity;
+      },
+      buyGenerator: (codeName) => {
+        game.onBuyGenerator(codeName);
+        return game.state.generators[codeName]?.quantityPurchased || 0;
+      },
+      firstGeneratorCode: () => config.generators.generators[0]?.codeName,
+      setTab: (tabId) => game.setTab(tabId),
+      switchContent: (contentId) => game.switchContent(contentId),
+      listGames: () => AFK.ConfigManager.getAvailableGames().map(g => g.id),
+      clearAllSaves: () => AFK.SaveManager.clearAll(),
+      activeTab: () => game.state.ui.activeTab,
+      runSelfTest: async () => {
+        const results = [];
+        const assert = (name, fn) => {
+          try {
+            fn();
+            results.push({ name, ok: true });
+          } catch (e) {
+            results.push({ name, ok: false, error: String(e.message || e) });
+          }
+        };
+        assert('AFK engine loaded', () => { if (!window.AFK?.GameLoop) throw new Error('missing AFK'); });
+        assert('content registry', () => {
+          const games = AFK.ConfigManager.getAvailableGames();
+          if (games.length < 2) throw new Error('expected 2+ games');
+        });
+        assert('tap increases primary', () => {
+          const before = window.__AFK_TEST__.getPrimary();
+          window.__AFK_TEST__.tap();
+          if (window.__AFK_TEST__.getPrimary() <= before) throw new Error('tap did not increase primary');
+        });
+        assert('buy first generator', () => {
+          window.__AFK_TEST__.addPrimary(50000);
+          const code = window.__AFK_TEST__.firstGeneratorCode();
+          const before = game.state.generators[code]?.quantityPurchased || 0;
+          window.__AFK_TEST__.buyGenerator(code);
+          if ((game.state.generators[code]?.quantityPurchased || 0) <= before) {
+            throw new Error(`failed to buy ${code}`);
+          }
+        });
+        window.__AFK_SELFTEST_RESULTS__ = results;
+        return results;
+      }
+    };
+
     createApp(App, { game }).mount('#app');
+
+    if (new URLSearchParams(window.location.search).get('selftest') === '1') {
+      window.__AFK_TEST__.runSelfTest().then(results => {
+        const failed = results.filter(r => !r.ok);
+        if (failed.length) console.error('Self-test failures:', failed);
+        else console.log('Self-test passed:', results.length, 'checks');
+      });
+    }
   }
 
   bootstrap().catch(err => {

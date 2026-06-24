@@ -373,6 +373,22 @@
 
 ---
 
+### 2026-6-24-21-0-0 — Test automation + bundle load fix
+
+**Request:** Add testing automation for agents to verify the game; fix load failures.
+
+**Implemented:**
+- `scripts/run-test-automation.py` — bundle regen + content validation + Playwright E2E (9 tests)
+- `tests/` — content validator, pytest content tests, E2E smoke (boot, tap, buy generator, game selector, self-test)
+- `window.__AFK_TEST__` — in-browser automation API (`?automation=1`); `runSelfTest()` for quick checks
+- Fixed `content/cosmic-time-factory/generators.json` — split merged `voidArchitect` / `eternityForge` entries
+- Prior fix (`950909b`): duplicate `LEGACY_STORAGE_KEY` in bundle; `ConfigManager.getCurrentContentId()`
+
+---
+
+## Related files
+
+- [tests/README.md](../tests/README.md) — how to run test automation
 - [content-expansion-approval.draft.prompt.md](./content-expansion-approval.draft.prompt.md) — numbered task breakdown for content expansion
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec
 - [ai-prompt-defaults.final.prompt.md](./ai-prompt-defaults.final.prompt.md) — generic agent communication rules

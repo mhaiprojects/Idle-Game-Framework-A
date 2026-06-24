@@ -1,19 +1,6 @@
-# OS / editor
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-*~
-.idea/
-.vscode/
-
-# Secrets
-.env
-.env.*
-*.pem
-credentials.json
-
-# Logs / temp
-*.log
-tmp/
-temp/
+# Test automation
+.venv-test/
+test-results/
+playwright-report/
+.pytest_cache/
+htmlcov/

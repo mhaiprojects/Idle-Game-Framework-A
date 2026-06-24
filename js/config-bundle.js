@@ -834,6 +834,63 @@ window.AFK_CONTENT = {
         },
         {
           "codeName": "voidArchitect",
+          "displayName": "Void Architect",
+          "description": "Designs structures from pure void matter across dimensions.",
+          "icon": "\ud83c\udfdb\ufe0f",
+          "category": "void",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "infinityChronometer",
+                "quantity": 1
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "voidMatter",
+                "amount": 10000
+              }
+            ]
+          },
+          "baseCost": 2500000000,
+          "costMultiplier": 1.26,
+          "costResources": [
+            {
+              "resource": "timeShards",
+              "multiplier": 1
+            },
+            {
+              "resource": "voidMatter",
+              "multiplier": 100
+            },
+            {
+              "resource": "chronoCrystals",
+              "multiplier": 200
+            }
+          ],
+          "produces": [
+            {
+              "resource": "voidMatter",
+              "amount": 25,
+              "role": "primary"
+            },
+            {
+              "resource": "quantumFlux",
+              "amount": 15,
+              "role": "bonus"
+            },
+            {
+              "resource": "chronoCrystals",
+              "amount": 5,
+              "role": "unlockGate",
+              "forGenerator": "eternityForge"
+            }
+          ],
+          "requiredFeature": "generators:tier3"
+        },
+        {
+          "codeName": "eternityForge",
           "displayName": "Eternity Forge",
           "description": "Forges eternal timelines into concentrated chrono crystals.",
           "icon": "\ud83d\udd25",
