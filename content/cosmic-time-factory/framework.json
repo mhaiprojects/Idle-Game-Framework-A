@@ -5,7 +5,7 @@
     "targetFps": 60
   },
   "save": {
-    "storageKey": "afk_ai_save",
+    "storageKey": "afk_cosmic_time_factory_save",
     "autoSaveIntervalMs": 10000,
     "rollingBackupIntervalMs": 300000,
     "maxBackups": 5,
@@ -70,5 +70,17 @@
     "speedMultipliers": [1, 2, 5, 10],
     "resourceGrantAmount": 1000,
     "maxBulkPurchaseIterations": 10000
+  },
+  "generatorTiers": {
+    "0": ["timeWarden", "cosmicSailor", "starForge"],
+    "1": ["nebulaHarvester", "quantumProcessor", "voidExtractor"],
+    "2": ["chronoRefinery", "temporalEngine", "cosmicFoundry"],
+    "3": ["infinityChronometer", "voidArchitect", "eternityForge"]
+  },
+  "resourceUnlockByTier": {
+    "0": ["timeShards", "cosmicEnergy", "stardust"],
+    "1": ["nebulaEssence", "quantumFlux"],
+    "2": ["voidMatter", "chronoCrystals"],
+    "3": []
   }
 }

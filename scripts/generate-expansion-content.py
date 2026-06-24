@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CONFIG = ROOT / 'config'
+CONFIG = ROOT / 'content' / 'cosmic-time-factory'
 
 SLOTS = [
     ('cape', 'Cape', '🧣'),

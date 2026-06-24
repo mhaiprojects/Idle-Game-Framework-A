@@ -1,0 +1,199 @@
+{
+  "gameLoop": {
+    "tickRate": 10,
+    "maxDeltaCapSeconds": 1,
+    "targetFps": 60
+  },
+  "save": {
+    "storageKey": "afk_dr_dirt_save",
+    "autoSaveIntervalMs": 10000,
+    "rollingBackupIntervalMs": 300000,
+    "maxBackups": 5,
+    "offlineCapSeconds": 7200,
+    "offlineModalMinSeconds": 60
+  },
+  "ui": {
+    "maxContentWidthPx": 640,
+    "resourceBarTopCount": 4,
+    "stagnationHintSeconds": 60,
+    "toastDurationMs": 3000,
+    "purchaseMultipliers": [
+      1,
+      10,
+      100,
+      "MAX"
+    ],
+    "sidebarDefaultPosition": "right",
+    "sidebarTransitionMs": 300,
+    "actionBarHeightPx": 64,
+    "tapAction": {
+      "percentOfPrimaryCurrencyRate": 0.1,
+      "minGain": 1,
+      "cooldownMs": 0
+    },
+    "actionBar": {
+      "maxSkillSlots": 4,
+      "maxBoostSlots": 4
+    }
+  },
+  "numberFormat": {
+    "thresholds": [
+      {
+        "suffix": "K",
+        "value": 1000
+      },
+      {
+        "suffix": "M",
+        "value": 1000000
+      },
+      {
+        "suffix": "B",
+        "value": 1000000000
+      },
+      {
+        "suffix": "T",
+        "value": 1000000000000
+      }
+    ],
+    "displayPrecision": 2
+  },
+  "characters": {
+    "maxActive": 3
+  },
+  "equipmentSlots": [
+    {
+      "id": "tool",
+      "label": "Tool",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "head",
+      "label": "Head",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "charm",
+      "label": "Charm",
+      "row": 0,
+      "col": 2
+    },
+    {
+      "id": "mainHand",
+      "label": "Main hand",
+      "row": 1,
+      "col": 0
+    },
+    {
+      "id": "body",
+      "label": "Body",
+      "row": 1,
+      "col": 1
+    },
+    {
+      "id": "offHand",
+      "label": "Off hand",
+      "row": 1,
+      "col": 2
+    },
+    {
+      "id": "feet",
+      "label": "Feet",
+      "row": 2,
+      "col": 0
+    },
+    {
+      "id": "waist",
+      "label": "Waist",
+      "row": 2,
+      "col": 1
+    },
+    {
+      "id": "companion",
+      "label": "Companion",
+      "row": 2,
+      "col": 2
+    }
+  ],
+  "equipment": {
+    "defaultRarity": "common",
+    "stackBonusPerCopy": 0.02,
+    "rarityMultipliers": {
+      "common": 1,
+      "uncommon": 1.15,
+      "rare": 1.35,
+      "epic": 1.6,
+      "legendary": 2
+    },
+    "rarityOrder": [
+      "common",
+      "uncommon",
+      "rare",
+      "epic",
+      "legendary"
+    ]
+  },
+  "devTools": {
+    "speedMultipliers": [
+      1,
+      2,
+      5,
+      10
+    ],
+    "resourceGrantAmount": 1000,
+    "maxBulkPurchaseIterations": 10000
+  },
+  "generatorTiers": {
+    "0": [
+      "rockGatherer",
+      "woodcutter",
+      "campfire"
+    ],
+    "1": [
+      "copperMine",
+      "bronzeSmelter",
+      "bronzeForge"
+    ],
+    "2": [
+      "ironMine",
+      "blacksmith",
+      "tradeCaravan"
+    ],
+    "3": [
+      "coalMine",
+      "steelMill",
+      "powerPlant"
+    ],
+    "4": [
+      "dataCenter",
+      "mlLaboratory",
+      "agiCore"
+    ]
+  },
+  "resourceUnlockByTier": {
+    "0": [
+      "stone",
+      "wood",
+      "food"
+    ],
+    "1": [
+      "copper",
+      "bronze"
+    ],
+    "2": [
+      "iron",
+      "gold"
+    ],
+    "3": [
+      "coal",
+      "steel",
+      "electricity"
+    ],
+    "4": [
+      "data",
+      "compute",
+      "intelligence"
+    ]
+  }
+}

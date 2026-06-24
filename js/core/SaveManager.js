@@ -1,7 +1,8 @@
 import { EventBus, EVENTS } from './EventBus.js';
 import { ConfigManager } from './ConfigManager.js';
 
-const SAVE_VERSION = '1.2.0';
+const SAVE_VERSION = '1.3.0';
+const LEGACY_STORAGE_KEY = 'afk_ai_save';
 
 const EQUIPMENT_SLOT_MIGRATION = {
   accessory: 'amulet',
@@ -25,10 +26,27 @@ function backupStorageKey() {
   return `${storageKey()}_backup`;
 }
 
+function migrateLegacyStorageKey() {
+  const currentId = ConfigManager.getCurrentContentId();
+  if (currentId !== 'cosmic-time-factory') return;
+  const newKey = storageKey();
+  if (localStorage.getItem(newKey)) return;
+  const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+  if (!legacy) return;
+  localStorage.setItem(newKey, legacy);
+  localStorage.removeItem(LEGACY_STORAGE_KEY);
+  const legacyBackup = localStorage.getItem(`${LEGACY_STORAGE_KEY}_backup`);
+  if (legacyBackup) {
+    localStorage.setItem(`${newKey}_backup`, legacyBackup);
+    localStorage.removeItem(`${LEGACY_STORAGE_KEY}_backup`);
+  }
+}
+
 function buildPayload(state) {
   const serializable = state.toJSON();
   const payload = {
     version: SAVE_VERSION,
+    contentId: ConfigManager.getCurrentContentId(),
     timestamp: Date.now(),
     state: serializable,
     checksum: ''
@@ -57,6 +75,7 @@ export const SaveManager = {
   },
 
   load() {
+    migrateLegacyStorageKey();
     const key = storageKey();
     try {
       const raw = localStorage.getItem(key);
@@ -64,6 +83,9 @@ export const SaveManager = {
       const parsed = JSON.parse(raw);
       const data = this.migrate(parsed);
       if (!data) return null;
+      const currentId = ConfigManager.getCurrentContentId();
+      if (data.contentId && data.contentId !== currentId) return null;
+      if (!data.contentId && currentId !== 'cosmic-time-factory') return null;
       data._integrity = this.verifyPayload(data);
       return data;
     } catch (e) {
@@ -206,6 +228,13 @@ export const SaveManager = {
       migrated.version = '1.2.0';
     }
 
+    if (migrated.version === '1.2.0') {
+      if (!migrated.contentId) {
+        migrated.contentId = 'cosmic-time-factory';
+      }
+      migrated.version = '1.3.0';
+    }
+
     if (migrated.version === SAVE_VERSION) return migrated;
 
     migrated._legacy = migrated._legacy || {};
@@ -216,13 +245,20 @@ export const SaveManager = {
 
   exportSave(state) {
     const payload = this.save(state);
+    const prefix = ConfigManager.getCurrentManifest()?.exportPrefix || 'game';
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `cosmic-time-factory-save-${Date.now()}.json`;
+    a.download = `${prefix}-save-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
+  },
+
+  hasSaveForContent(contentId) {
+    const game = ConfigManager.getAvailableGames().find(g => g.id === contentId);
+    if (!game?.storageKey || typeof localStorage === 'undefined') return false;
+    return !!localStorage.getItem(game.storageKey);
   },
 
   importSave(file) {

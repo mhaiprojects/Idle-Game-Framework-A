@@ -6,10 +6,11 @@
   const App = window.AFK_UI.App;
 
   class GameFacade {
-    constructor(config, gameState, gameLoop) {
+    constructor(config, gameState, gameLoop, contentId) {
       this.config = config;
       this.gameState = gameState;
       this.gameLoop = gameLoop;
+      this.contentId = contentId;
       this.offlineModal = null;
       this._reactiveTick = 0;
       this.getEquipSlotOptions = this.getEquipSlotOptions.bind(this);
@@ -909,6 +910,12 @@
       try {
         const data = await AFK.SaveManager.importSave(file);
         if (!data?.state) throw new Error('No valid state');
+        if (data.contentId && data.contentId !== this.contentId) {
+          const target = AFK.ConfigManager.getAvailableGames().find(g => g.id === data.contentId);
+          const name = target?.displayName || data.contentId;
+          if (!confirm(`This save belongs to "${name}". Switch to that game and import?`)) return;
+          await this.switchContent(data.contentId);
+        }
         const integrityNote = data._integrity?.valid === false
           ? '\n\nWarning: imported save failed checksum verification.'
           : '';
@@ -994,6 +1001,51 @@
       console.log('Game state snapshot:', JSON.parse(JSON.stringify(this.gameState.toJSON())));
       this.gameState.showToast('State logged to console');
     }
+
+    getGameSelectorDisplay() {
+      void this._reactiveTick;
+      const games = AFK.ConfigManager.getAvailableGames().map(g => ({
+        ...g,
+        active: g.id === this.contentId,
+        hasSave: AFK.SaveManager.hasSaveForContent(g.id)
+      }));
+      return {
+        games,
+        currentGame: AFK.ConfigManager.getCurrentManifest()
+      };
+    }
+
+    async switchContent(contentId) {
+      if (!contentId || contentId === this.contentId) {
+        this.setTab('gameSelector');
+        return;
+      }
+      const target = AFK.ConfigManager.getAvailableGames().find(g => g.id === contentId);
+      if (!target) return;
+
+      AFK.SaveManager.save(this.gameState);
+      this.gameLoop.stop();
+
+      AFK.setSelectedContentId(contentId);
+      const config = await AFK.loadAllConfigs(contentId);
+      const saved = AFK.SaveManager.load();
+
+      this.config = config;
+      this.contentId = contentId;
+      this.gameState = new AFK.GameState(config, saved?.state);
+      this.gameLoop = new AFK.GameLoop(this.gameState, config);
+
+      const manifest = AFK.ConfigManager.getCurrentManifest();
+      if (typeof document !== 'undefined' && manifest?.displayName) {
+        document.title = manifest.displayName;
+      }
+
+      this.offlineModal = null;
+      this.gameState.state.ui.activeTab = 'generators';
+      this.gameLoop.start();
+      this.bumpUI();
+      this.gameState.showToast(`Now playing: ${manifest?.displayName || contentId}`);
+    }
   }
 
   async function bootstrap() {
@@ -1001,11 +1053,15 @@
       throw new Error('Game bundles not loaded. Ensure config-bundle.js, afk-engine.bundle.js, and afk-ui.bundle.js are included before main.js.');
     }
 
-    const config = await AFK.loadAllConfigs();
+    const contentId = AFK.getSelectedContentId();
+    const config = await AFK.loadAllConfigs(contentId);
     const saved = AFK.SaveManager.load();
     const gameState = new AFK.GameState(config, saved?.state);
     const gameLoop = new AFK.GameLoop(gameState, config);
-    const game = reactive(new GameFacade(config, gameState, gameLoop));
+    const game = reactive(new GameFacade(config, gameState, gameLoop, contentId));
+
+    const manifest = AFK.ConfigManager.getCurrentManifest();
+    if (manifest?.displayName) document.title = manifest.displayName;
 
     if (saved?._integrity?.valid === false) {
       gameState.showToast('Save integrity warning — data may be corrupted');

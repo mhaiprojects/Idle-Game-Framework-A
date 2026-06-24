@@ -1,0 +1,778 @@
+{
+  "generators": [
+    {
+      "codeName": "rockGatherer",
+      "displayName": "Rock Gatherer",
+      "icon": "\ud83e\udea8",
+      "category": "stone",
+      "description": "Collects stone from riverbeds and outcrops.",
+      "unlockConditions": null,
+      "baseCost": 10,
+      "costMultiplier": 1.15,
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "stone",
+          "amount": 1,
+          "role": "primary"
+        },
+        {
+          "resource": "wood",
+          "amount": 0.3,
+          "role": "unlockGate",
+          "forGenerator": "woodcutter"
+        }
+      ]
+    },
+    {
+      "codeName": "woodcutter",
+      "displayName": "Woodcutter",
+      "icon": "\ud83e\ude93",
+      "category": "stone",
+      "description": "Fells trees and prepares timber.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "rockGatherer",
+            "quantity": 1
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "wood",
+            "amount": 10
+          }
+        ]
+      },
+      "baseCost": 50,
+      "costMultiplier": 1.15,
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "wood",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "wood",
+          "amount": 1,
+          "role": "primary"
+        },
+        {
+          "resource": "food",
+          "amount": 0.4,
+          "role": "unlockGate",
+          "forGenerator": "campfire"
+        }
+      ]
+    },
+    {
+      "codeName": "campfire",
+      "displayName": "Campfire",
+      "icon": "\ud83d\udd25",
+      "category": "stone",
+      "description": "Cooks food and preserves tribal knowledge.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "woodcutter",
+            "quantity": 3
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "food",
+            "amount": 25
+          }
+        ]
+      },
+      "baseCost": 200,
+      "costMultiplier": 1.16,
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "wood",
+          "multiplier": 2
+        },
+        {
+          "resource": "food",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "food",
+          "amount": 1.5,
+          "role": "primary"
+        },
+        {
+          "resource": "stone",
+          "amount": 0.5,
+          "role": "bonus"
+        },
+        {
+          "resource": "copper",
+          "amount": 0.05,
+          "role": "unlockGate",
+          "forGenerator": "copperMine"
+        }
+      ]
+    },
+    {
+      "codeName": "copperMine",
+      "displayName": "Copper Mine",
+      "icon": "\u26cf\ufe0f",
+      "category": "bronze",
+      "description": "Extracts copper ore from shallow deposits.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "ascensionTier",
+            "minTier": 1
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "copper",
+            "amount": 20
+          }
+        ]
+      },
+      "baseCost": 1500,
+      "costMultiplier": 1.17,
+      "requiredFeature": "generators:tier1",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "food",
+          "multiplier": 2
+        },
+        {
+          "resource": "copper",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "copper",
+          "amount": 1,
+          "role": "primary"
+        },
+        {
+          "resource": "bronze",
+          "amount": 0.1,
+          "role": "unlockGate",
+          "forGenerator": "bronzeSmelter"
+        }
+      ]
+    },
+    {
+      "codeName": "bronzeSmelter",
+      "displayName": "Bronze Smelter",
+      "icon": "\ud83c\udffa",
+      "category": "bronze",
+      "description": "Smelts copper into bronze alloy.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "copperMine",
+            "quantity": 2
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "bronze",
+            "amount": 15
+          }
+        ]
+      },
+      "baseCost": 8000,
+      "costMultiplier": 1.18,
+      "requiredFeature": "generators:tier1",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "copper",
+          "multiplier": 3
+        },
+        {
+          "resource": "bronze",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "bronze",
+          "amount": 1.2,
+          "role": "primary"
+        },
+        {
+          "resource": "iron",
+          "amount": 0.08,
+          "role": "unlockGate",
+          "forGenerator": "ironMine"
+        }
+      ]
+    },
+    {
+      "codeName": "bronzeForge",
+      "displayName": "Bronze Forge",
+      "icon": "\ud83d\udd28",
+      "category": "bronze",
+      "description": "Forges bronze tools and weapons.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "bronzeSmelter",
+            "quantity": 3
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "bronze",
+            "amount": 100
+          }
+        ]
+      },
+      "baseCost": 40000,
+      "costMultiplier": 1.19,
+      "requiredFeature": "generators:tier1",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "bronze",
+          "multiplier": 5
+        }
+      ],
+      "produces": [
+        {
+          "resource": "bronze",
+          "amount": 3,
+          "role": "primary"
+        },
+        {
+          "resource": "stone",
+          "amount": 2,
+          "role": "bonus"
+        },
+        {
+          "resource": "iron",
+          "amount": 0.15,
+          "role": "unlockGate",
+          "forGenerator": "ironMine"
+        }
+      ]
+    },
+    {
+      "codeName": "ironMine",
+      "displayName": "Iron Mine",
+      "icon": "\ud83c\udfd4\ufe0f",
+      "category": "medieval",
+      "description": "Deep mines yield iron for empires.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "ascensionTier",
+            "minTier": 2
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "iron",
+            "amount": 50
+          }
+        ]
+      },
+      "baseCost": 200000,
+      "costMultiplier": 1.2,
+      "requiredFeature": "generators:tier2",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "bronze",
+          "multiplier": 3
+        },
+        {
+          "resource": "iron",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "iron",
+          "amount": 1,
+          "role": "primary"
+        },
+        {
+          "resource": "gold",
+          "amount": 0.05,
+          "role": "unlockGate",
+          "forGenerator": "tradeCaravan"
+        }
+      ]
+    },
+    {
+      "codeName": "blacksmith",
+      "displayName": "Blacksmith",
+      "icon": "\u2692\ufe0f",
+      "category": "medieval",
+      "description": "Shapes iron into tools of conquest.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "ironMine",
+            "quantity": 3
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "iron",
+            "amount": 200
+          }
+        ]
+      },
+      "baseCost": 1000000,
+      "costMultiplier": 1.21,
+      "requiredFeature": "generators:tier2",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "iron",
+          "multiplier": 5
+        }
+      ],
+      "produces": [
+        {
+          "resource": "iron",
+          "amount": 2.5,
+          "role": "primary"
+        },
+        {
+          "resource": "gold",
+          "amount": 0.1,
+          "role": "unlockGate",
+          "forGenerator": "tradeCaravan"
+        },
+        {
+          "resource": "coal",
+          "amount": 0.02,
+          "role": "unlockGate",
+          "forGenerator": "coalMine"
+        }
+      ]
+    },
+    {
+      "codeName": "tradeCaravan",
+      "displayName": "Trade Caravan",
+      "icon": "\ud83d\udc2a",
+      "category": "medieval",
+      "description": "Routes goods and gold across kingdoms.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "blacksmith",
+            "quantity": 2
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "gold",
+            "amount": 100
+          }
+        ]
+      },
+      "baseCost": 5000000,
+      "costMultiplier": 1.22,
+      "requiredFeature": "generators:tier2",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "iron",
+          "multiplier": 10
+        },
+        {
+          "resource": "gold",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "gold",
+          "amount": 1,
+          "role": "primary"
+        },
+        {
+          "resource": "stone",
+          "amount": 10,
+          "role": "bonus"
+        },
+        {
+          "resource": "iron",
+          "amount": 0.5,
+          "role": "bonus"
+        },
+        {
+          "resource": "coal",
+          "amount": 0.1,
+          "role": "unlockGate",
+          "forGenerator": "coalMine"
+        }
+      ]
+    },
+    {
+      "codeName": "coalMine",
+      "displayName": "Coal Mine",
+      "icon": "\u2b1b",
+      "category": "industrial",
+      "description": "Fuels the furnaces of industry.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "ascensionTier",
+            "minTier": 3
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "coal",
+            "amount": 100
+          }
+        ]
+      },
+      "baseCost": 50000000,
+      "costMultiplier": 1.23,
+      "requiredFeature": "generators:tier3",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "iron",
+          "multiplier": 5
+        },
+        {
+          "resource": "coal",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "coal",
+          "amount": 1.5,
+          "role": "primary"
+        },
+        {
+          "resource": "steel",
+          "amount": 0.1,
+          "role": "unlockGate",
+          "forGenerator": "steelMill"
+        }
+      ]
+    },
+    {
+      "codeName": "steelMill",
+      "displayName": "Steel Mill",
+      "icon": "\ud83c\udfed",
+      "category": "industrial",
+      "description": "Mass-produces steel from coal and iron.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "coalMine",
+            "quantity": 3
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "steel",
+            "amount": 50
+          }
+        ]
+      },
+      "baseCost": 500000000,
+      "costMultiplier": 1.24,
+      "requiredFeature": "generators:tier3",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "coal",
+          "multiplier": 5
+        },
+        {
+          "resource": "steel",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "steel",
+          "amount": 1,
+          "role": "primary"
+        },
+        {
+          "resource": "electricity",
+          "amount": 0.05,
+          "role": "unlockGate",
+          "forGenerator": "powerPlant"
+        }
+      ]
+    },
+    {
+      "codeName": "powerPlant",
+      "displayName": "Power Plant",
+      "icon": "\u26a1",
+      "category": "industrial",
+      "description": "Generates electricity for the modern age.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "steelMill",
+            "quantity": 2
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "electricity",
+            "amount": 100
+          }
+        ]
+      },
+      "baseCost": 5000000000,
+      "costMultiplier": 1.25,
+      "requiredFeature": "generators:tier3",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "steel",
+          "multiplier": 10
+        },
+        {
+          "resource": "electricity",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "electricity",
+          "amount": 2,
+          "role": "primary"
+        },
+        {
+          "resource": "stone",
+          "amount": 100,
+          "role": "bonus"
+        },
+        {
+          "resource": "data",
+          "amount": 0.02,
+          "role": "unlockGate",
+          "forGenerator": "dataCenter"
+        }
+      ]
+    },
+    {
+      "codeName": "dataCenter",
+      "displayName": "Data Center",
+      "icon": "\ud83d\udda5\ufe0f",
+      "category": "digital",
+      "description": "Stores and processes the world's information.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "ascensionTier",
+            "minTier": 4
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "data",
+            "amount": 100
+          }
+        ]
+      },
+      "baseCost": 50000000000,
+      "costMultiplier": 1.26,
+      "requiredFeature": "generators:tier4",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "electricity",
+          "multiplier": 5
+        },
+        {
+          "resource": "data",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "data",
+          "amount": 1,
+          "role": "primary"
+        },
+        {
+          "resource": "compute",
+          "amount": 0.1,
+          "role": "unlockGate",
+          "forGenerator": "mlLaboratory"
+        }
+      ]
+    },
+    {
+      "codeName": "mlLaboratory",
+      "displayName": "ML Laboratory",
+      "icon": "\ud83e\uddea",
+      "category": "digital",
+      "description": "Trains models on vast datasets.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "dataCenter",
+            "quantity": 2
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "compute",
+            "amount": 50
+          }
+        ]
+      },
+      "baseCost": 500000000000,
+      "costMultiplier": 1.27,
+      "requiredFeature": "generators:tier4",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "data",
+          "multiplier": 5
+        },
+        {
+          "resource": "compute",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "compute",
+          "amount": 1.5,
+          "role": "primary"
+        },
+        {
+          "resource": "intelligence",
+          "amount": 0.05,
+          "role": "unlockGate",
+          "forGenerator": "agiCore"
+        }
+      ]
+    },
+    {
+      "codeName": "agiCore",
+      "displayName": "AGI Core",
+      "icon": "\ud83e\udde0",
+      "category": "digital",
+      "description": "Artificial general intelligence \u2014 humanity's next chapter.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "mlLaboratory",
+            "quantity": 1
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "intelligence",
+            "amount": 25
+          }
+        ]
+      },
+      "baseCost": 5000000000000,
+      "costMultiplier": 1.3,
+      "requiredFeature": "generators:tier4",
+      "costResources": [
+        {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
+          "resource": "compute",
+          "multiplier": 20
+        },
+        {
+          "resource": "intelligence",
+          "multiplier": 1
+        }
+      ],
+      "produces": [
+        {
+          "resource": "stone",
+          "amount": 10000,
+          "role": "primary"
+        },
+        {
+          "resource": "intelligence",
+          "amount": 5,
+          "role": "bonus"
+        },
+        {
+          "resource": "compute",
+          "amount": 10,
+          "role": "bonus"
+        }
+      ]
+    }
+  ]
+}

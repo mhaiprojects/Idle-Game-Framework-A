@@ -1,6 +1,11 @@
 import { FormulaEngine } from '../game/FormulaEngine.js';
 
 let config = null;
+let contentRegistry = null;
+let currentContentId = null;
+
+const CONTENT_SELECTION_KEY = 'afk_selected_content';
+const LEGACY_STORAGE_KEY = 'afk_ai_save';
 
 const CONFIG_FILES = [
   'framework', 'difficulty', 'resources', 'generators', 'upgrades',
@@ -8,21 +13,69 @@ const CONFIG_FILES = [
   'drops', 'ascension', 'prestige', 'defaults'
 ];
 
-export async function loadAllConfigs() {
-  if (window.AFK_CONFIG) {
-    config = window.AFK_CONFIG;
-    validateConfig();
-    return config;
+export async function loadContentRegistry() {
+  if (window.AFK_CONTENT_REGISTRY) {
+    contentRegistry = window.AFK_CONTENT_REGISTRY;
+    return contentRegistry;
   }
+  const res = await fetch('content/registry.json');
+  if (!res.ok) throw new Error('Failed to load content/registry.json');
+  contentRegistry = await res.json();
+  return contentRegistry;
+}
+
+export function getSelectedContentId() {
+  if (typeof localStorage !== 'undefined') {
+    const stored = localStorage.getItem(CONTENT_SELECTION_KEY);
+    if (stored) return stored;
+  }
+  return contentRegistry?.defaultContentId || 'cosmic-time-factory';
+}
+
+export function setSelectedContentId(contentId) {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(CONTENT_SELECTION_KEY, contentId);
+  }
+}
+
+export function getContentRegistry() {
+  return contentRegistry;
+}
+
+export function getCurrentContentId() {
+  return currentContentId;
+}
+
+export function getCurrentManifest() {
+  const id = currentContentId || getSelectedContentId();
+  return contentRegistry?.games?.find(g => g.id === id) || null;
+}
+
+async function loadContentFromFetch(contentId) {
   const entries = await Promise.all(
     CONFIG_FILES.map(async name => {
-      const res = await fetch(`config/${name}.json`);
-      if (!res.ok) throw new Error(`Failed to load config/${name}.json`);
+      const res = await fetch(`content/${contentId}/${name}.json`);
+      if (!res.ok) throw new Error(`Failed to load content/${contentId}/${name}.json`);
       return [name, await res.json()];
     })
   );
-  config = Object.fromEntries(entries);
-  validateConfig();
+  return Object.fromEntries(entries);
+}
+
+export async function loadAllConfigs(contentId) {
+  await loadContentRegistry();
+  const id = contentId || getSelectedContentId();
+
+  if (window.AFK_CONTENT?.[id]) {
+    config = window.AFK_CONTENT[id];
+  } else if (window.AFK_CONFIG && !window.AFK_CONTENT && id === 'cosmic-time-factory') {
+    config = window.AFK_CONFIG;
+  } else {
+    config = await loadContentFromFetch(id);
+  }
+
+  currentContentId = id;
+  validateConfig(config);
   return config;
 }
 
@@ -54,12 +107,12 @@ export function validateGeneratorChain(cfg) {
   return { valid: errors.length === 0, errors };
 }
 
-function validateConfig() {
-  const resources = config.resources.resources;
+function validateConfig(cfg = config) {
+  const resources = cfg.resources.resources;
   const primary = resources.filter(r => r.isPrimary);
   if (primary.length !== 1) throw new Error('Exactly one primary resource required');
 
-  const chain = validateGeneratorChain(config);
+  const chain = validateGeneratorChain(cfg);
   if (!chain.valid) {
     const msg = chain.errors.map(e =>
       `${e.generator} does not produce ${e.missing} required by ${e.forGenerator}`
@@ -80,6 +133,8 @@ function flattenConditions(unlockConditions) {
 
 export const ConfigManager = {
   getAll() { return config; },
+  getAvailableGames() { return contentRegistry?.games || []; },
+  getGeneratorTiers() { return config?.framework?.generatorTiers || {}; },
   getDefaults() { return config.defaults; },
   getDefaultIcon(key) {
     return config.defaults.icons[key] ?? config.defaults.icons.unknown;

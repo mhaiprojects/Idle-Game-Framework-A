@@ -2,16 +2,14 @@ import { FormulaEngine } from '../FormulaEngine.js';
 import { ModifierSystem } from '../ModifierSystem.js';
 import { ConfigManager } from '../../core/ConfigManager.js';
 
-const GENERATOR_TIERS = {
-  0: ['timeWarden', 'cosmicSailor', 'starForge'],
-  1: ['nebulaHarvester', 'quantumProcessor', 'voidExtractor'],
-  2: ['chronoRefinery', 'temporalEngine', 'cosmicFoundry'],
-  3: ['infinityChronometer', 'voidArchitect', 'eternityForge']
-};
+function getGeneratorTiers(config) {
+  return config.framework?.generatorTiers || {};
+}
 
 export const AchievementSystem = {
-  getGeneratorTier(codeName) {
-    for (const [tier, codes] of Object.entries(GENERATOR_TIERS)) {
+  getGeneratorTier(codeName, config) {
+    const tiers = getGeneratorTiers(config);
+    for (const [tier, codes] of Object.entries(tiers)) {
       if (codes.includes(codeName)) return Number(tier);
     }
     return 0;
@@ -206,7 +204,8 @@ export const AchievementSystem = {
         break;
       }
       case 'generatorsOwnedTier': {
-        const codes = GENERATOR_TIERS[req.tier] || [];
+        const tiers = getGeneratorTiers(config);
+        const codes = tiers[req.tier] || [];
         const current = codes.filter(c => (state.generators[c]?.quantityPurchased || 0) >= (req.amount || 1)).length;
         progress = codes.length > 0 ? Math.min(1, current / codes.length) : 0;
         icon = '🏭';
@@ -278,7 +277,8 @@ export const AchievementSystem = {
         return total >= req.amount;
       }
       case 'generatorsOwnedTier': {
-        const codes = GENERATOR_TIERS[req.tier] || [];
+        const tiers = getGeneratorTiers(config);
+        const codes = tiers[req.tier] || [];
         if (req.tier === 0 && req.amount > 1) {
           return codes.every(c => (state.generators[c]?.quantityPurchased || 0) >= req.amount);
         }

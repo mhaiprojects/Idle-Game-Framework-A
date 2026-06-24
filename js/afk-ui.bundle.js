@@ -548,10 +548,55 @@ AFK_UI.ResourceBar = {
   `
 };
 
+// --- js/ui/GameSelectorPanel.vue.js ---
+const PanelHeader = AFK_UI.PanelHeader;
+
+AFK_UI.GameSelectorPanel = {
+  name: 'GameSelectorPanel',
+  components: { PanelHeader, CardSection },
+  props: {
+    games: Array,
+    currentGame: Object
+  },
+  emits: ['select-game'],
+  template: `
+    <div class="panel">
+      <PanelHeader panel-key="gameSelector" />
+      <CardSection section-key="currentGame" level="panel" :first="true">
+        <p v-if="currentGame" class="section-text">
+          Currently playing: {{ currentGame.icon }} <strong>{{ currentGame.displayName }}</strong>
+        </p>
+      </CardSection>
+      <CardSection section-key="gameCards" level="panel">
+        <div class="game-card-grid">
+          <div v-for="game in games" :key="game.id"
+            class="card game-card"
+            :class="{ 'game-card-active': game.active }"
+            :style="game.themeColor ? { '--game-accent': game.themeColor } : null">
+            <div class="card-header">
+              <span class="card-icon game-card-icon">{{ game.icon }}</span>
+              <span class="card-name">{{ game.displayName }}</span>
+              <span v-if="game.active" class="game-card-badge">Playing</span>
+              <span v-else-if="game.hasSave" class="game-card-badge save">Save</span>
+            </div>
+            <p class="card-description">{{ game.description }}</p>
+            <p v-if="game.tagline" class="hint-text">{{ game.tagline }}</p>
+            <div class="section-actions section-actions-start">
+              <button class="btn" :class="game.active ? 'btn-ghost' : 'btn-primary'"
+                :disabled="game.active" @click="$emit('select-game', game.id)">
+                {{ game.active ? 'Selected' : (game.hasSave ? 'Continue' : 'Play') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </CardSection>
+    </div>
+  `
+};
+
 // --- js/ui/GeneratorPanel.vue.js ---
 const PurchaseMultiplier = AFK_UI.PurchaseMultiplier;
 const ResourceProgressList = AFK_UI.ResourceProgressList;
-const PanelHeader = AFK_UI.PanelHeader;
 
 AFK_UI.GeneratorPanel = {
   name: 'GeneratorPanel',
@@ -1246,6 +1291,7 @@ AFK_UI.ActionBar = {
 };
 
 // --- js/ui/App.vue.js ---
+const GameSelectorPanel = AFK_UI.GameSelectorPanel;
 const ResourceBar = AFK_UI.ResourceBar;
 const GeneratorPanel = AFK_UI.GeneratorPanel;
 const UpgradePanel = AFK_UI.UpgradePanel;
@@ -1266,7 +1312,7 @@ const InfoModal = AFK_UI.InfoModal;
 AFK_UI.App = {
   name: 'App',
   components: {
-    ResourceBar, GeneratorPanel, UpgradePanel, CharacterPanel,
+    GameSelectorPanel, ResourceBar, GeneratorPanel, UpgradePanel, CharacterPanel,
     InventoryPanel, ArtifactPanel, AchievementPanel, AscensionPanel,
     SettingsPanel, StatsPanel, ProgressPanel, ActionBar, Toast, EventBanner,
     UnlockModal, InfoModal, CardSection, PanelHeader
@@ -1289,8 +1335,14 @@ AFK_UI.App = {
     allTabs() {
       return this.config?.defaults?.tabs || [];
     },
+    engineTabs() {
+      return [{ id: 'gameSelector', icon: '🎮', label: 'Games' }];
+    },
     tabs() {
-      return this.allTabs.filter(t => !t.devOnly || this.state.settings.devMode);
+      return [...this.engineTabs, ...this.allTabs.filter(t => !t.devOnly || this.state.settings.devMode)];
+    },
+    gameSelectorData() {
+      return this.game.getGameSelectorDisplay();
     },
     resourceBarItems() {
       return this.game.getResourceBarItems();
@@ -1377,6 +1429,7 @@ AFK_UI.App = {
   },
   methods: {
     isTabUnlocked(tab) {
+      if (tab.id === 'gameSelector') return true;
       if (tab.devOnly) return this.state.settings.devMode;
       if (!tab.feature) return true;
       return this.game.isFeatureUnlocked(tab.feature);
@@ -1395,6 +1448,7 @@ AFK_UI.App = {
     closeInfoModal() {
       this.infoModal = null;
     },
+    onSelectGame(contentId) { this.game.switchContent(contentId); },
     onTabClick(tab) {
       if (this.isTabUnlocked(tab)) {
         this.game.setTab(tab.id);
@@ -1456,6 +1510,10 @@ AFK_UI.App = {
       <EventBanner :events="eventBannerItems" />
       <div class="main-layout">
         <div class="content-area">
+          <GameSelectorPanel v-if="state.ui.activeTab === 'gameSelector'"
+            :games="gameSelectorData.games"
+            :current-game="gameSelectorData.currentGame"
+            @select-game="onSelectGame" />
           <GeneratorPanel v-if="state.ui.activeTab === 'generators'"
             :generators="generators" :multiplier="state.ui.purchaseMultiplier"
             :multiplier-options="config.framework.ui.purchaseMultipliers"

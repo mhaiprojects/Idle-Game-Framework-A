@@ -357,7 +357,21 @@
 
 ---
 
-## Related files
+### 2026-6-21-28-0-0 — Engine/content split + Game Selector + Dr Dirt theme
+
+**Request:** Separate game engine from content; move configs to `content/{THEME}`; Game Selector tab; new Dr Dirt theme (Stone Age → AI Age, 5 ascensions).
+
+**Implemented:**
+- `content/cosmic-time-factory/` — existing game configs + manifest
+- `content/dr-dirt/` — new civilization theme: 15 generators (3/age), 5 ascension tiers, 13 resources, characters/artifacts/achievements
+- `content/registry.json` — multi-game registry with per-game storage keys
+- `ConfigManager` — `loadContentRegistry`, `loadAllConfigs(contentId)`, `getAvailableGames`, dynamic `resourceUnlockByTier` / `generatorTiers`
+- `SaveManager` v1.3.0 — `contentId` in saves, legacy `afk_ai_save` migration, per-game storage keys
+- `GameSelectorPanel` — game cards with Play/Continue; engine-level 🎮 tab always unlocked
+- `main.js` — `switchContent()` hot-swaps game without full reload
+- `scripts/bundle-for-file-protocol.py` — bundles all content packs into `window.AFK_CONTENT`
+
+---
 
 - [content-expansion-approval.draft.prompt.md](./content-expansion-approval.draft.prompt.md) — numbered task breakdown for content expansion
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec

@@ -1,0 +1,81 @@
+{
+  "artifacts": [
+    {
+      "codeName": "firstFlint",
+      "displayName": "First Flint",
+      "description": "+5% all production",
+      "icon": "\ud83d\udd25",
+      "rarity": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.05
+      },
+      "dropRequirements": {
+        "generator": "rockGatherer",
+        "minAscensionTier": 0
+      }
+    },
+    {
+      "codeName": "bronzeTablet",
+      "displayName": "Bronze Tablet",
+      "description": "+10% bronze generators",
+      "icon": "\ud83d\udcdc",
+      "rarity": "uncommon",
+      "effect": {
+        "type": "categoryMultiplier",
+        "category": "bronze",
+        "multiplier": 1.1
+      },
+      "dropRequirements": {
+        "generator": "bronzeForge",
+        "minAscensionTier": 1
+      }
+    },
+    {
+      "codeName": "ironCrown",
+      "displayName": "Iron Crown",
+      "description": "+12% global production",
+      "icon": "\ud83d\udc51",
+      "rarity": "rare",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.12
+      },
+      "dropRequirements": {
+        "generator": "blacksmith",
+        "minAscensionTier": 2
+      }
+    },
+    {
+      "codeName": "steamEngine",
+      "displayName": "Steam Engine",
+      "description": "+15% industrial generators",
+      "icon": "\ud83d\ude82",
+      "rarity": "epic",
+      "effect": {
+        "type": "categoryMultiplier",
+        "category": "industrial",
+        "multiplier": 1.15
+      },
+      "dropRequirements": {
+        "generator": "powerPlant",
+        "minAscensionTier": 3
+      }
+    },
+    {
+      "codeName": "neuralChip",
+      "displayName": "Neural Chip",
+      "description": "Double tap power",
+      "icon": "\ud83d\udcbe",
+      "rarity": "legendary",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 2
+      },
+      "dropRequirements": {
+        "generator": "agiCore",
+        "minAscensionTier": 4
+      }
+    }
+  ]
+}

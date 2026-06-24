@@ -1,0 +1,10 @@
+{
+  "id": "dr-dirt",
+  "displayName": "Dr Dirt",
+  "description": "Guide civilization from the Stone Age to the AI Age. Each ascension advances humanity through history.",
+  "icon": "\ud83c\udf0d",
+  "tagline": "Stone Age \u2192 AI Age",
+  "storageKey": "afk_dr_dirt_save",
+  "exportPrefix": "dr-dirt",
+  "themeColor": "#84cc16"
+}

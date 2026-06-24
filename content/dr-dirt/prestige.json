@@ -1,0 +1,325 @@
+{
+  "prestigeCurrency": {
+    "codeName": "legacyPoints",
+    "displayName": "Legacy Points",
+    "gainFormula": "logarithmic",
+    "logBase": 10,
+    "minimumResourceValue": 1000,
+    "milestoneExponent": 2,
+    "resourceWeights": {
+      "stone": 1,
+      "wood": 0.4,
+      "food": 0.3,
+      "copper": 0.5,
+      "bronze": 0.6,
+      "iron": 0.7,
+      "gold": 0.8,
+      "coal": 0.9,
+      "steel": 1.0,
+      "electricity": 1.1,
+      "data": 1.2,
+      "compute": 1.3,
+      "intelligence": 1.5
+    },
+    "rulesExplanation": "Legacy Points from weighted civilization progress (resources available in your current age only). Each point requires exponentially more weighted value."
+  },
+  "prestigeMinimumBase": {
+    "operator": "AND",
+    "conditions": [
+      {
+        "type": "resourceHeld",
+        "resource": "stone",
+        "amount": 1000
+      },
+      {
+        "type": "resourceHeld",
+        "resource": "wood",
+        "amount": 500
+      },
+      {
+        "type": "resourceHeld",
+        "resource": "food",
+        "amount": 100
+      }
+    ]
+  },
+  "prestigeMinimumTierResources": {
+    "1": [
+      {
+        "resource": "copper",
+        "amount": 50
+      }
+    ],
+    "2": [
+      {
+        "resource": "iron",
+        "amount": 200
+      }
+    ],
+    "3": [
+      {
+        "resource": "coal",
+        "amount": 150
+      }
+    ],
+    "4": [
+      {
+        "resource": "data",
+        "amount": 100
+      }
+    ]
+  },
+  "prestigeMinimumScalePerPrestige": 0.2,
+  "featureUnlocks": [
+    {
+      "feature": "tab:characters",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 1
+          }
+        ]
+      }
+    },
+    {
+      "feature": "tab:inventory",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 1
+          }
+        ]
+      }
+    },
+    {
+      "feature": "systems:drops",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 1
+          }
+        ]
+      }
+    },
+    {
+      "feature": "tab:artifacts",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 2
+          }
+        ]
+      }
+    }
+  ],
+  "onPrestige": {
+    "clearCurrency": true,
+    "clearGeneratorQuantities": true,
+    "keepGeneratorUnlocks": true,
+    "clearUpgrades": true,
+    "clearInventory": false,
+    "clearArtifacts": false,
+    "clearTemporaryBuffs": true,
+    "resetRunStats": true,
+    "resetPrestigeShopAllocation": true
+  },
+  "startingResourcesAfterPrestige": {
+    "stone": 10
+  },
+  "prestigeBonuses": [
+    {
+      "codeName": "tribalWisdom",
+      "displayName": "Tribal Wisdom",
+      "description": "+5% stone per level",
+      "icon": "\ud83d\udcff",
+      "cost": 1,
+      "maxLevel": 25,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.05
+      },
+      "requiredFeature": "prestigeShop:tier0"
+    },
+    {
+      "codeName": "strongArms",
+      "displayName": "Strong Arms",
+      "description": "+10% tap per level",
+      "icon": "\ud83d\udcaa",
+      "cost": 2,
+      "maxLevel": 15,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplierPerLevel": 0.1
+      },
+      "requiredFeature": "prestigeShop:tier0"
+    },
+    {
+      "codeName": "campfireTales",
+      "displayName": "Campfire Tales",
+      "description": "+3% offline efficiency per level",
+      "icon": "\ud83d\udd25",
+      "cost": 2,
+      "maxLevel": 10,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.03
+      },
+      "requiredFeature": "prestigeShop:tier0"
+    },
+    {
+      "codeName": "bronzeMastery",
+      "displayName": "Bronze Mastery",
+      "description": "+8% bronze generators per level",
+      "icon": "\ud83d\udd36",
+      "cost": 3,
+      "maxLevel": 12,
+      "effect": {
+        "type": "categoryMultiplier",
+        "category": "bronze",
+        "multiplierPerLevel": 0.08
+      },
+      "requiredFeature": "prestigeShop:tier1"
+    },
+    {
+      "codeName": "tradeRoutes",
+      "displayName": "Trade Routes",
+      "description": "+6% medieval generators per level",
+      "icon": "\ud83d\udc2a",
+      "cost": 3,
+      "maxLevel": 12,
+      "effect": {
+        "type": "categoryMultiplier",
+        "category": "medieval",
+        "multiplierPerLevel": 0.06
+      },
+      "requiredFeature": "prestigeShop:tier1"
+    },
+    {
+      "codeName": "writtenWord",
+      "displayName": "Written Word",
+      "description": "+4% global per level",
+      "icon": "\ud83d\udcdc",
+      "cost": 2,
+      "maxLevel": 10,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.04
+      },
+      "requiredFeature": "prestigeShop:tier1"
+    },
+    {
+      "codeName": "assemblyLine",
+      "displayName": "Assembly Line",
+      "description": "-2% costs per level",
+      "icon": "\u2699\ufe0f",
+      "cost": 3,
+      "maxLevel": 10,
+      "effect": {
+        "type": "costReduction",
+        "multiplierPerLevel": 0.02
+      },
+      "requiredFeature": "prestigeShop:tier2"
+    },
+    {
+      "codeName": "steelWorks",
+      "displayName": "Steel Works",
+      "description": "+8% industrial generators per level",
+      "icon": "\ud83c\udfed",
+      "cost": 4,
+      "maxLevel": 10,
+      "effect": {
+        "type": "categoryMultiplier",
+        "category": "industrial",
+        "multiplierPerLevel": 0.08
+      },
+      "requiredFeature": "prestigeShop:tier2"
+    },
+    {
+      "codeName": "invention",
+      "displayName": "Invention",
+      "description": "+5% global per level",
+      "icon": "\ud83d\udca1",
+      "cost": 4,
+      "maxLevel": 15,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.05
+      },
+      "requiredFeature": "prestigeShop:tier3"
+    },
+    {
+      "codeName": "electricGrid",
+      "displayName": "Electric Grid",
+      "description": "+7% industrial generators per level",
+      "icon": "\u26a1",
+      "cost": 5,
+      "maxLevel": 12,
+      "effect": {
+        "type": "categoryMultiplier",
+        "category": "industrial",
+        "multiplierPerLevel": 0.07
+      },
+      "requiredFeature": "prestigeShop:tier3"
+    },
+    {
+      "codeName": "massMedia",
+      "displayName": "Mass Media",
+      "description": "+4% global per level",
+      "icon": "\ud83d\udcfa",
+      "cost": 5,
+      "maxLevel": 10,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.04
+      },
+      "requiredFeature": "prestigeShop:tier3"
+    },
+    {
+      "codeName": "cloudScale",
+      "displayName": "Cloud Scale",
+      "description": "+6% global per level",
+      "icon": "\u2601\ufe0f",
+      "cost": 5,
+      "maxLevel": 20,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.06
+      },
+      "requiredFeature": "prestigeShop:tier4"
+    },
+    {
+      "codeName": "neuralNet",
+      "displayName": "Neural Net",
+      "description": "+5% tap per level",
+      "icon": "\ud83e\udde0",
+      "cost": 5,
+      "maxLevel": 15,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplierPerLevel": 0.05
+      },
+      "requiredFeature": "prestigeShop:tier4"
+    },
+    {
+      "codeName": "singularity",
+      "displayName": "Singularity Core",
+      "description": "-3% costs per level",
+      "icon": "\u267e\ufe0f",
+      "cost": 6,
+      "maxLevel": 10,
+      "effect": {
+        "type": "costReduction",
+        "multiplierPerLevel": 0.03
+      },
+      "requiredFeature": "prestigeShop:tier4"
+    }
+  ]
+}

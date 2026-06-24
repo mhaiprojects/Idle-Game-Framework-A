@@ -1,0 +1,158 @@
+{
+  "dropTables": [
+    {
+      "codeName": "passiveTick",
+      "trigger": "tick",
+      "chancePerSecond": 0.08,
+      "entries": [
+        {
+          "item": "rationPack",
+          "weight": 70,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "energyDrink",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "codeName": "onClick",
+      "trigger": "click",
+      "chance": 0.02,
+      "entries": [
+        {
+          "item": "rationPack",
+          "weight": 60,
+          "quantity": [
+            1,
+            2
+          ]
+        },
+        {
+          "item": "energyDrink",
+          "weight": 40,
+          "quantity": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "codeName": "equipmentDrop",
+      "trigger": "tick",
+      "chancePerSecond": 0.01,
+      "dynamicTierWeights": true,
+      "entries": [
+        {
+          "item": "stonePick",
+          "weight": 40,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "leafCrown",
+          "weight": 35,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "boneCharm",
+          "weight": 25,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "uncommon"
+        }
+      ]
+    },
+    {
+      "codeName": "artifactDrop",
+      "trigger": "tick",
+      "chancePerSecond": 0.0008,
+      "entries": [
+        {
+          "artifact": "firstFlint",
+          "weight": 40
+        },
+        {
+          "artifact": "bronzeTablet",
+          "weight": 25,
+          "dropRequirements": {
+            "generator": "bronzeForge",
+            "minAscensionTier": 1
+          }
+        },
+        {
+          "artifact": "ironCrown",
+          "weight": 20,
+          "dropRequirements": {
+            "generator": "blacksmith",
+            "minAscensionTier": 2
+          }
+        },
+        {
+          "artifact": "steamEngine",
+          "weight": 10,
+          "dropRequirements": {
+            "generator": "powerPlant",
+            "minAscensionTier": 3
+          }
+        },
+        {
+          "artifact": "neuralChip",
+          "weight": 5,
+          "dropRequirements": {
+            "generator": "agiCore",
+            "minAscensionTier": 4
+          }
+        }
+      ]
+    }
+  ],
+  "equipmentDropModifiers": {
+    "tierWeightsByAscension": {
+      "0": {
+        "common": 0.8,
+        "uncommon": 0.18,
+        "rare": 0.02
+      },
+      "1": {
+        "common": 0.6,
+        "uncommon": 0.3,
+        "rare": 0.1
+      },
+      "2": {
+        "common": 0.45,
+        "uncommon": 0.4,
+        "rare": 0.15
+      },
+      "3": {
+        "common": 0.3,
+        "uncommon": 0.45,
+        "rare": 0.25
+      },
+      "4": {
+        "common": 0.2,
+        "uncommon": 0.4,
+        "rare": 0.4
+      }
+    },
+    "quantityBonusPerGenerator": 0.002
+  }
+}

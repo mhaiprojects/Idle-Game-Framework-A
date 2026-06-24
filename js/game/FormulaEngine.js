@@ -256,6 +256,16 @@ export const FormulaEngine = {
   },
 
   getResourcesForAscensionTier(tier, config) {
+    const unlockMap = config.framework?.resourceUnlockByTier;
+    const primary = config.resources.resources.find(r => r.isPrimary)?.codeName;
+    if (unlockMap) {
+      const codes = [];
+      for (let i = 0; i <= tier; i++) {
+        for (const res of unlockMap[String(i)] || []) codes.push(res);
+      }
+      if (primary && !codes.includes(primary)) codes.unshift(primary);
+      if (codes.length) return [...new Set(codes)];
+    }
     const all = config.resources.resources.map(r => r.codeName);
     const byTier = {
       0: ['timeShards', 'cosmicEnergy', 'stardust'],
@@ -263,7 +273,7 @@ export const FormulaEngine = {
       2: ['timeShards', 'cosmicEnergy', 'stardust', 'nebulaEssence', 'quantumFlux', 'voidMatter', 'chronoCrystals'],
       3: all
     };
-    return byTier[Math.min(Math.max(tier, 0), 3)] || byTier[0];
+    return byTier[Math.min(Math.max(tier, 0), config.ascension?.maxTier ?? 3)] || byTier[0];
   },
 
   getScaledPrestigeMinimum(state, config) {

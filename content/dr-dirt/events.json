@@ -1,0 +1,30 @@
+{
+  "events": [
+    {
+      "codeName": "bountifulHarvest",
+      "displayName": "Bountiful Harvest",
+      "icon": "\ud83c\udf3e",
+      "description": "Double food production.",
+      "duration": 30,
+      "minInterval": 120,
+      "maxInterval": 300,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 2
+      }
+    },
+    {
+      "codeName": "inspiration",
+      "displayName": "Flash of Inspiration",
+      "icon": "\ud83d\udca1",
+      "description": "Triple tap power.",
+      "duration": 20,
+      "minInterval": 180,
+      "maxInterval": 400,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 3
+      }
+    }
+  ]
+}

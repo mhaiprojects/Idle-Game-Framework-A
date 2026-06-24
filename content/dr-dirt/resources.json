@@ -1,0 +1,121 @@
+{
+  "resources": [
+    {
+      "codeName": "stone",
+      "displayName": "Stone",
+      "description": "Raw stone \u2014 the foundation of early civilization.",
+      "icon": "\ud83e\udea8",
+      "color": "#78716c",
+      "isPrimary": true,
+      "baseValue": 0
+    },
+    {
+      "codeName": "wood",
+      "displayName": "Wood",
+      "description": "Timber for tools, shelter, and fire.",
+      "icon": "\ud83e\udeb5",
+      "color": "#92400e",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "food",
+      "displayName": "Food",
+      "description": "Sustenance for your growing tribe.",
+      "icon": "\ud83c\udf56",
+      "color": "#ea580c",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "copper",
+      "displayName": "Copper",
+      "description": "First metal of the Bronze Age.",
+      "icon": "\ud83d\udfe4",
+      "color": "#b45309",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "bronze",
+      "displayName": "Bronze",
+      "description": "Alloy that unlocks advanced tools.",
+      "icon": "\ud83d\udd36",
+      "color": "#d97706",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "iron",
+      "displayName": "Iron",
+      "description": "Strong metal of empires and war.",
+      "icon": "\u2699\ufe0f",
+      "color": "#52525b",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "gold",
+      "displayName": "Gold",
+      "description": "Wealth that fuels trade routes.",
+      "icon": "\ud83e\ude99",
+      "color": "#eab308",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "coal",
+      "displayName": "Coal",
+      "description": "Fuel of the industrial revolution.",
+      "icon": "\u2b1b",
+      "color": "#1c1917",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "steel",
+      "displayName": "Steel",
+      "description": "Industrial backbone of modern industry.",
+      "icon": "\ud83d\udd29",
+      "color": "#64748b",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "electricity",
+      "displayName": "Electricity",
+      "description": "Power that lights the modern world.",
+      "icon": "\u26a1",
+      "color": "#facc15",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "data",
+      "displayName": "Data",
+      "description": "Digital raw material of the information age.",
+      "icon": "\ud83d\udcbe",
+      "color": "#06b6d4",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "compute",
+      "displayName": "Compute",
+      "description": "Processing power for machine learning.",
+      "icon": "\ud83d\udda5\ufe0f",
+      "color": "#8b5cf6",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "intelligence",
+      "displayName": "Intelligence",
+      "description": "Synthetic cognition \u2014 the fruit of AGI.",
+      "icon": "\ud83e\udde0",
+      "color": "#ec4899",
+      "isPrimary": false,
+      "baseValue": 0
+    }
+  ]
+}

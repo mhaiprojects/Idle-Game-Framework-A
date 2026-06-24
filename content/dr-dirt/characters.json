@@ -1,0 +1,98 @@
+{
+  "characters": [
+    {
+      "codeName": "tribalElder",
+      "displayName": "Tribal Elder",
+      "icon": "\ud83e\uddd3",
+      "description": "Wise leader of the stone-age tribe.",
+      "unlockConditions": null,
+      "baseStats": {
+        "globalMultiplier": 1.05
+      },
+      "activeSkill": {
+        "codeName": "rally",
+        "displayName": "Rally",
+        "icon": "\ud83d\udce3",
+        "cooldownSeconds": 45,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 2,
+          "durationSeconds": 15
+        }
+      }
+    },
+    {
+      "codeName": "bronzeSmith",
+      "displayName": "Bronze Smith",
+      "icon": "\ud83d\udd28",
+      "description": "Master of the bronze age forge.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "ascensionTier",
+            "minTier": 1
+          },
+          {
+            "type": "generatorOwned",
+            "generator": "bronzeForge",
+            "quantity": 1
+          }
+        ]
+      },
+      "baseStats": {
+        "categoryMultiplier": {
+          "category": "bronze",
+          "multiplier": 1.15
+        }
+      },
+      "activeSkill": {
+        "codeName": "moltenBurst",
+        "displayName": "Molten Burst",
+        "icon": "\ud83d\udd25",
+        "cooldownSeconds": 50,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 2.5,
+          "durationSeconds": 12
+        }
+      }
+    },
+    {
+      "codeName": "industrialist",
+      "displayName": "Industrialist",
+      "icon": "\ud83c\udfed",
+      "description": "Titan of the industrial revolution.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "ascensionTier",
+            "minTier": 3
+          },
+          {
+            "type": "lifetimePrestiges",
+            "min": 3
+          }
+        ]
+      },
+      "baseStats": {
+        "categoryMultiplier": {
+          "category": "industrial",
+          "multiplier": 1.2
+        }
+      },
+      "activeSkill": {
+        "codeName": "massProduction",
+        "displayName": "Mass Production",
+        "icon": "\u2699\ufe0f",
+        "cooldownSeconds": 60,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 3,
+          "durationSeconds": 10
+        }
+      }
+    }
+  ]
+}

@@ -317,6 +317,16 @@ const FormulaEngine = {
   },
 
   getResourcesForAscensionTier(tier, config) {
+    const unlockMap = config.framework?.resourceUnlockByTier;
+    const primary = config.resources.resources.find(r => r.isPrimary)?.codeName;
+    if (unlockMap) {
+      const codes = [];
+      for (let i = 0; i <= tier; i++) {
+        for (const res of unlockMap[String(i)] || []) codes.push(res);
+      }
+      if (primary && !codes.includes(primary)) codes.unshift(primary);
+      if (codes.length) return [...new Set(codes)];
+    }
     const all = config.resources.resources.map(r => r.codeName);
     const byTier = {
       0: ['timeShards', 'cosmicEnergy', 'stardust'],
@@ -324,7 +334,7 @@ const FormulaEngine = {
       2: ['timeShards', 'cosmicEnergy', 'stardust', 'nebulaEssence', 'quantumFlux', 'voidMatter', 'chronoCrystals'],
       3: all
     };
-    return byTier[Math.min(Math.max(tier, 0), 3)] || byTier[0];
+    return byTier[Math.min(Math.max(tier, 0), config.ascension?.maxTier ?? 3)] || byTier[0];
   },
 
   getScaledPrestigeMinimum(state, config) {
@@ -562,6 +572,11 @@ const FormulaEngine = {
 // --- js/core/ConfigManager.js ---
 
 let config = null;
+let contentRegistry = null;
+let currentContentId = null;
+
+const CONTENT_SELECTION_KEY = 'afk_selected_content';
+const LEGACY_STORAGE_KEY = 'afk_ai_save';
 
 const CONFIG_FILES = [
   'framework', 'difficulty', 'resources', 'generators', 'upgrades',
@@ -569,21 +584,69 @@ const CONFIG_FILES = [
   'drops', 'ascension', 'prestige', 'defaults'
 ];
 
-async function loadAllConfigs() {
-  if (window.AFK_CONFIG) {
-    config = window.AFK_CONFIG;
-    validateConfig();
-    return config;
+async function loadContentRegistry() {
+  if (window.AFK_CONTENT_REGISTRY) {
+    contentRegistry = window.AFK_CONTENT_REGISTRY;
+    return contentRegistry;
   }
+  const res = await fetch('content/registry.json');
+  if (!res.ok) throw new Error('Failed to load content/registry.json');
+  contentRegistry = await res.json();
+  return contentRegistry;
+}
+
+function getSelectedContentId() {
+  if (typeof localStorage !== 'undefined') {
+    const stored = localStorage.getItem(CONTENT_SELECTION_KEY);
+    if (stored) return stored;
+  }
+  return contentRegistry?.defaultContentId || 'cosmic-time-factory';
+}
+
+function setSelectedContentId(contentId) {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(CONTENT_SELECTION_KEY, contentId);
+  }
+}
+
+function getContentRegistry() {
+  return contentRegistry;
+}
+
+function getCurrentContentId() {
+  return currentContentId;
+}
+
+function getCurrentManifest() {
+  const id = currentContentId || getSelectedContentId();
+  return contentRegistry?.games?.find(g => g.id === id) || null;
+}
+
+async function loadContentFromFetch(contentId) {
   const entries = await Promise.all(
     CONFIG_FILES.map(async name => {
-      const res = await fetch(`config/${name}.json`);
-      if (!res.ok) throw new Error(`Failed to load config/${name}.json`);
+      const res = await fetch(`content/${contentId}/${name}.json`);
+      if (!res.ok) throw new Error(`Failed to load content/${contentId}/${name}.json`);
       return [name, await res.json()];
     })
   );
-  config = Object.fromEntries(entries);
-  validateConfig();
+  return Object.fromEntries(entries);
+}
+
+async function loadAllConfigs(contentId) {
+  await loadContentRegistry();
+  const id = contentId || getSelectedContentId();
+
+  if (window.AFK_CONTENT?.[id]) {
+    config = window.AFK_CONTENT[id];
+  } else if (window.AFK_CONFIG && !window.AFK_CONTENT && id === 'cosmic-time-factory') {
+    config = window.AFK_CONFIG;
+  } else {
+    config = await loadContentFromFetch(id);
+  }
+
+  currentContentId = id;
+  validateConfig(config);
   return config;
 }
 
@@ -615,12 +678,12 @@ function validateGeneratorChain(cfg) {
   return { valid: errors.length === 0, errors };
 }
 
-function validateConfig() {
-  const resources = config.resources.resources;
+function validateConfig(cfg = config) {
+  const resources = cfg.resources.resources;
   const primary = resources.filter(r => r.isPrimary);
   if (primary.length !== 1) throw new Error('Exactly one primary resource required');
 
-  const chain = validateGeneratorChain(config);
+  const chain = validateGeneratorChain(cfg);
   if (!chain.valid) {
     const msg = chain.errors.map(e =>
       `${e.generator} does not produce ${e.missing} required by ${e.forGenerator}`
@@ -641,6 +704,8 @@ function flattenConditions(unlockConditions) {
 
 const ConfigManager = {
   getAll() { return config; },
+  getAvailableGames() { return contentRegistry?.games || []; },
+  getGeneratorTiers() { return config?.framework?.generatorTiers || {}; },
   getDefaults() { return config.defaults; },
   getDefaultIcon(key) {
     return config.defaults.icons[key] ?? config.defaults.icons.unknown;
@@ -1426,7 +1491,8 @@ const ConfigManager = {
 
 // --- js/core/SaveManager.js ---
 
-const SAVE_VERSION = '1.2.0';
+const SAVE_VERSION = '1.3.0';
+const LEGACY_STORAGE_KEY = 'afk_ai_save';
 
 const EQUIPMENT_SLOT_MIGRATION = {
   accessory: 'amulet',
@@ -1450,10 +1516,27 @@ function backupStorageKey() {
   return `${storageKey()}_backup`;
 }
 
+function migrateLegacyStorageKey() {
+  const currentId = ConfigManager.getCurrentContentId();
+  if (currentId !== 'cosmic-time-factory') return;
+  const newKey = storageKey();
+  if (localStorage.getItem(newKey)) return;
+  const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+  if (!legacy) return;
+  localStorage.setItem(newKey, legacy);
+  localStorage.removeItem(LEGACY_STORAGE_KEY);
+  const legacyBackup = localStorage.getItem(`${LEGACY_STORAGE_KEY}_backup`);
+  if (legacyBackup) {
+    localStorage.setItem(`${newKey}_backup`, legacyBackup);
+    localStorage.removeItem(`${LEGACY_STORAGE_KEY}_backup`);
+  }
+}
+
 function buildPayload(state) {
   const serializable = state.toJSON();
   const payload = {
     version: SAVE_VERSION,
+    contentId: ConfigManager.getCurrentContentId(),
     timestamp: Date.now(),
     state: serializable,
     checksum: ''
@@ -1482,6 +1565,7 @@ const SaveManager = {
   },
 
   load() {
+    migrateLegacyStorageKey();
     const key = storageKey();
     try {
       const raw = localStorage.getItem(key);
@@ -1489,6 +1573,9 @@ const SaveManager = {
       const parsed = JSON.parse(raw);
       const data = this.migrate(parsed);
       if (!data) return null;
+      const currentId = ConfigManager.getCurrentContentId();
+      if (data.contentId && data.contentId !== currentId) return null;
+      if (!data.contentId && currentId !== 'cosmic-time-factory') return null;
       data._integrity = this.verifyPayload(data);
       return data;
     } catch (e) {
@@ -1631,6 +1718,13 @@ const SaveManager = {
       migrated.version = '1.2.0';
     }
 
+    if (migrated.version === '1.2.0') {
+      if (!migrated.contentId) {
+        migrated.contentId = 'cosmic-time-factory';
+      }
+      migrated.version = '1.3.0';
+    }
+
     if (migrated.version === SAVE_VERSION) return migrated;
 
     migrated._legacy = migrated._legacy || {};
@@ -1641,13 +1735,20 @@ const SaveManager = {
 
   exportSave(state) {
     const payload = this.save(state);
+    const prefix = ConfigManager.getCurrentManifest()?.exportPrefix || 'game';
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `cosmic-time-factory-save-${Date.now()}.json`;
+    a.download = `${prefix}-save-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
+  },
+
+  hasSaveForContent(contentId) {
+    const game = ConfigManager.getAvailableGames().find(g => g.id === contentId);
+    if (!game?.storageKey || typeof localStorage === 'undefined') return false;
+    return !!localStorage.getItem(game.storageKey);
   },
 
   importSave(file) {
@@ -1777,7 +1878,7 @@ function makeChecks() {
     ],
     meta: [
       { id: 'prestige', label: 'Prestige system + shop bonuses', check: () => (ConfigManager.getPrestige()?.prestigeBonuses?.length || 0) > 0 },
-      { id: 'ascension', label: 'Ascension tiers (0-3)', check: () => ConfigManager.getAscension()?.maxTier === 3 },
+      { id: 'ascension', label: 'Ascension tiers configured', check: () => (ConfigManager.getAscension()?.maxTier ?? 0) >= 0 },
       { id: 'achievements', label: 'Achievements config', check: () => (ConfigManager.getAchievements()?.length || 0) > 0 },
       { id: 'events', label: 'Random events config', check: () => (ConfigManager.getEvents()?.length || 0) > 0 }
     ],
@@ -2814,16 +2915,14 @@ const DropSystem = {
 
 // --- js/game/systems/AchievementSystem.js ---
 
-const GENERATOR_TIERS = {
-  0: ['timeWarden', 'cosmicSailor', 'starForge'],
-  1: ['nebulaHarvester', 'quantumProcessor', 'voidExtractor'],
-  2: ['chronoRefinery', 'temporalEngine', 'cosmicFoundry'],
-  3: ['infinityChronometer', 'voidArchitect', 'eternityForge']
-};
+function getGeneratorTiers(config) {
+  return config.framework?.generatorTiers || {};
+}
 
 const AchievementSystem = {
-  getGeneratorTier(codeName) {
-    for (const [tier, codes] of Object.entries(GENERATOR_TIERS)) {
+  getGeneratorTier(codeName, config) {
+    const tiers = getGeneratorTiers(config);
+    for (const [tier, codes] of Object.entries(tiers)) {
       if (codes.includes(codeName)) return Number(tier);
     }
     return 0;
@@ -3018,7 +3117,8 @@ const AchievementSystem = {
         break;
       }
       case 'generatorsOwnedTier': {
-        const codes = GENERATOR_TIERS[req.tier] || [];
+        const tiers = getGeneratorTiers(config);
+        const codes = tiers[req.tier] || [];
         const current = codes.filter(c => (state.generators[c]?.quantityPurchased || 0) >= (req.amount || 1)).length;
         progress = codes.length > 0 ? Math.min(1, current / codes.length) : 0;
         icon = '🏭';
@@ -3090,7 +3190,8 @@ const AchievementSystem = {
         return total >= req.amount;
       }
       case 'generatorsOwnedTier': {
-        const codes = GENERATOR_TIERS[req.tier] || [];
+        const tiers = getGeneratorTiers(config);
+        const codes = tiers[req.tier] || [];
         if (req.tier === 0 && req.amount > 1) {
           return codes.every(c => (state.generators[c]?.quantityPurchased || 0) >= req.amount);
         }
@@ -3254,6 +3355,12 @@ if (typeof EventBus !== "undefined") AFK.EventBus = EventBus;
 if (typeof EVENTS !== "undefined") AFK.EVENTS = EVENTS;
 if (typeof ConfigManager !== "undefined") AFK.ConfigManager = ConfigManager;
 if (typeof loadAllConfigs !== "undefined") AFK.loadAllConfigs = loadAllConfigs;
+if (typeof loadContentRegistry !== "undefined") AFK.loadContentRegistry = loadContentRegistry;
+if (typeof getSelectedContentId !== "undefined") AFK.getSelectedContentId = getSelectedContentId;
+if (typeof setSelectedContentId !== "undefined") AFK.setSelectedContentId = setSelectedContentId;
+if (typeof getContentRegistry !== "undefined") AFK.getContentRegistry = getContentRegistry;
+if (typeof getCurrentContentId !== "undefined") AFK.getCurrentContentId = getCurrentContentId;
+if (typeof getCurrentManifest !== "undefined") AFK.getCurrentManifest = getCurrentManifest;
 if (typeof validateGeneratorChain !== "undefined") AFK.validateGeneratorChain = validateGeneratorChain;
 if (typeof SaveManager !== "undefined") AFK.SaveManager = SaveManager;
 if (typeof ProgressTracker !== "undefined") AFK.ProgressTracker = ProgressTracker;

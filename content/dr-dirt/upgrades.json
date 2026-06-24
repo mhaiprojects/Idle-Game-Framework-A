@@ -1,0 +1,46 @@
+{
+  "upgrades": [
+    {
+      "codeName": "sharperTools",
+      "displayName": "Sharper Tools",
+      "description": "+10% stone production per level",
+      "icon": "\ud83e\ude93",
+      "cost": 50,
+      "costResource": "stone",
+      "costScale": 1.12,
+      "maxLevel": 25,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.1
+      }
+    },
+    {
+      "codeName": "betterForaging",
+      "displayName": "Better Foraging",
+      "description": "+15% tap power per level",
+      "icon": "\ud83d\udc46",
+      "cost": 100,
+      "costResource": "stone",
+      "costScale": 1.15,
+      "maxLevel": 20,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.15
+      }
+    },
+    {
+      "codeName": "efficientLabor",
+      "displayName": "Efficient Labor",
+      "description": "-3% costs per level",
+      "icon": "\ud83d\udcc9",
+      "cost": 200,
+      "costResource": "stone",
+      "costScale": 1.18,
+      "maxLevel": 15,
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.97
+      }
+    }
+  ]
+}

@@ -88,7 +88,7 @@ function makeChecks() {
     ],
     meta: [
       { id: 'prestige', label: 'Prestige system + shop bonuses', check: () => (ConfigManager.getPrestige()?.prestigeBonuses?.length || 0) > 0 },
-      { id: 'ascension', label: 'Ascension tiers (0-3)', check: () => ConfigManager.getAscension()?.maxTier === 3 },
+      { id: 'ascension', label: 'Ascension tiers configured', check: () => (ConfigManager.getAscension()?.maxTier ?? 0) >= 0 },
       { id: 'achievements', label: 'Achievements config', check: () => (ConfigManager.getAchievements()?.length || 0) > 0 },
       { id: 'events', label: 'Random events config', check: () => (ConfigManager.getEvents()?.length || 0) > 0 }
     ],

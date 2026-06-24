@@ -1,0 +1,124 @@
+{
+  "achievements": [
+    {
+      "codeName": "firstTap",
+      "displayName": "First Labor",
+      "description": "Perform your first tap.",
+      "icon": "\ud83d\udc46",
+      "requirement": {
+        "type": "totalTaps",
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.05
+        }
+      }
+    },
+    {
+      "codeName": "firstGenerator",
+      "displayName": "Tool User",
+      "description": "Own a Rock Gatherer.",
+      "icon": "\ud83e\udea8",
+      "requirement": {
+        "type": "generatorOwned",
+        "generator": "rockGatherer",
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.05
+        }
+      }
+    },
+    {
+      "codeName": "firstPrestige",
+      "displayName": "New Beginning",
+      "description": "Perform your first prestige.",
+      "icon": "\ud83d\udd04",
+      "requirement": {
+        "type": "prestigeCount",
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
+        }
+      }
+    },
+    {
+      "codeName": "bronzeAge",
+      "displayName": "Bronze Dawn",
+      "description": "Ascend to the Bronze Age.",
+      "icon": "\ud83d\udd36",
+      "requirement": {
+        "type": "ascensionTier",
+        "minTier": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.06
+        }
+      }
+    },
+    {
+      "codeName": "medievalEra",
+      "displayName": "Age of Empires",
+      "description": "Ascend to the Medieval Era.",
+      "icon": "\ud83c\udff0",
+      "requirement": {
+        "type": "ascensionTier",
+        "minTier": 2
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.08
+        }
+      }
+    },
+    {
+      "codeName": "industrialRev",
+      "displayName": "Industrial Revolution",
+      "description": "Ascend to the Industrial Age.",
+      "icon": "\ud83c\udfed",
+      "requirement": {
+        "type": "ascensionTier",
+        "minTier": 3
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.1
+        }
+      }
+    },
+    {
+      "codeName": "aiAge",
+      "displayName": "Singularity",
+      "description": "Ascend to the AI Age.",
+      "icon": "\ud83e\udde0",
+      "requirement": {
+        "type": "ascensionTier",
+        "minTier": 4
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.15
+        }
+      }
+    }
+  ]
+}

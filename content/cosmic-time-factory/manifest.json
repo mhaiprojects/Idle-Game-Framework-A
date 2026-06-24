@@ -1,0 +1,10 @@
+{
+  "id": "cosmic-time-factory",
+  "displayName": "Cosmic Time Factory",
+  "description": "Harvest time shards and ascend through cosmic realms — from mortal realm to cosmic infinity.",
+  "icon": "⏱️",
+  "tagline": "Temporal idle incremental",
+  "storageKey": "afk_cosmic_time_factory_save",
+  "exportPrefix": "cosmic-time-factory",
+  "themeColor": "#6366f1"
+}

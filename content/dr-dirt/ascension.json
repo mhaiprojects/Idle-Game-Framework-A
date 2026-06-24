@@ -1,0 +1,181 @@
+{
+  "maxTier": 4,
+  "ascensionTiers": [
+    {
+      "tier": 0,
+      "codeName": "stoneAge",
+      "displayName": "Stone Age",
+      "isStartingTier": true,
+      "difficultyProfile": "tier0",
+      "unlockedFeatures": [
+        "tab:generators",
+        "tab:upgrades",
+        "tab:achievements",
+        "tab:stats",
+        "tab:settings",
+        "tab:ascension",
+        "generators:tier0",
+        "prestigeShop:tier0"
+      ]
+    },
+    {
+      "tier": 1,
+      "codeName": "bronzeAge",
+      "displayName": "Bronze Age",
+      "difficultyProfile": "tier1",
+      "ascensionRequirements": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "prestigeCount",
+            "min": 2
+          },
+          {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "stone",
+            "min": 100000
+          },
+          {
+            "type": "lifetimeGeneratorPurchases",
+            "min": 50
+          }
+        ]
+      },
+      "onAscend": {
+        "clearCurrency": true,
+        "clearGeneratorQuantities": true,
+        "keepGeneratorUnlocks": true,
+        "clearUpgrades": false,
+        "clearInventory": false,
+        "clearArtifacts": false
+      },
+      "unlockedFeatures": [
+        "systems:drops",
+        "tab:characters",
+        "tab:inventory",
+        "generators:tier1",
+        "prestigeShop:tier1",
+        "resources:copper",
+        "resources:bronze"
+      ]
+    },
+    {
+      "tier": 2,
+      "codeName": "medieval",
+      "displayName": "Medieval Era",
+      "difficultyProfile": "tier2",
+      "ascensionRequirements": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "prestigeCount",
+            "min": 5
+          },
+          {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "stone",
+            "min": 10000000
+          },
+          {
+            "type": "lifetimeGeneratorPurchases",
+            "min": 200
+          }
+        ]
+      },
+      "onAscend": {
+        "clearCurrency": true,
+        "clearGeneratorQuantities": true,
+        "keepGeneratorUnlocks": true,
+        "clearUpgrades": false,
+        "clearInventory": false,
+        "clearArtifacts": false
+      },
+      "unlockedFeatures": [
+        "tab:artifacts",
+        "generators:tier2",
+        "prestigeShop:tier2",
+        "resources:iron",
+        "resources:gold"
+      ]
+    },
+    {
+      "tier": 3,
+      "codeName": "industrial",
+      "displayName": "Industrial Age",
+      "difficultyProfile": "tier3",
+      "ascensionRequirements": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "prestigeCount",
+            "min": 8
+          },
+          {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "stone",
+            "min": 1000000000
+          },
+          {
+            "type": "lifetimeGeneratorPurchases",
+            "min": 500
+          }
+        ]
+      },
+      "onAscend": {
+        "clearCurrency": true,
+        "clearGeneratorQuantities": true,
+        "keepGeneratorUnlocks": true,
+        "clearUpgrades": false,
+        "clearInventory": false,
+        "clearArtifacts": false
+      },
+      "unlockedFeatures": [
+        "systems:randomEvents",
+        "generators:tier3",
+        "prestigeShop:tier3",
+        "resources:coal",
+        "resources:steel",
+        "resources:electricity"
+      ]
+    },
+    {
+      "tier": 4,
+      "codeName": "aiAge",
+      "displayName": "AI Age",
+      "difficultyProfile": "tier4",
+      "ascensionRequirements": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "prestigeCount",
+            "min": 15
+          },
+          {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "stone",
+            "min": 1000000000000
+          },
+          {
+            "type": "lifetimeGeneratorPurchases",
+            "min": 2000
+          }
+        ]
+      },
+      "onAscend": {
+        "clearCurrency": true,
+        "clearGeneratorQuantities": true,
+        "keepGeneratorUnlocks": true,
+        "clearUpgrades": false,
+        "clearInventory": false,
+        "clearArtifacts": false
+      },
+      "unlockedFeatures": [
+        "generators:tier4",
+        "prestigeShop:tier4",
+        "resources:data",
+        "resources:compute",
+        "resources:intelligence"
+      ]
+    }
+  ]
+}

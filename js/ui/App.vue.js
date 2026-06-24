@@ -1,3 +1,4 @@
+import GameSelectorPanel from './GameSelectorPanel.vue.js';
 import ResourceBar from './ResourceBar.vue.js';
 import GeneratorPanel from './GeneratorPanel.vue.js';
 import UpgradePanel from './UpgradePanel.vue.js';
@@ -20,7 +21,7 @@ import PanelHeader from './components/PanelHeader.vue.js';
 export default {
   name: 'App',
   components: {
-    ResourceBar, GeneratorPanel, UpgradePanel, CharacterPanel,
+    GameSelectorPanel, ResourceBar, GeneratorPanel, UpgradePanel, CharacterPanel,
     InventoryPanel, ArtifactPanel, AchievementPanel, AscensionPanel,
     SettingsPanel, StatsPanel, ProgressPanel, ActionBar, Toast, EventBanner,
     UnlockModal, InfoModal, CardSection, PanelHeader
@@ -43,8 +44,14 @@ export default {
     allTabs() {
       return this.config?.defaults?.tabs || [];
     },
+    engineTabs() {
+      return [{ id: 'gameSelector', icon: '🎮', label: 'Games' }];
+    },
     tabs() {
-      return this.allTabs.filter(t => !t.devOnly || this.state.settings.devMode);
+      return [...this.engineTabs, ...this.allTabs.filter(t => !t.devOnly || this.state.settings.devMode)];
+    },
+    gameSelectorData() {
+      return this.game.getGameSelectorDisplay();
     },
     resourceBarItems() {
       return this.game.getResourceBarItems();
@@ -131,6 +138,7 @@ export default {
   },
   methods: {
     isTabUnlocked(tab) {
+      if (tab.id === 'gameSelector') return true;
       if (tab.devOnly) return this.state.settings.devMode;
       if (!tab.feature) return true;
       return this.game.isFeatureUnlocked(tab.feature);
@@ -149,6 +157,7 @@ export default {
     closeInfoModal() {
       this.infoModal = null;
     },
+    onSelectGame(contentId) { this.game.switchContent(contentId); },
     onTabClick(tab) {
       if (this.isTabUnlocked(tab)) {
         this.game.setTab(tab.id);
@@ -210,6 +219,10 @@ export default {
       <EventBanner :events="eventBannerItems" />
       <div class="main-layout">
         <div class="content-area">
+          <GameSelectorPanel v-if="state.ui.activeTab === 'gameSelector'"
+            :games="gameSelectorData.games"
+            :current-game="gameSelectorData.currentGame"
+            @select-game="onSelectGame" />
           <GeneratorPanel v-if="state.ui.activeTab === 'generators'"
             :generators="generators" :multiplier="state.ui.purchaseMultiplier"
             :multiplier-options="config.framework.ui.purchaseMultipliers"

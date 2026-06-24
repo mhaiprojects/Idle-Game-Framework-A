@@ -1,0 +1,25 @@
+{
+  "defaultContentId": "cosmic-time-factory",
+  "games": [
+    {
+      "id": "cosmic-time-factory",
+      "displayName": "Cosmic Time Factory",
+      "description": "Harvest time shards and ascend through cosmic realms — from mortal realm to cosmic infinity.",
+      "icon": "⏱️",
+      "tagline": "Temporal idle incremental",
+      "storageKey": "afk_cosmic_time_factory_save",
+      "exportPrefix": "cosmic-time-factory",
+      "themeColor": "#6366f1"
+    },
+    {
+      "id": "dr-dirt",
+      "displayName": "Dr Dirt",
+      "description": "Guide civilization from the Stone Age to the AI Age. Each ascension advances humanity through history.",
+      "icon": "🌍",
+      "tagline": "Stone Age → AI Age",
+      "storageKey": "afk_dr_dirt_save",
+      "exportPrefix": "dr-dirt",
+      "themeColor": "#84cc16"
+    }
+  ]
+}

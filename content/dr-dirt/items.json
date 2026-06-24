@@ -1,0 +1,72 @@
+{
+  "items": [
+    {
+      "codeName": "rationPack",
+      "displayName": "Ration Pack",
+      "description": "Boosts production briefly.",
+      "icon": "\ud83c\udf71",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.5,
+        "durationSeconds": 30
+      }
+    },
+    {
+      "codeName": "energyDrink",
+      "displayName": "Energy Drink",
+      "description": "Boosts manual labor (taps).",
+      "icon": "\ud83e\udd64",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 2.5,
+        "durationSeconds": 20
+      }
+    },
+    {
+      "codeName": "stonePick",
+      "displayName": "Stone Pick",
+      "description": "Basic gathering tool.",
+      "icon": "\u26cf\ufe0f",
+      "type": "equipable",
+      "slot": "tool",
+      "rarity": "common",
+      "stackable": true,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.05
+      }
+    },
+    {
+      "codeName": "leafCrown",
+      "displayName": "Leaf Crown",
+      "description": "Tribal headwear.",
+      "icon": "\ud83c\udf3f",
+      "type": "equipable",
+      "slot": "head",
+      "rarity": "common",
+      "stackable": true,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.08
+      }
+    },
+    {
+      "codeName": "boneCharm",
+      "displayName": "Bone Charm",
+      "description": "Ancestral charm.",
+      "icon": "\ud83e\uddb4",
+      "type": "equipable",
+      "slot": "charm",
+      "rarity": "uncommon",
+      "stackable": true,
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.95
+      }
+    }
+  ]
+}

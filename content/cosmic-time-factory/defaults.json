@@ -142,7 +142,9 @@
     "prestigeRequirements": { "icon": "♻️", "title": "Prestige Requirements" },
     "ascensionRequirements": { "icon": "🔄", "title": "Ascension Requirements" },
     "achievementRequirements": { "icon": "🏆", "title": "Achievement Requirements" },
-    "reward": { "icon": "🎁", "title": "Reward" }
+    "reward": { "icon": "🎁", "title": "Reward" },
+    "gameCards": { "icon": "🎮", "title": "Available Games" },
+    "currentGame": { "icon": "▶️", "title": "Currently Playing" }
   },
   "panels": {
     "generators": { "icon": "⚙️", "title": "Generators" },
@@ -155,7 +157,8 @@
     "stats": { "icon": "📊", "title": "Stats" },
     "settings": { "icon": "🛠️", "title": "Settings" },
     "progress": { "icon": "🔧", "title": "Progress Tracker" },
-    "devTools": { "icon": "🧪", "title": "Dev Tools" }
+    "devTools": { "icon": "🧪", "title": "Dev Tools" },
+    "gameSelector": { "icon": "🎮", "title": "Game Selector" }
   },
   "tabs": [
     { "id": "generators", "icon": "⚙️", "label": "Generators", "feature": "tab:generators" },
