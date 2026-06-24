@@ -5,12 +5,22 @@
     "gainFormula": "logarithmic",
     "logBase": 10,
     "minimumResourceValue": 1000,
-    "resourceWeights": { "timeShards": 1, "cosmicEnergy": 0.5, "stardust": 0.3 }
+    "resourceWeights": {
+      "timeShards": 1,
+      "cosmicEnergy": 0.5,
+      "stardust": 0.3
+    },
+    "milestoneExponent": 2,
+    "rulesExplanation": "Prestige Shards are earned from weighted run earnings (ascension-available resources only). Each shard requires exponentially more weighted value; requirements scale with lifetime prestiges."
   },
   "prestigeMinimum": {
     "operator": "AND",
     "conditions": [
-      { "type": "resourceHeld", "resource": "timeShards", "amount": 1000 }
+      {
+        "type": "resourceHeld",
+        "resource": "timeShards",
+        "amount": 1000
+      }
     ]
   },
   "featureUnlocks": [
@@ -18,28 +28,48 @@
       "feature": "tab:characters",
       "unlockConditions": {
         "operator": "AND",
-        "conditions": [{ "type": "lifetimePrestiges", "min": 1 }]
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 1
+          }
+        ]
       }
     },
     {
       "feature": "tab:inventory",
       "unlockConditions": {
         "operator": "AND",
-        "conditions": [{ "type": "lifetimePrestiges", "min": 1 }]
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 1
+          }
+        ]
       }
     },
     {
       "feature": "systems:drops",
       "unlockConditions": {
         "operator": "AND",
-        "conditions": [{ "type": "lifetimePrestiges", "min": 1 }]
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 1
+          }
+        ]
       }
     },
     {
       "feature": "tab:artifacts",
       "unlockConditions": {
         "operator": "AND",
-        "conditions": [{ "type": "lifetimePrestiges", "min": 2 }]
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 2
+          }
+        ]
       }
     }
   ],
@@ -51,7 +81,8 @@
     "clearInventory": false,
     "clearArtifacts": false,
     "clearTemporaryBuffs": true,
-    "resetRunStats": true
+    "resetRunStats": true,
+    "resetPrestigeShopAllocation": true
   },
   "startingResourcesAfterPrestige": {
     "timeShards": 10
@@ -61,29 +92,201 @@
       "codeName": "globalBoost",
       "displayName": "Cosmic Resonance",
       "description": "+5% primary currency per level",
-      "icon": "🌟",
+      "icon": "\ud83c\udf1f",
       "cost": 1,
       "maxLevel": 25,
-      "effect": { "type": "globalMultiplier", "multiplierPerLevel": 0.05 }
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.05
+      },
+      "requiredFeature": "prestigeShop:tier0"
     },
     {
       "codeName": "clickPower",
       "displayName": "Tap Amplifier",
       "description": "+10% click power per level",
-      "icon": "👆",
+      "icon": "\ud83d\udc46",
       "cost": 2,
       "maxLevel": 15,
-      "effect": { "type": "clickMultiplier", "multiplierPerLevel": 0.10 }
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplierPerLevel": 0.1
+      },
+      "requiredFeature": "prestigeShop:tier0"
+    },
+    {
+      "codeName": "offlineBoost",
+      "displayName": "Dream Harvest",
+      "description": "+3% offline efficiency per level",
+      "icon": "\ud83c\udf19",
+      "cost": 2,
+      "maxLevel": 10,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.03
+      },
+      "requiredFeature": "prestigeShop:tier0"
+    },
+    {
+      "codeName": "stellarResonance",
+      "displayName": "Stellar Resonance",
+      "description": "+8% stellar generators per level",
+      "icon": "\u2b50",
+      "cost": 3,
+      "maxLevel": 12,
+      "effect": {
+        "type": "categoryMultiplier",
+        "category": "stellar",
+        "multiplierPerLevel": 0.08
+      },
+      "requiredFeature": "prestigeShop:tier1"
+    },
+    {
+      "codeName": "quantumFocus",
+      "displayName": "Quantum Focus",
+      "description": "+8% quantum generators per level",
+      "icon": "\u269b\ufe0f",
+      "cost": 3,
+      "maxLevel": 12,
+      "effect": {
+        "type": "categoryMultiplier",
+        "category": "quantum",
+        "multiplierPerLevel": 0.08
+      },
+      "requiredFeature": "prestigeShop:tier1"
+    },
+    {
+      "codeName": "startingBonus",
+      "displayName": "Head Start",
+      "description": "+5 starting time shards per level after prestige",
+      "icon": "\ud83d\ude80",
+      "cost": 2,
+      "maxLevel": 10,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.02
+      },
+      "requiredFeature": "prestigeShop:tier1"
     },
     {
       "codeName": "costEfficiency",
       "displayName": "Efficiency Matrix",
       "description": "-2% costs per level",
-      "icon": "📉",
+      "icon": "\ud83d\udcc9",
       "cost": 3,
       "maxLevel": 10,
-      "effect": { "type": "costReduction", "multiplierPerLevel": 0.02 },
+      "effect": {
+        "type": "costReduction",
+        "multiplierPerLevel": 0.02
+      },
       "requiredFeature": "prestigeShop:tier2"
+    },
+    {
+      "codeName": "voidDiscount",
+      "displayName": "Void Bargain",
+      "description": "+6% void generator output per level",
+      "icon": "\ud83d\udd73\ufe0f",
+      "cost": 4,
+      "maxLevel": 10,
+      "effect": {
+        "type": "categoryMultiplier",
+        "category": "void",
+        "multiplierPerLevel": 0.06
+      },
+      "requiredFeature": "prestigeShop:tier2"
+    },
+    {
+      "codeName": "upgradeBoost",
+      "displayName": "Upgrade Catalyst",
+      "description": "+4% global production per level",
+      "icon": "\ud83d\udd27",
+      "cost": 4,
+      "maxLevel": 15,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.04
+      },
+      "requiredFeature": "prestigeShop:tier2"
+    },
+    {
+      "codeName": "infinityAmp",
+      "displayName": "Infinity Amplifier",
+      "description": "+6% global production per level",
+      "icon": "\u267e\ufe0f",
+      "cost": 5,
+      "maxLevel": 20,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplierPerLevel": 0.06
+      },
+      "requiredFeature": "prestigeShop:tier3"
+    },
+    {
+      "codeName": "ascensionMemory",
+      "displayName": "Ascension Memory",
+      "description": "+5% click power per level",
+      "icon": "\ud83e\udde0",
+      "cost": 5,
+      "maxLevel": 15,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplierPerLevel": 0.05
+      },
+      "requiredFeature": "prestigeShop:tier3"
+    },
+    {
+      "codeName": "masteryCore",
+      "displayName": "Mastery Core",
+      "description": "-3% costs per level",
+      "icon": "\ud83d\udc8e",
+      "cost": 6,
+      "maxLevel": 10,
+      "effect": {
+        "type": "costReduction",
+        "multiplierPerLevel": 0.03
+      },
+      "requiredFeature": "prestigeShop:tier3"
     }
-  ]
+  ],
+  "prestigeMinimumBase": {
+    "operator": "AND",
+    "conditions": [
+      {
+        "type": "resourceHeld",
+        "resource": "timeShards",
+        "amount": 1000
+      },
+      {
+        "type": "resourceHeld",
+        "resource": "cosmicEnergy",
+        "amount": 500
+      },
+      {
+        "type": "resourceHeld",
+        "resource": "stardust",
+        "amount": 100
+      }
+    ]
+  },
+  "prestigeMinimumTierResources": {
+    "1": [
+      {
+        "resource": "quantumFlux",
+        "amount": 50
+      }
+    ],
+    "2": [
+      {
+        "resource": "voidMatter",
+        "amount": 200
+      }
+    ],
+    "3": [
+      {
+        "resource": "chronoCrystals",
+        "amount": 100
+      }
+    ]
+  },
+  "prestigeMinimumScalePerPrestige": 0.2
 }

@@ -882,6 +882,21 @@ html, body {
   background: var(--color-success);
 }
 
+.character-effects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.character-effect-row {
+  font-size: 0.8rem;
+}
+
+.character-effect-sources {
+  font-size: 0.7rem;
+  margin-top: 0.15rem;
+}
+
 .resource-progress-list {
   display: flex;
   flex-direction: column;

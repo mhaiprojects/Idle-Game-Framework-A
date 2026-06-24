@@ -4,125 +4,569 @@
       "codeName": "energyCell",
       "displayName": "Energy Cell",
       "description": "A compact cell of cosmic energy. Restores production briefly.",
-      "icon": "🔋",
+      "icon": "\ud83d\udd0b",
       "type": "consumable",
       "actionBarEligible": true,
-      "effect": { "type": "globalMultiplier", "multiplier": 1.5, "durationSeconds": 30 }
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.5,
+        "durationSeconds": 30
+      }
     },
     {
       "codeName": "rareCrystal",
       "displayName": "Rare Crystal",
       "description": "A shimmering crystal that boosts click power.",
-      "icon": "💠",
+      "icon": "\ud83d\udca0",
       "type": "consumable",
       "actionBarEligible": true,
-      "effect": { "type": "clickMultiplier", "multiplier": 3, "durationSeconds": 15 }
-    },
-    {
-      "codeName": "starlightCape",
-      "displayName": "Starlight Cape",
-      "description": "A luminous cape woven from captured starlight.",
-      "icon": "🧣",
-      "type": "equipable",
-      "slot": "cape",
-      "rarity": "common",
-      "stackable": true,
-      "effect": { "type": "globalMultiplier", "multiplier": 1.05 }
-    },
-    {
-      "codeName": "chronoHelm",
-      "displayName": "Chrono Helm",
-      "description": "Helmet that bends time around the wearer.",
-      "icon": "⛑️",
-      "type": "equipable",
-      "slot": "helmet",
-      "rarity": "uncommon",
-      "stackable": true,
-      "effect": { "type": "costReduction", "multiplier": 0.95 }
-    },
-    {
-      "codeName": "temporalLens",
-      "displayName": "Temporal Lens",
-      "description": "Equipment that focuses temporal energy.",
-      "icon": "🔍",
-      "type": "equipable",
-      "slot": "amulet",
-      "rarity": "rare",
-      "stackable": true,
-      "effect": { "type": "globalMultiplier", "multiplier": 1.1 }
-    },
-    {
-      "codeName": "chronoBlade",
-      "displayName": "Chrono Blade",
-      "description": "A weapon forged from frozen time.",
-      "icon": "⚔️",
-      "type": "equipable",
-      "slot": "mainHand",
-      "rarity": "rare",
-      "stackable": true,
-      "effect": { "type": "clickMultiplier", "multiplier": 1.2 }
-    },
-    {
-      "codeName": "voidPlate",
-      "displayName": "Void Plate",
-      "description": "Armor plate harvested from the dimensional void.",
-      "icon": "🛡️",
-      "type": "equipable",
-      "slot": "body",
-      "rarity": "epic",
-      "stackable": true,
-      "effect": { "type": "globalMultiplier", "multiplier": 1.08 }
-    },
-    {
-      "codeName": "fluxBuckler",
-      "displayName": "Flux Buckler",
-      "description": "Off-hand shield that stabilizes quantum flux.",
-      "icon": "🔰",
-      "type": "equipable",
-      "slot": "offHand",
-      "rarity": "uncommon",
-      "stackable": true,
-      "effect": { "type": "globalMultiplier", "multiplier": 1.04 }
-    },
-    {
-      "codeName": "phaseBoots",
-      "displayName": "Phase Boots",
-      "description": "Boots that step between timelines.",
-      "icon": "👢",
-      "type": "equipable",
-      "slot": "boots",
-      "rarity": "uncommon",
-      "stackable": true,
-      "effect": { "type": "clickMultiplier", "multiplier": 1.1 }
-    },
-    {
-      "codeName": "timekeepersBelt",
-      "displayName": "Timekeeper's Belt",
-      "description": "Belt lined with chrono crystals.",
-      "icon": "🎗️",
-      "type": "equipable",
-      "slot": "belt",
-      "rarity": "rare",
-      "stackable": true,
-      "effect": { "type": "costReduction", "multiplier": 0.92 }
-    },
-    {
-      "codeName": "quantumMote",
-      "displayName": "Quantum Mote",
-      "description": "A tiny pet formed from probability foam.",
-      "icon": "🐾",
-      "type": "equipable",
-      "slot": "pet",
-      "rarity": "common",
-      "stackable": true,
-      "effect": { "type": "globalMultiplier", "multiplier": 1.03 }
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 3,
+        "durationSeconds": 15
+      }
     },
     {
       "codeName": "voidShard",
       "displayName": "Void Shard",
       "description": "Ingredient for advanced crafting.",
-      "icon": "🧩",
+      "icon": "\ud83e\udde9",
       "type": "ingredient"
+    },
+    {
+      "codeName": "capeCommon",
+      "displayName": "Common Cape",
+      "description": "Common cape gear for the cape slot.",
+      "icon": "\ud83e\udde3",
+      "type": "equipable",
+      "slot": "cape",
+      "rarity": "common",
+      "stackable": true,
+      "dropTier": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.04
+      }
+    },
+    {
+      "codeName": "capeRare",
+      "displayName": "Rare Cape",
+      "description": "Rare cape gear for the cape slot.",
+      "icon": "\ud83e\udde3",
+      "type": "equipable",
+      "slot": "cape",
+      "rarity": "rare",
+      "stackable": true,
+      "dropTier": "rare",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.12
+      }
+    },
+    {
+      "codeName": "capeEpic",
+      "displayName": "Epic Cape",
+      "description": "Epic cape gear for the cape slot.",
+      "icon": "\ud83e\udde3",
+      "type": "equipable",
+      "slot": "cape",
+      "rarity": "epic",
+      "stackable": true,
+      "dropTier": "epic",
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.9
+      }
+    },
+    {
+      "codeName": "helmetCommon",
+      "displayName": "Common Helmet",
+      "description": "Common helmet gear for the helmet slot.",
+      "icon": "\u26d1\ufe0f",
+      "type": "equipable",
+      "slot": "helmet",
+      "rarity": "common",
+      "stackable": true,
+      "dropTier": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.04
+      }
+    },
+    {
+      "codeName": "helmetRare",
+      "displayName": "Rare Helmet",
+      "description": "Rare helmet gear for the helmet slot.",
+      "icon": "\u26d1\ufe0f",
+      "type": "equipable",
+      "slot": "helmet",
+      "rarity": "rare",
+      "stackable": true,
+      "dropTier": "rare",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.12
+      }
+    },
+    {
+      "codeName": "helmetEpic",
+      "displayName": "Epic Helmet",
+      "description": "Epic helmet gear for the helmet slot.",
+      "icon": "\u26d1\ufe0f",
+      "type": "equipable",
+      "slot": "helmet",
+      "rarity": "epic",
+      "stackable": true,
+      "dropTier": "epic",
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.9
+      }
+    },
+    {
+      "codeName": "amuletCommon",
+      "displayName": "Common Amulet",
+      "description": "Common amulet gear for the amulet slot.",
+      "icon": "\ud83d\udd0d",
+      "type": "equipable",
+      "slot": "amulet",
+      "rarity": "common",
+      "stackable": true,
+      "dropTier": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.04
+      }
+    },
+    {
+      "codeName": "amuletRare",
+      "displayName": "Rare Amulet",
+      "description": "Rare amulet gear for the amulet slot.",
+      "icon": "\ud83d\udd0d",
+      "type": "equipable",
+      "slot": "amulet",
+      "rarity": "rare",
+      "stackable": true,
+      "dropTier": "rare",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.12
+      }
+    },
+    {
+      "codeName": "amuletEpic",
+      "displayName": "Epic Amulet",
+      "description": "Epic amulet gear for the amulet slot.",
+      "icon": "\ud83d\udd0d",
+      "type": "equipable",
+      "slot": "amulet",
+      "rarity": "epic",
+      "stackable": true,
+      "dropTier": "epic",
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.9
+      }
+    },
+    {
+      "codeName": "mainHandCommon",
+      "displayName": "Common Blade",
+      "description": "Common blade gear for the mainHand slot.",
+      "icon": "\u2694\ufe0f",
+      "type": "equipable",
+      "slot": "mainHand",
+      "rarity": "common",
+      "stackable": true,
+      "dropTier": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.04
+      }
+    },
+    {
+      "codeName": "mainHandRare",
+      "displayName": "Rare Blade",
+      "description": "Rare blade gear for the mainHand slot.",
+      "icon": "\u2694\ufe0f",
+      "type": "equipable",
+      "slot": "mainHand",
+      "rarity": "rare",
+      "stackable": true,
+      "dropTier": "rare",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.12
+      }
+    },
+    {
+      "codeName": "mainHandEpic",
+      "displayName": "Epic Blade",
+      "description": "Epic blade gear for the mainHand slot.",
+      "icon": "\u2694\ufe0f",
+      "type": "equipable",
+      "slot": "mainHand",
+      "rarity": "epic",
+      "stackable": true,
+      "dropTier": "epic",
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.9
+      }
+    },
+    {
+      "codeName": "bodyCommon",
+      "displayName": "Common Plate",
+      "description": "Common plate gear for the body slot.",
+      "icon": "\ud83d\udee1\ufe0f",
+      "type": "equipable",
+      "slot": "body",
+      "rarity": "common",
+      "stackable": true,
+      "dropTier": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.04
+      }
+    },
+    {
+      "codeName": "bodyRare",
+      "displayName": "Rare Plate",
+      "description": "Rare plate gear for the body slot.",
+      "icon": "\ud83d\udee1\ufe0f",
+      "type": "equipable",
+      "slot": "body",
+      "rarity": "rare",
+      "stackable": true,
+      "dropTier": "rare",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.12
+      }
+    },
+    {
+      "codeName": "bodyEpic",
+      "displayName": "Epic Plate",
+      "description": "Epic plate gear for the body slot.",
+      "icon": "\ud83d\udee1\ufe0f",
+      "type": "equipable",
+      "slot": "body",
+      "rarity": "epic",
+      "stackable": true,
+      "dropTier": "epic",
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.9
+      }
+    },
+    {
+      "codeName": "offHandCommon",
+      "displayName": "Common Buckler",
+      "description": "Common buckler gear for the offHand slot.",
+      "icon": "\ud83d\udd30",
+      "type": "equipable",
+      "slot": "offHand",
+      "rarity": "common",
+      "stackable": true,
+      "dropTier": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.04
+      }
+    },
+    {
+      "codeName": "offHandRare",
+      "displayName": "Rare Buckler",
+      "description": "Rare buckler gear for the offHand slot.",
+      "icon": "\ud83d\udd30",
+      "type": "equipable",
+      "slot": "offHand",
+      "rarity": "rare",
+      "stackable": true,
+      "dropTier": "rare",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.12
+      }
+    },
+    {
+      "codeName": "offHandEpic",
+      "displayName": "Epic Buckler",
+      "description": "Epic buckler gear for the offHand slot.",
+      "icon": "\ud83d\udd30",
+      "type": "equipable",
+      "slot": "offHand",
+      "rarity": "epic",
+      "stackable": true,
+      "dropTier": "epic",
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.9
+      }
+    },
+    {
+      "codeName": "bootsCommon",
+      "displayName": "Common Boots",
+      "description": "Common boots gear for the boots slot.",
+      "icon": "\ud83d\udc62",
+      "type": "equipable",
+      "slot": "boots",
+      "rarity": "common",
+      "stackable": true,
+      "dropTier": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.04
+      }
+    },
+    {
+      "codeName": "bootsRare",
+      "displayName": "Rare Boots",
+      "description": "Rare boots gear for the boots slot.",
+      "icon": "\ud83d\udc62",
+      "type": "equipable",
+      "slot": "boots",
+      "rarity": "rare",
+      "stackable": true,
+      "dropTier": "rare",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.12
+      }
+    },
+    {
+      "codeName": "bootsEpic",
+      "displayName": "Epic Boots",
+      "description": "Epic boots gear for the boots slot.",
+      "icon": "\ud83d\udc62",
+      "type": "equipable",
+      "slot": "boots",
+      "rarity": "epic",
+      "stackable": true,
+      "dropTier": "epic",
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.9
+      }
+    },
+    {
+      "codeName": "beltCommon",
+      "displayName": "Common Belt",
+      "description": "Common belt gear for the belt slot.",
+      "icon": "\ud83c\udf97\ufe0f",
+      "type": "equipable",
+      "slot": "belt",
+      "rarity": "common",
+      "stackable": true,
+      "dropTier": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.04
+      }
+    },
+    {
+      "codeName": "beltRare",
+      "displayName": "Rare Belt",
+      "description": "Rare belt gear for the belt slot.",
+      "icon": "\ud83c\udf97\ufe0f",
+      "type": "equipable",
+      "slot": "belt",
+      "rarity": "rare",
+      "stackable": true,
+      "dropTier": "rare",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.12
+      }
+    },
+    {
+      "codeName": "beltEpic",
+      "displayName": "Epic Belt",
+      "description": "Epic belt gear for the belt slot.",
+      "icon": "\ud83c\udf97\ufe0f",
+      "type": "equipable",
+      "slot": "belt",
+      "rarity": "epic",
+      "stackable": true,
+      "dropTier": "epic",
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.9
+      }
+    },
+    {
+      "codeName": "petCommon",
+      "displayName": "Common Pet",
+      "description": "Common pet gear for the pet slot.",
+      "icon": "\ud83d\udc3e",
+      "type": "equipable",
+      "slot": "pet",
+      "rarity": "common",
+      "stackable": true,
+      "dropTier": "common",
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.04
+      }
+    },
+    {
+      "codeName": "petRare",
+      "displayName": "Rare Pet",
+      "description": "Rare pet gear for the pet slot.",
+      "icon": "\ud83d\udc3e",
+      "type": "equipable",
+      "slot": "pet",
+      "rarity": "rare",
+      "stackable": true,
+      "dropTier": "rare",
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.12
+      }
+    },
+    {
+      "codeName": "petEpic",
+      "displayName": "Epic Pet",
+      "description": "Epic pet gear for the pet slot.",
+      "icon": "\ud83d\udc3e",
+      "type": "equipable",
+      "slot": "pet",
+      "rarity": "epic",
+      "stackable": true,
+      "dropTier": "epic",
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.9
+      }
+    },
+    {
+      "codeName": "fluxDrink",
+      "displayName": "Flux Drink",
+      "description": "Consumable boost: globalMultiplier.",
+      "icon": "\ud83e\udd64",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.35,
+        "durationSeconds": 45
+      }
+    },
+    {
+      "codeName": "tapSerum",
+      "displayName": "Tap Serum",
+      "description": "Consumable boost: clickMultiplier.",
+      "icon": "\ud83d\udc89",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 2.5,
+        "durationSeconds": 20
+      }
+    },
+    {
+      "codeName": "costCache",
+      "displayName": "Cost Cache",
+      "description": "Consumable boost: costReduction.",
+      "icon": "\ud83d\udce6",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.85,
+        "durationSeconds": 60
+      }
+    },
+    {
+      "codeName": "stellarRation",
+      "displayName": "Stellar Ration",
+      "description": "Consumable boost: globalMultiplier.",
+      "icon": "\ud83c\udf71",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.2,
+        "durationSeconds": 90
+      }
+    },
+    {
+      "codeName": "voidCapsule",
+      "displayName": "Void Capsule",
+      "description": "Consumable boost: clickMultiplier.",
+      "icon": "\ud83d\udc8a",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 1.8,
+        "durationSeconds": 30
+      }
+    },
+    {
+      "codeName": "chronoTea",
+      "displayName": "Chrono Tea",
+      "description": "Consumable boost: globalMultiplier.",
+      "icon": "\ud83c\udf75",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.15,
+        "durationSeconds": 120
+      }
+    },
+    {
+      "codeName": "quantumShot",
+      "displayName": "Quantum Shot",
+      "description": "Consumable boost: clickMultiplier.",
+      "icon": "\u2697\ufe0f",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "clickMultiplier",
+        "multiplier": 3,
+        "durationSeconds": 15
+      }
+    },
+    {
+      "codeName": "nebulaBar",
+      "displayName": "Nebula Bar",
+      "description": "Consumable boost: globalMultiplier.",
+      "icon": "\ud83c\udf6b",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.25,
+        "durationSeconds": 75
+      }
+    },
+    {
+      "codeName": "essenceVial",
+      "displayName": "Essence Vial",
+      "description": "Consumable boost: costReduction.",
+      "icon": "\ud83e\uddea",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "costReduction",
+        "multiplier": 0.8,
+        "durationSeconds": 45
+      }
+    },
+    {
+      "codeName": "infinityDrop",
+      "displayName": "Infinity Drop",
+      "description": "Consumable boost: globalMultiplier.",
+      "icon": "\ud83d\udca7",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "effect": {
+        "type": "globalMultiplier",
+        "multiplier": 1.5,
+        "durationSeconds": 30
+      }
     }
   ]
 }

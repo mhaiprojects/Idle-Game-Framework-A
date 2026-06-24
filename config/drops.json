@@ -3,48 +3,676 @@
     {
       "codeName": "passiveTick",
       "trigger": "tick",
-      "chancePerSecond": 0.10,
+      "chancePerSecond": 0.08,
       "entries": [
-        { "item": "energyCell", "weight": 80, "quantity": [1, 1] },
-        { "item": "rareCrystal", "weight": 20, "quantity": [1, 1] }
+        {
+          "item": "energyCell",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "rareCrystal",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "fluxDrink",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "tapSerum",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "costCache",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "stellarRation",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "voidCapsule",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "chronoTea",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "quantumShot",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "nebulaBar",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "essenceVial",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "infinityDrop",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        }
       ]
     },
     {
       "codeName": "onClick",
       "trigger": "click",
-      "chance": 0.02,
+      "chance": 0.025,
       "entries": [
-        { "item": "energyCell", "weight": 60, "quantity": [1, 2] },
-        { "item": "rareCrystal", "weight": 30, "quantity": [1, 1] },
-        { "item": "voidShard", "weight": 10, "quantity": [1, 1] }
+        {
+          "item": "energyCell",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "rareCrystal",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "fluxDrink",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "tapSerum",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "costCache",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "stellarRation",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "voidCapsule",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "chronoTea",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "quantumShot",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "nebulaBar",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "essenceVial",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "infinityDrop",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ]
+        },
+        {
+          "item": "voidShard",
+          "weight": 5,
+          "quantity": [
+            1,
+            1
+          ]
+        }
       ]
     },
     {
       "codeName": "equipmentDrop",
       "trigger": "tick",
-      "chancePerSecond": 0.015,
+      "chancePerSecond": 0.012,
+      "dynamicTierWeights": true,
       "entries": [
-        { "item": "starlightCape", "weight": 14, "quantity": [1, 1] },
-        { "item": "chronoHelm", "weight": 12, "quantity": [1, 1] },
-        { "item": "temporalLens", "weight": 10, "quantity": [1, 1] },
-        { "item": "chronoBlade", "weight": 10, "quantity": [1, 1] },
-        { "item": "voidPlate", "weight": 8, "quantity": [1, 1] },
-        { "item": "fluxBuckler", "weight": 10, "quantity": [1, 1] },
-        { "item": "phaseBoots", "weight": 10, "quantity": [1, 1] },
-        { "item": "timekeepersBelt", "weight": 8, "quantity": [1, 1] },
-        { "item": "quantumMote", "weight": 12, "quantity": [1, 1] }
+        {
+          "item": "capeCommon",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "capeRare",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "rare"
+        },
+        {
+          "item": "capeEpic",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "epic"
+        },
+        {
+          "item": "helmetCommon",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "helmetRare",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "rare"
+        },
+        {
+          "item": "helmetEpic",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "epic"
+        },
+        {
+          "item": "amuletCommon",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "amuletRare",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "rare"
+        },
+        {
+          "item": "amuletEpic",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "epic"
+        },
+        {
+          "item": "mainHandCommon",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "mainHandRare",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "rare"
+        },
+        {
+          "item": "mainHandEpic",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "epic"
+        },
+        {
+          "item": "bodyCommon",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "bodyRare",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "rare"
+        },
+        {
+          "item": "bodyEpic",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "epic"
+        },
+        {
+          "item": "offHandCommon",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "offHandRare",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "rare"
+        },
+        {
+          "item": "offHandEpic",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "epic"
+        },
+        {
+          "item": "bootsCommon",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "bootsRare",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "rare"
+        },
+        {
+          "item": "bootsEpic",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "epic"
+        },
+        {
+          "item": "beltCommon",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "beltRare",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "rare"
+        },
+        {
+          "item": "beltEpic",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "epic"
+        },
+        {
+          "item": "petCommon",
+          "weight": 60,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "common"
+        },
+        {
+          "item": "petRare",
+          "weight": 30,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "rare"
+        },
+        {
+          "item": "petEpic",
+          "weight": 10,
+          "quantity": [
+            1,
+            1
+          ],
+          "dropTier": "epic"
+        }
       ]
     },
     {
       "codeName": "artifactDrop",
       "trigger": "tick",
-      "chancePerSecond": 0.001,
+      "chancePerSecond": 0.0008,
       "entries": [
-        { "artifact": "chronoLens", "weight": 40, "quantity": [1, 1] },
-        { "artifact": "starCompass", "weight": 30, "quantity": [1, 1] },
-        { "artifact": "voidHeart", "weight": 20, "quantity": [1, 1] },
-        { "artifact": "infinityGear", "weight": 10, "quantity": [1, 1] }
+        {
+          "artifact": "chronoLens",
+          "weight": 20
+        },
+        {
+          "artifact": "starCompass",
+          "weight": 30
+        },
+        {
+          "artifact": "voidHeart",
+          "weight": 5
+        },
+        {
+          "artifact": "infinityGear",
+          "weight": 5
+        },
+        {
+          "artifact": "fluxCoil",
+          "weight": 30,
+          "dropRequirements": {
+            "generator": "quantumProcessor",
+            "minAscensionTier": 1
+          }
+        },
+        {
+          "artifact": "nebulaShard",
+          "weight": 40,
+          "dropRequirements": {
+            "generator": "nebulaHarvester",
+            "minAscensionTier": 0
+          }
+        },
+        {
+          "artifact": "voidSigil",
+          "weight": 20,
+          "dropRequirements": {
+            "generator": "voidExtractor",
+            "minAscensionTier": 1
+          }
+        },
+        {
+          "artifact": "chronoDial",
+          "weight": 20,
+          "dropRequirements": {
+            "generator": "chronoRefinery",
+            "minAscensionTier": 1
+          }
+        },
+        {
+          "artifact": "temporalAnchor",
+          "weight": 12,
+          "dropRequirements": {
+            "generator": "temporalEngine",
+            "minAscensionTier": 2
+          }
+        },
+        {
+          "artifact": "cosmicEmber",
+          "weight": 30,
+          "dropRequirements": {
+            "generator": "cosmicFoundry",
+            "minAscensionTier": 2
+          }
+        },
+        {
+          "artifact": "quantumEcho",
+          "weight": 20,
+          "dropRequirements": {
+            "generator": "quantumProcessor",
+            "minAscensionTier": 1
+          }
+        },
+        {
+          "artifact": "stellarCore",
+          "weight": 12,
+          "dropRequirements": {
+            "generator": "starForge",
+            "minAscensionTier": 0
+          }
+        },
+        {
+          "artifact": "voidMirror",
+          "weight": 5,
+          "dropRequirements": {
+            "generator": "voidExtractor",
+            "minAscensionTier": 2
+          }
+        },
+        {
+          "artifact": "infinityLoop",
+          "weight": 5,
+          "dropRequirements": {
+            "generator": "infinityChronometer",
+            "minAscensionTier": 3
+          }
+        },
+        {
+          "artifact": "timeCapsule",
+          "weight": 40,
+          "dropRequirements": {
+            "generator": "timeWarden",
+            "minAscensionTier": 0
+          }
+        },
+        {
+          "artifact": "sailorChart",
+          "weight": 40,
+          "dropRequirements": {
+            "generator": "cosmicSailor",
+            "minAscensionTier": 0
+          }
+        },
+        {
+          "artifact": "forgeHammer",
+          "weight": 30,
+          "dropRequirements": {
+            "generator": "starForge",
+            "minAscensionTier": 1
+          }
+        },
+        {
+          "artifact": "harvesterLens",
+          "weight": 30,
+          "dropRequirements": {
+            "generator": "nebulaHarvester",
+            "minAscensionTier": 1
+          }
+        },
+        {
+          "artifact": "processorChip",
+          "weight": 20,
+          "dropRequirements": {
+            "generator": "quantumProcessor",
+            "minAscensionTier": 2
+          }
+        },
+        {
+          "artifact": "extractorFang",
+          "weight": 20,
+          "dropRequirements": {
+            "generator": "voidExtractor",
+            "minAscensionTier": 2
+          }
+        },
+        {
+          "artifact": "refineryCoil",
+          "weight": 12,
+          "dropRequirements": {
+            "generator": "chronoRefinery",
+            "minAscensionTier": 2
+          }
+        },
+        {
+          "artifact": "engineCog",
+          "weight": 12,
+          "dropRequirements": {
+            "generator": "temporalEngine",
+            "minAscensionTier": 2
+          }
+        },
+        {
+          "artifact": "foundryBrand",
+          "weight": 5,
+          "dropRequirements": {
+            "generator": "cosmicFoundry",
+            "minAscensionTier": 3
+          }
+        },
+        {
+          "artifact": "chronometerHand",
+          "weight": 5,
+          "dropRequirements": {
+            "generator": "infinityChronometer",
+            "minAscensionTier": 3
+          }
+        }
       ]
     }
-  ]
+  ],
+  "equipmentDropModifiers": {
+    "tierWeightsByAscension": {
+      "0": {
+        "common": 0.75,
+        "rare": 0.22,
+        "epic": 0.03
+      },
+      "1": {
+        "common": 0.55,
+        "rare": 0.35,
+        "epic": 0.1
+      },
+      "2": {
+        "common": 0.4,
+        "rare": 0.42,
+        "epic": 0.18
+      },
+      "3": {
+        "common": 0.25,
+        "rare": 0.45,
+        "epic": 0.3
+      }
+    },
+    "quantityBonusPerGenerator": 0.002,
+    "categoryBoostPerOwned": 0.05
+  }
 }

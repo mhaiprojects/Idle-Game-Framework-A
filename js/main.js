@@ -199,6 +199,9 @@
           unlockResult: unlock,
           unlockRequirements: AFK.ConfigManager.getCombinedUnlockRequirements(
             { unlockConditions: c.unlockConditions }, this.state, (v) => this.formatNumber(v)
+          ),
+          effectSummary: AFK.ModifierSystem.summarizeCharacterEffects(
+            c.codeName, this.state, this.config, (eff) => this.describeEffectShort(eff) || this.describeEffect(eff)
           )
         };
       });
@@ -390,6 +393,13 @@
             });
             sections.push(section('currentlyEquipped', equipped.join(' · ') || L('nothingEquipped')));
           }
+          const effectRows = AFK.ModifierSystem.summarizeCharacterEffects(
+            codeName, this.state, this.config, (eff) => this.describeEffectShort(eff) || this.describeEffect(eff)
+          );
+          if (effectRows.length) {
+            sections.push(section('combinedEffects',
+              effectRows.map(r => `${r.label} (${r.sources})`).join(' · ')));
+          }
           const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
             { unlockConditions: char.unlockConditions }, this.state, fmt
           );
@@ -491,18 +501,22 @@
         }
         case 'prestige': {
           const fmtLocal = fmt;
+          const prestigeMinimum = AFK.FormulaEngine.getScaledPrestigeMinimum(this.state, this.config);
           const prestigeRequirements = AFK.ConfigManager.buildRequirementRowsFromConditions(
-            this.config.prestige.prestigeMinimum, this.state, fmtLocal
+            prestigeMinimum, this.state, fmtLocal
           );
+          const shardProgress = AFK.FormulaEngine.getPrestigeShardProgress(this.state, this.config, fmtLocal);
           const lostKept = AFK.PrestigeSystem.getLostKept(this.config);
           const gain = AFK.PrestigeSystem.getProjectedGain(this.state, this.config);
           const diff = AFK.FormulaEngine.getEffectiveDifficulty(this.state, this.config);
+          const pc = this.config.prestige.prestigeCurrency;
           return {
             title: AFK.ConfigManager.getSection('prestigeSoftReset').title,
             icon: AFK.ConfigManager.getSection('prestigeSoftReset').icon,
             sections: [
+              section('shardRules', shardProgress.rulesExplanation || pc.rulesExplanation || ''),
               section('rewards',
-                `Gain +${gain} Prestige Shards. Cost mult: ${diff.costMultiplier.toFixed(2)}× · ${this.getPrimaryCurrencyLabel()}: ${diff.primaryCurrencyMultiplier.toFixed(2)}×`),
+                `Gain +${gain} Prestige Shards. Next shard milestone: ${fmtLocal(shardProgress.nextMilestone)} weighted run value. Cost mult: ${diff.costMultiplier.toFixed(2)}× · ${this.getPrimaryCurrencyLabel()}: ${diff.primaryCurrencyMultiplier.toFixed(2)}×`),
               section('lost', lostKept.lost.join(' · ')),
               section('kept', lostKept.kept.join(' · '))
             ],
@@ -632,9 +646,11 @@
       const tier = this.state.meta.ascension.currentTier;
       const next = AFK.AscensionSystem.getNextTier(this.state, this.config);
       const ascendCheck = AFK.AscensionSystem.canAscend(this.state, this.config);
+      const prestigeMinimum = AFK.FormulaEngine.getScaledPrestigeMinimum(this.state, this.config);
       const prestigeRequirements = AFK.ConfigManager.buildRequirementRowsFromConditions(
-        this.config.prestige.prestigeMinimum, this.state, fmt
+        prestigeMinimum, this.state, fmt
       );
+      const shardProgress = AFK.FormulaEngine.getPrestigeShardProgress(this.state, this.config, fmt);
       const ascensionRequirements = next?.ascensionRequirements
         ? this._buildAscensionRequirementRows(
           next.ascensionRequirements.conditions || [next.ascensionRequirements],
@@ -654,6 +670,7 @@
         canAscend: ascendCheck.met,
         nextTierName: next ? AFK.ConfigManager.formatAscensionTierLabel(next.tier) : '',
         prestigeRequirements,
+        shardProgress,
         ascensionRequirements,
         prestigeLost: lostKeptPrestige.lost,
         prestigeKept: lostKeptPrestige.kept,

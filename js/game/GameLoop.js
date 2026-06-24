@@ -84,7 +84,7 @@ export class GameLoop {
       elapsedSec, this.gameState.state, this.config, mods, fw.save.offlineCapSeconds
     );
 
-    this.gameState.applyOfflineGains(result.gains);
+    this.gameState.applyOfflineGains(result.gains, result.elapsed);
     return {
       ...result,
       elapsedSec,

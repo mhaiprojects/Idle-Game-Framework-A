@@ -64,7 +64,7 @@ export function createInitialState(config) {
         run: { resourcesEarnedThisRun: {}, peakPrimaryCurrencyRateThisRun: 0 }
       }
     },
-    stats: { totalTaps: 0, totalClicks: 0, playTimeSeconds: 0 },
+    stats: { totalTaps: 0, totalClicks: 0, playTimeSeconds: 0, eventsSeen: 0, offlineSecondsClaimed: 0 },
     settings: {
       sidebarPosition: fw.ui.sidebarDefaultPosition,
       soundEnabled: true,
@@ -410,7 +410,10 @@ export class GameState {
     EventBus.emit(EVENTS.GAME_TICK, { delta: deltaSeconds });
   }
 
-  applyOfflineGains(gains) {
+  applyOfflineGains(gains, elapsedSeconds) {
+    if (elapsedSeconds > 0) {
+      this.data.stats.offlineSecondsClaimed = (this.data.stats.offlineSecondsClaimed || 0) + elapsedSeconds;
+    }
     for (const [res, amt] of Object.entries(gains)) {
       if (amt > 0) this.addResource(res, amt, 'offline');
     }

@@ -4,248 +4,627 @@
       "codeName": "timeWarden",
       "displayName": "Time Warden",
       "description": "A humble sentinel that harvests raw time shards from the cosmic stream.",
-      "icon": "⏳",
+      "icon": "\u23f3",
       "category": "temporal",
       "unlockConditions": null,
       "baseCost": 10,
       "costMultiplier": 1.15,
-      "costResources": [{ "resource": "timeShards", "multiplier": 1 }],
+      "costResources": [
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        }
+      ],
       "produces": [
-        { "resource": "timeShards", "amount": 1, "role": "primary" },
-        { "resource": "cosmicEnergy", "amount": 0.5, "role": "unlockGate", "forGenerator": "cosmicSailor" }
+        {
+          "resource": "timeShards",
+          "amount": 1,
+          "role": "primary"
+        },
+        {
+          "resource": "cosmicEnergy",
+          "amount": 0.5,
+          "role": "unlockGate",
+          "forGenerator": "cosmicSailor"
+        }
       ]
     },
     {
       "codeName": "cosmicSailor",
       "displayName": "Cosmic Sailor",
       "description": "Navigates stellar currents to gather cosmic energy.",
-      "icon": "🚀",
+      "icon": "\ud83d\ude80",
       "category": "stellar",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          { "type": "achievement", "achievement": "firstGenerator" },
-          { "type": "canAffordFirstPurchase", "generator": "cosmicSailor" },
-          { "type": "resourceHeld", "resource": "cosmicEnergy", "amount": 10 }
+          {
+            "type": "achievement",
+            "achievement": "firstGenerator"
+          },
+          {
+            "type": "canAffordFirstPurchase",
+            "generator": "cosmicSailor"
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "cosmicEnergy",
+            "amount": 10
+          }
         ]
       },
       "baseCost": 100,
       "costMultiplier": 1.15,
       "costResources": [
-        { "resource": "timeShards", "multiplier": 1 },
-        { "resource": "cosmicEnergy", "multiplier": 1 }
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "cosmicEnergy",
+          "multiplier": 1
+        }
       ],
       "produces": [
-        { "resource": "cosmicEnergy", "amount": 1, "role": "unlockGate", "forGenerator": "starForge" },
-        { "resource": "stardust", "amount": 0.5, "role": "unlockGate", "forGenerator": "starForge" },
-        { "resource": "timeShards", "amount": 0.2, "role": "bonus" }
+        {
+          "resource": "cosmicEnergy",
+          "amount": 1,
+          "role": "unlockGate",
+          "forGenerator": "starForge"
+        },
+        {
+          "resource": "stardust",
+          "amount": 0.5,
+          "role": "unlockGate",
+          "forGenerator": "starForge"
+        },
+        {
+          "resource": "timeShards",
+          "amount": 0.2,
+          "role": "bonus"
+        }
       ]
     },
     {
       "codeName": "starForge",
       "displayName": "Star Forge",
       "description": "Forges stardust from compressed stellar plasma.",
-      "icon": "⭐",
+      "icon": "\u2b50",
       "category": "stellar",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          { "type": "generatorOwned", "generator": "cosmicSailor", "quantity": 5 },
-          { "type": "resourceHeld", "resource": "stardust", "amount": 25 }
+          {
+            "type": "generatorOwned",
+            "generator": "cosmicSailor",
+            "quantity": 5
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "stardust",
+            "amount": 25
+          }
         ]
       },
       "baseCost": 500,
       "costMultiplier": 1.16,
       "costResources": [
-        { "resource": "timeShards", "multiplier": 1 },
-        { "resource": "cosmicEnergy", "multiplier": 2 },
-        { "resource": "stardust", "multiplier": 1 }
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "cosmicEnergy",
+          "multiplier": 2
+        },
+        {
+          "resource": "stardust",
+          "multiplier": 1
+        }
       ],
       "produces": [
-        { "resource": "stardust", "amount": 2, "role": "unlockGate", "forGenerator": "nebulaHarvester" },
-        { "resource": "nebulaEssence", "amount": 0.3, "role": "unlockGate", "forGenerator": "nebulaHarvester" }
+        {
+          "resource": "stardust",
+          "amount": 2,
+          "role": "unlockGate",
+          "forGenerator": "nebulaHarvester"
+        },
+        {
+          "resource": "nebulaEssence",
+          "amount": 0.3,
+          "role": "unlockGate",
+          "forGenerator": "nebulaHarvester"
+        }
       ]
     },
     {
       "codeName": "nebulaHarvester",
       "displayName": "Nebula Harvester",
       "description": "Collects essence from swirling nebula clouds.",
-      "icon": "🌠",
+      "icon": "\ud83c\udf20",
       "category": "stellar",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          { "type": "generatorOwned", "generator": "starForge", "quantity": 3 },
-          { "type": "resourceHeld", "resource": "nebulaEssence", "amount": 50 }
+          {
+            "type": "generatorOwned",
+            "generator": "starForge",
+            "quantity": 3
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "nebulaEssence",
+            "amount": 50
+          }
         ]
       },
       "baseCost": 2500,
       "costMultiplier": 1.17,
       "costResources": [
-        { "resource": "timeShards", "multiplier": 1 },
-        { "resource": "stardust", "multiplier": 3 },
-        { "resource": "nebulaEssence", "multiplier": 1 }
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "stardust",
+          "multiplier": 3
+        },
+        {
+          "resource": "nebulaEssence",
+          "multiplier": 1
+        }
       ],
       "produces": [
-        { "resource": "nebulaEssence", "amount": 1.5, "role": "unlockGate", "forGenerator": "quantumProcessor" },
-        { "resource": "quantumFlux", "amount": 0.1, "role": "unlockGate", "forGenerator": "quantumProcessor" }
+        {
+          "resource": "nebulaEssence",
+          "amount": 1.5,
+          "role": "unlockGate",
+          "forGenerator": "quantumProcessor"
+        },
+        {
+          "resource": "quantumFlux",
+          "amount": 0.1,
+          "role": "unlockGate",
+          "forGenerator": "quantumProcessor"
+        }
       ],
-      "requiredFeature": "generators:quantumProcessor"
+      "requiredFeature": "generators:tier1"
     },
     {
       "codeName": "quantumProcessor",
       "displayName": "Quantum Processor",
       "description": "Processes quantum flux from collapsed probability waves.",
-      "icon": "⚛️",
+      "icon": "\u269b\ufe0f",
       "category": "quantum",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          { "type": "ascensionTier", "minTier": 1 },
-          { "type": "resourceHeld", "resource": "quantumFlux", "amount": 20 }
+          {
+            "type": "ascensionTier",
+            "minTier": 1
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "quantumFlux",
+            "amount": 20
+          }
         ]
       },
       "baseCost": 15000,
       "costMultiplier": 1.18,
       "costResources": [
-        { "resource": "timeShards", "multiplier": 1 },
-        { "resource": "nebulaEssence", "multiplier": 2 },
-        { "resource": "quantumFlux", "multiplier": 1 }
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "nebulaEssence",
+          "multiplier": 2
+        },
+        {
+          "resource": "quantumFlux",
+          "multiplier": 1
+        }
       ],
       "produces": [
-        { "resource": "quantumFlux", "amount": 1, "role": "unlockGate", "forGenerator": "voidExtractor" },
-        { "resource": "voidMatter", "amount": 0.2, "role": "unlockGate", "forGenerator": "voidExtractor" }
+        {
+          "resource": "quantumFlux",
+          "amount": 1,
+          "role": "unlockGate",
+          "forGenerator": "voidExtractor"
+        },
+        {
+          "resource": "voidMatter",
+          "amount": 0.2,
+          "role": "unlockGate",
+          "forGenerator": "voidExtractor"
+        }
       ],
-      "requiredFeature": "generators:quantumProcessor"
+      "requiredFeature": "generators:tier1"
     },
     {
       "codeName": "voidExtractor",
       "displayName": "Void Extractor",
       "description": "Mines matter from the dimensional void between realities.",
-      "icon": "🕳️",
+      "icon": "\ud83d\udd73\ufe0f",
       "category": "void",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          { "type": "generatorOwned", "generator": "quantumProcessor", "quantity": 5 },
-          { "type": "resourceHeld", "resource": "voidMatter", "amount": 100 }
+          {
+            "type": "generatorOwned",
+            "generator": "quantumProcessor",
+            "quantity": 5
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "voidMatter",
+            "amount": 100
+          }
         ]
       },
       "baseCost": 75000,
       "costMultiplier": 1.19,
       "costResources": [
-        { "resource": "timeShards", "multiplier": 1 },
-        { "resource": "quantumFlux", "multiplier": 3 },
-        { "resource": "voidMatter", "multiplier": 1 }
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "quantumFlux",
+          "multiplier": 3
+        },
+        {
+          "resource": "voidMatter",
+          "multiplier": 1
+        }
       ],
       "produces": [
-        { "resource": "voidMatter", "amount": 1.5, "role": "unlockGate", "forGenerator": "chronoRefinery" },
-        { "resource": "chronoCrystals", "amount": 0.05, "role": "unlockGate", "forGenerator": "chronoRefinery" }
-      ]
+        {
+          "resource": "voidMatter",
+          "amount": 1.5,
+          "role": "unlockGate",
+          "forGenerator": "chronoRefinery"
+        },
+        {
+          "resource": "chronoCrystals",
+          "amount": 0.05,
+          "role": "unlockGate",
+          "forGenerator": "chronoRefinery"
+        }
+      ],
+      "requiredFeature": "generators:tier1"
     },
     {
       "codeName": "chronoRefinery",
       "displayName": "Chrono Refinery",
       "description": "Refines void matter into pure chrono crystals.",
-      "icon": "🔬",
+      "icon": "\ud83d\udd2c",
       "category": "temporal",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          { "type": "generatorOwned", "generator": "voidExtractor", "quantity": 3 },
-          { "type": "resourceHeld", "resource": "chronoCrystals", "amount": 50 }
+          {
+            "type": "generatorOwned",
+            "generator": "voidExtractor",
+            "quantity": 3
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "chronoCrystals",
+            "amount": 50
+          }
         ]
       },
       "baseCost": 500000,
-      "costMultiplier": 1.20,
+      "costMultiplier": 1.2,
       "costResources": [
-        { "resource": "timeShards", "multiplier": 1 },
-        { "resource": "voidMatter", "multiplier": 5 },
-        { "resource": "chronoCrystals", "multiplier": 1 }
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "voidMatter",
+          "multiplier": 5
+        },
+        {
+          "resource": "chronoCrystals",
+          "multiplier": 1
+        }
       ],
       "produces": [
-        { "resource": "chronoCrystals", "amount": 0.5, "role": "unlockGate", "forGenerator": "temporalEngine" },
-        { "resource": "timeShards", "amount": 5, "role": "bonus" }
-      ]
+        {
+          "resource": "chronoCrystals",
+          "amount": 0.5,
+          "role": "unlockGate",
+          "forGenerator": "temporalEngine"
+        },
+        {
+          "resource": "timeShards",
+          "amount": 5,
+          "role": "bonus"
+        }
+      ],
+      "requiredFeature": "generators:tier2"
     },
     {
       "codeName": "temporalEngine",
       "displayName": "Temporal Engine",
       "description": "A massive engine that bends local time to accelerate production.",
-      "icon": "⚙️",
+      "icon": "\u2699\ufe0f",
       "category": "temporal",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          { "type": "generatorOwned", "generator": "chronoRefinery", "quantity": 5 },
-          { "type": "prestigeCount", "min": 1 }
+          {
+            "type": "generatorOwned",
+            "generator": "chronoRefinery",
+            "quantity": 5
+          },
+          {
+            "type": "prestigeCount",
+            "min": 1
+          }
         ]
       },
       "baseCost": 5000000,
       "costMultiplier": 1.21,
       "costResources": [
-        { "resource": "timeShards", "multiplier": 1 },
-        { "resource": "chronoCrystals", "multiplier": 10 }
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "chronoCrystals",
+          "multiplier": 10
+        }
       ],
       "produces": [
-        { "resource": "timeShards", "amount": 50, "role": "primary" },
-        { "resource": "chronoCrystals", "amount": 2, "role": "unlockGate", "forGenerator": "cosmicFoundry" },
-        { "resource": "quantumFlux", "amount": 1, "role": "unlockGate", "forGenerator": "cosmicFoundry" }
-      ]
+        {
+          "resource": "timeShards",
+          "amount": 50,
+          "role": "primary"
+        },
+        {
+          "resource": "chronoCrystals",
+          "amount": 2,
+          "role": "unlockGate",
+          "forGenerator": "cosmicFoundry"
+        },
+        {
+          "resource": "quantumFlux",
+          "amount": 1,
+          "role": "unlockGate",
+          "forGenerator": "cosmicFoundry"
+        }
+      ],
+      "requiredFeature": "generators:tier2"
     },
     {
       "codeName": "cosmicFoundry",
       "displayName": "Cosmic Foundry",
       "description": "Forges entire star systems into concentrated temporal fuel.",
-      "icon": "🏭",
+      "icon": "\ud83c\udfed",
       "category": "stellar",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          { "type": "generatorOwned", "generator": "temporalEngine", "quantity": 3 },
-          { "type": "ascensionTier", "minTier": 2 }
+          {
+            "type": "generatorOwned",
+            "generator": "temporalEngine",
+            "quantity": 3
+          },
+          {
+            "type": "ascensionTier",
+            "minTier": 2
+          }
         ]
       },
       "baseCost": 50000000,
       "costMultiplier": 1.22,
       "costResources": [
-        { "resource": "timeShards", "multiplier": 1 },
-        { "resource": "chronoCrystals", "multiplier": 50 },
-        { "resource": "quantumFlux", "multiplier": 10 }
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "chronoCrystals",
+          "multiplier": 50
+        },
+        {
+          "resource": "quantumFlux",
+          "multiplier": 10
+        }
       ],
       "produces": [
-        { "resource": "timeShards", "amount": 500, "role": "primary" },
-        { "resource": "chronoCrystals", "amount": 25, "role": "unlockGate", "forGenerator": "infinityChronometer" },
-        { "resource": "voidMatter", "amount": 5, "role": "unlockGate", "forGenerator": "infinityChronometer" },
-        { "resource": "quantumFlux", "amount": 10, "role": "bonus" }
-      ]
+        {
+          "resource": "timeShards",
+          "amount": 500,
+          "role": "primary"
+        },
+        {
+          "resource": "chronoCrystals",
+          "amount": 25,
+          "role": "unlockGate",
+          "forGenerator": "infinityChronometer"
+        },
+        {
+          "resource": "voidMatter",
+          "amount": 5,
+          "role": "unlockGate",
+          "forGenerator": "infinityChronometer"
+        },
+        {
+          "resource": "quantumFlux",
+          "amount": 10,
+          "role": "bonus"
+        }
+      ],
+      "requiredFeature": "generators:tier2"
     },
     {
       "codeName": "infinityChronometer",
       "displayName": "Infinity Chronometer",
-      "description": "The ultimate time-measuring device — harnesses infinite temporal loops.",
-      "icon": "♾️",
+      "description": "The ultimate time-measuring device \u2014 harnesses infinite temporal loops.",
+      "icon": "\u267e\ufe0f",
       "category": "temporal",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          { "type": "generatorOwned", "generator": "cosmicFoundry", "quantity": 1 },
-          { "type": "ascensionTier", "minTier": 3 }
+          {
+            "type": "generatorOwned",
+            "generator": "cosmicFoundry",
+            "quantity": 1
+          },
+          {
+            "type": "ascensionTier",
+            "minTier": 3
+          }
         ]
       },
       "baseCost": 500000000,
       "costMultiplier": 1.25,
       "costResources": [
-        { "resource": "timeShards", "multiplier": 1 },
-        { "resource": "chronoCrystals", "multiplier": 100 },
-        { "resource": "voidMatter", "multiplier": 50 }
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "chronoCrystals",
+          "multiplier": 100
+        },
+        {
+          "resource": "voidMatter",
+          "multiplier": 50
+        }
       ],
       "produces": [
-        { "resource": "timeShards", "amount": 5000, "role": "primary" },
-        { "resource": "chronoCrystals", "amount": 100, "role": "bonus" },
-        { "resource": "quantumFlux", "amount": 50, "role": "bonus" }
+        {
+          "resource": "timeShards",
+          "amount": 5000,
+          "role": "primary"
+        },
+        {
+          "resource": "chronoCrystals",
+          "amount": 100,
+          "role": "bonus"
+        },
+        {
+          "resource": "quantumFlux",
+          "amount": 50,
+          "role": "bonus"
+        },
+        {
+          "resource": "voidMatter",
+          "amount": 10,
+          "role": "unlockGate",
+          "forGenerator": "voidArchitect"
+        }
       ],
-      "requiredFeature": "systems:allGenerators"
+      "requiredFeature": "generators:tier3"
+    },
+    {
+      "codeName": "voidArchitect",
+      "displayName": "Void Architect",
+      "description": "Designs structures from pure void matter across dimensions.",
+      "icon": "\ud83c\udfdb\ufe0f",
+      "category": "void",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "infinityChronometer",
+            "quantity": 1
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "voidMatter",
+            "amount": 10000
+          }
+        ]
+      },
+      "baseCost": 2500000000,
+      "costMultiplier": 1.26,
+      "costResources": [
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "voidMatter",
+          "multiplier": 100
+        },
+        {
+          "resource": "chronoCrystals",
+          "multiplier": 200
+        }
+      ],
+      "produces": [
+        {
+          "resource": "voidMatter",
+          "amount": 25,
+          "role": "primary"
+        },
+        {
+          "resource": "quantumFlux",
+          "amount": 15,
+          "role": "bonus"
+        },
+        {
+          "resource": "chronoCrystals",
+          "amount": 5,
+          "role": "unlockGate",
+          "forGenerator": "eternityForge"
+        }
+      ],
+      "displayName": "Eternity Forge",
+      "description": "Forges eternal timelines into concentrated chrono crystals.",
+      "icon": "\ud83d\udd25",
+      "category": "temporal",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "generatorOwned",
+            "generator": "voidArchitect",
+            "quantity": 1
+          },
+          {
+            "type": "ascensionTier",
+            "minTier": 3
+          }
+        ]
+      },
+      "baseCost": 10000000000,
+      "costMultiplier": 1.28,
+      "costResources": [
+        {
+          "resource": "timeShards",
+          "multiplier": 1
+        },
+        {
+          "resource": "chronoCrystals",
+          "multiplier": 500
+        },
+        {
+          "resource": "voidMatter",
+          "multiplier": 200
+        }
+      ],
+      "produces": [
+        {
+          "resource": "chronoCrystals",
+          "amount": 150,
+          "role": "primary"
+        },
+        {
+          "resource": "timeShards",
+          "amount": 10000,
+          "role": "bonus"
+        }
+      ],
+      "requiredFeature": "generators:tier3"
     }
   ]
 }

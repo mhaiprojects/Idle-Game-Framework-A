@@ -2,7 +2,21 @@ import { FormulaEngine } from '../FormulaEngine.js';
 import { ModifierSystem } from '../ModifierSystem.js';
 import { ConfigManager } from '../../core/ConfigManager.js';
 
+const GENERATOR_TIERS = {
+  0: ['timeWarden', 'cosmicSailor', 'starForge'],
+  1: ['nebulaHarvester', 'quantumProcessor', 'voidExtractor'],
+  2: ['chronoRefinery', 'temporalEngine', 'cosmicFoundry'],
+  3: ['infinityChronometer', 'voidArchitect', 'eternityForge']
+};
+
 export const AchievementSystem = {
+  getGeneratorTier(codeName) {
+    for (const [tier, codes] of Object.entries(GENERATOR_TIERS)) {
+      if (codes.includes(codeName)) return Number(tier);
+    }
+    return 0;
+  },
+
   checkAll(state, config, gameState) {
     const mods = ModifierSystem.collect(state, config);
     const primary = config.resources.resources.find(r => r.isPrimary);
@@ -124,6 +138,81 @@ export const AchievementSystem = {
         label = ConfigManager.formatAchievementLabel('playTime', { current, required: req.amount });
         break;
       }
+      case 'lifetimePrestiges': {
+        const current = state.meta.milestones.lifetimePrestiges || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🔄';
+        label = `${current} / ${req.amount} lifetime prestiges`;
+        break;
+      }
+      case 'ascensionTier': {
+        const current = state.meta.ascension.currentTier;
+        progress = req.minTier > 0 ? Math.min(1, current / req.minTier) : 1;
+        icon = '🌅';
+        label = `Ascension tier ${current} / ${req.minTier}`;
+        break;
+      }
+      case 'charactersUnlocked': {
+        const current = Object.values(state.characters).filter(c => c.unlocked).length;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '👥';
+        label = `${current} / ${req.amount} characters unlocked`;
+        break;
+      }
+      case 'equipmentSlotsFilled': {
+        const current = Math.max(...Object.values(state.characters).map(c =>
+          Object.values(c.equipment || {}).filter(Boolean).length
+        ), 0);
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🎒';
+        label = `${current} / ${req.amount} equipment slots filled (best character)`;
+        break;
+      }
+      case 'itemHeld': {
+        const current = Math.max(...Object.values(state.inventory), 0);
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '📦';
+        label = `Hold ${req.amount}+ of any item (best: ${current})`;
+        break;
+      }
+      case 'upgradeLevels': {
+        let current = 0;
+        for (const u of Object.values(state.upgrades)) current += u.purchaseCount || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🔧';
+        label = `${current} / ${req.amount} upgrade levels purchased`;
+        break;
+      }
+      case 'eventsSeen': {
+        const current = state.stats.eventsSeen || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🎲';
+        label = `${current} / ${req.amount} random events seen`;
+        break;
+      }
+      case 'offlineSeconds': {
+        const current = state.stats.offlineSecondsClaimed || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🌙';
+        label = `${Math.floor(current)}s / ${req.amount}s offline progress claimed`;
+        break;
+      }
+      case 'prestigeShopLevels': {
+        let current = 0;
+        for (const lvl of Object.values(state.meta.prestige.purchasedBonuses || {})) current += lvl || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🛒';
+        label = `${current} / ${req.amount} prestige shop levels purchased`;
+        break;
+      }
+      case 'generatorsOwnedTier': {
+        const codes = GENERATOR_TIERS[req.tier] || [];
+        const current = codes.filter(c => (state.generators[c]?.quantityPurchased || 0) >= (req.amount || 1)).length;
+        progress = codes.length > 0 ? Math.min(1, current / codes.length) : 0;
+        icon = '🏭';
+        label = `${current} / ${codes.length} tier-${req.tier} generators owned`;
+        break;
+      }
       default:
         break;
     }
@@ -162,6 +251,39 @@ export const AchievementSystem = {
         return (state.inventory[req.item] || 0) >= req.amount;
       case 'playTime':
         return state.stats.playTimeSeconds >= req.amount;
+      case 'lifetimePrestiges':
+        return (state.meta.milestones.lifetimePrestiges || 0) >= req.amount;
+      case 'ascensionTier':
+        return state.meta.ascension.currentTier >= req.minTier;
+      case 'charactersUnlocked':
+        return Object.values(state.characters).filter(c => c.unlocked).length >= req.amount;
+      case 'equipmentSlotsFilled':
+        return Object.values(state.characters).some(c =>
+          Object.values(c.equipment || {}).filter(Boolean).length >= req.amount
+        );
+      case 'itemHeld':
+        return Object.values(state.inventory).some(qty => qty >= req.amount);
+      case 'upgradeLevels': {
+        let total = 0;
+        for (const u of Object.values(state.upgrades)) total += u.purchaseCount || 0;
+        return total >= req.amount;
+      }
+      case 'eventsSeen':
+        return (state.stats.eventsSeen || 0) >= req.amount;
+      case 'offlineSeconds':
+        return (state.stats.offlineSecondsClaimed || 0) >= req.amount;
+      case 'prestigeShopLevels': {
+        let total = 0;
+        for (const lvl of Object.values(state.meta.prestige.purchasedBonuses || {})) total += lvl || 0;
+        return total >= req.amount;
+      }
+      case 'generatorsOwnedTier': {
+        const codes = GENERATOR_TIERS[req.tier] || [];
+        if (req.tier === 0 && req.amount > 1) {
+          return codes.every(c => (state.generators[c]?.quantityPurchased || 0) >= req.amount);
+        }
+        return codes.every(c => (state.generators[c]?.quantityPurchased || 0) >= (req.amount || 1));
+      }
       default:
         return false;
     }

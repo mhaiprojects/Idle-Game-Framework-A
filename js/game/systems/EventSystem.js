@@ -31,6 +31,7 @@ export const EventSystem = {
     const evt = events[Math.floor(Math.random() * events.length)];
     const expiresAt = Date.now() + evt.duration * 1000;
     state.activeEvents.push({ codeName: evt.codeName, effect: evt.effect, expiresAt, displayName: evt.displayName, icon: evt.icon });
+    state.stats.eventsSeen = (state.stats.eventsSeen || 0) + 1;
     ModifierSystem.invalidate();
     gameState._bumpModCache();
     gameState.showToast(`${evt.icon} ${evt.displayName}!`);
@@ -51,6 +52,7 @@ export const EventSystem = {
     if (!evt) return;
     const expiresAt = Date.now() + evt.duration * 1000;
     state.activeEvents.push({ codeName: evt.codeName, effect: evt.effect, expiresAt, displayName: evt.displayName, icon: evt.icon });
+    state.stats.eventsSeen = (state.stats.eventsSeen || 0) + 1;
     ModifierSystem.invalidate();
     gameState._bumpModCache();
     EventBus.emit(EVENTS.RANDOM_EVENT_START, { event: evt.codeName });

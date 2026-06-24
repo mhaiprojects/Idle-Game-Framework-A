@@ -4,65 +4,656 @@
       "codeName": "firstSteps",
       "displayName": "First Steps",
       "description": "Perform your first tap.",
-      "icon": "👣",
-      "requirement": { "type": "totalTaps", "amount": 1 },
-      "reward": { "type": "resourceBonus", "resource": "timeShards", "amount": 10 }
+      "icon": "\ud83d\udc63",
+      "requirement": {
+        "type": "totalTaps",
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
+        }
+      }
     },
     {
       "codeName": "firstGenerator",
       "displayName": "Time Keeper",
       "description": "Purchase your first Time Warden.",
-      "icon": "⏳",
-      "requirement": { "type": "generatorOwned", "generator": "timeWarden", "amount": 1 },
-      "reward": { "type": "modifierUnlock", "effect": { "type": "clickMultiplier", "multiplier": 1.1 } }
+      "icon": "\u23f3",
+      "requirement": {
+        "type": "generatorOwned",
+        "generator": "timeWarden",
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.1
+        }
+      }
     },
     {
       "codeName": "tenGenerators",
       "displayName": "Assembly Line",
       "description": "Own 10 generators total.",
-      "icon": "🏗️",
-      "requirement": { "type": "generatorCount", "amount": 10 },
-      "reward": { "type": "resourceBonus", "resource": "timeShards", "amount": 100 }
+      "icon": "\ud83c\udfd7\ufe0f",
+      "requirement": {
+        "type": "generatorCount",
+        "amount": 10
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
+        }
+      }
     },
     {
       "codeName": "hundredTaps",
       "displayName": "Tap Master",
       "description": "Tap 100 times.",
-      "icon": "👆",
-      "requirement": { "type": "totalTaps", "amount": 100 },
-      "reward": { "type": "modifierUnlock", "effect": { "type": "clickMultiplier", "multiplier": 1.25 } }
+      "icon": "\ud83d\udc46",
+      "requirement": {
+        "type": "totalTaps",
+        "amount": 100
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.25
+        }
+      }
     },
     {
       "codeName": "firstPrestige",
       "displayName": "Temporal Reset",
       "description": "Perform your first prestige.",
-      "icon": "🔄",
-      "requirement": { "type": "prestigeCount", "amount": 1 },
-      "reward": { "type": "titleUnlock", "title": "Time Traveler" }
+      "icon": "\ud83d\udd04",
+      "requirement": {
+        "type": "prestigeCount",
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
+        }
+      }
     },
     {
       "codeName": "primaryRateThousand",
       "displayName": "Production Surge",
       "description": "Earn 1,000 Time Shards per second from generators.",
-      "icon": "📈",
-      "requirement": { "type": "primaryCurrencyRateReached", "amount": 1000 },
-      "reward": { "type": "resourceBonus", "resource": "timeShards", "amount": 5000 }
+      "icon": "\ud83d\udcc8",
+      "requirement": {
+        "type": "primaryCurrencyRateReached",
+        "amount": 1000
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
+        }
+      }
     },
     {
       "codeName": "firstAscension",
       "displayName": "Awakening",
       "description": "Ascend to the Awakened Realm.",
-      "icon": "🌅",
-      "requirement": { "type": "ascensionCount", "amount": 1 },
-      "reward": { "type": "modifierUnlock", "effect": { "type": "globalMultiplier", "multiplier": 1.05 } }
+      "icon": "\ud83c\udf05",
+      "requirement": {
+        "type": "ascensionCount",
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.05
+        }
+      }
     },
     {
       "codeName": "artifactCollector",
       "displayName": "Curator of Time",
       "description": "Collect 3 artifacts.",
-      "icon": "🔮",
-      "requirement": { "type": "artifactCount", "amount": 3 },
-      "reward": { "type": "resourceBonus", "resource": "timeShards", "amount": 10000 }
+      "icon": "\ud83d\udd2e",
+      "requirement": {
+        "type": "artifactCount",
+        "amount": 3
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
+        }
+      }
+    },
+    {
+      "codeName": "tap500",
+      "displayName": "Tap Apprentice",
+      "description": "Tap 500 times.",
+      "icon": "\ud83c\udfc5",
+      "requirement": {
+        "type": "totalTaps",
+        "amount": 500
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.05
+        }
+      }
+    },
+    {
+      "codeName": "tap5000",
+      "displayName": "Tap Expert",
+      "description": "Tap 5,000 times.",
+      "icon": "\u2b50",
+      "requirement": {
+        "type": "totalTaps",
+        "amount": 5000
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.08
+        }
+      }
+    },
+    {
+      "codeName": "own25gen",
+      "displayName": "Industrialist",
+      "description": "Own 25 generators total.",
+      "icon": "\ud83c\udfaf",
+      "requirement": {
+        "type": "generatorCount",
+        "amount": 25
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      }
+    },
+    {
+      "codeName": "own100gen",
+      "displayName": "Megafactory",
+      "description": "Own 100 generators total.",
+      "icon": "\ud83d\udd25",
+      "requirement": {
+        "type": "generatorCount",
+        "amount": 100
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.08
+        }
+      }
+    },
+    {
+      "codeName": "prestige3",
+      "displayName": "Triple Reset",
+      "description": "Reach 3 lifetime prestiges.",
+      "icon": "\ud83d\udcab",
+      "requirement": {
+        "type": "lifetimePrestiges",
+        "amount": 3
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.05
+        }
+      }
+    },
+    {
+      "codeName": "prestige10",
+      "displayName": "Decade Reset",
+      "description": "Reach 10 lifetime prestiges.",
+      "icon": "\ud83c\udf1f",
+      "requirement": {
+        "type": "lifetimePrestiges",
+        "amount": 10
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.1
+        }
+      }
+    },
+    {
+      "codeName": "ascensionTier2",
+      "displayName": "Transcendent",
+      "description": "Reach ascension tier 2.",
+      "icon": "\ud83c\udfc6",
+      "requirement": {
+        "type": "ascensionTier",
+        "minTier": 2
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.06
+        }
+      }
+    },
+    {
+      "codeName": "ascensionTier3",
+      "displayName": "Cosmic Being",
+      "description": "Reach ascension tier 3.",
+      "icon": "\ud83c\udf96\ufe0f",
+      "requirement": {
+        "type": "ascensionTier",
+        "minTier": 3
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.12
+        }
+      }
+    },
+    {
+      "codeName": "artifact10",
+      "displayName": "Vault Keeper",
+      "description": "Collect 10 artifacts.",
+      "icon": "\u2728",
+      "requirement": {
+        "type": "artifactCount",
+        "amount": 10
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.07
+        }
+      }
+    },
+    {
+      "codeName": "artifact20",
+      "displayName": "Master Curator",
+      "description": "Collect 20 artifacts.",
+      "icon": "\ud83d\udc8e",
+      "requirement": {
+        "type": "artifactCount",
+        "amount": 20
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.12
+        }
+      }
+    },
+    {
+      "codeName": "rate10k",
+      "displayName": "Velocity",
+      "description": "Reach 10k primary currency/s.",
+      "icon": "\ud83c\udfc5",
+      "requirement": {
+        "type": "primaryCurrencyRateReached",
+        "amount": 10000
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.05
+        }
+      }
+    },
+    {
+      "codeName": "rate1m",
+      "displayName": "Hypervelocity",
+      "description": "Reach 1M primary currency/s.",
+      "icon": "\u2b50",
+      "requirement": {
+        "type": "primaryCurrencyRateReached",
+        "amount": 1000000
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.1
+        }
+      }
+    },
+    {
+      "codeName": "ownSailor5",
+      "displayName": "Fleet Captain",
+      "description": "Own 5 Cosmic Sailors.",
+      "icon": "\ud83c\udfaf",
+      "requirement": {
+        "type": "generatorOwned",
+        "generator": "cosmicSailor",
+        "amount": 5
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
+        }
+      }
+    },
+    {
+      "codeName": "ownQuantum1",
+      "displayName": "Quantum Initiate",
+      "description": "Own a Quantum Processor.",
+      "icon": "\ud83d\udd25",
+      "requirement": {
+        "type": "generatorOwned",
+        "generator": "quantumProcessor",
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "categoryMultiplier",
+          "multiplier": 1.1,
+          "category": "quantum"
+        }
+      }
+    },
+    {
+      "codeName": "ownInfinity1",
+      "displayName": "Infinity Touch",
+      "description": "Own Infinity Chronometer.",
+      "icon": "\ud83d\udcab",
+      "requirement": {
+        "type": "generatorOwned",
+        "generator": "infinityChronometer",
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.15
+        }
+      }
+    },
+    {
+      "codeName": "earnCosmic",
+      "displayName": "Cosmic Hoard",
+      "description": "Earn 1M cosmic energy total.",
+      "icon": "\ud83c\udf1f",
+      "requirement": {
+        "type": "resourceEarned",
+        "resource": "cosmicEnergy",
+        "amount": 1000000
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      }
+    },
+    {
+      "codeName": "earnVoid",
+      "displayName": "Void Hoard",
+      "description": "Earn 100k void matter total.",
+      "icon": "\ud83c\udfc6",
+      "requirement": {
+        "type": "resourceEarned",
+        "resource": "voidMatter",
+        "amount": 100000
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.06
+        }
+      }
+    },
+    {
+      "codeName": "prestigeTier5",
+      "displayName": "Tier Veteran",
+      "description": "5 prestiges this tier.",
+      "icon": "\ud83c\udf96\ufe0f",
+      "requirement": {
+        "type": "prestigeCount",
+        "amount": 5
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.98
+        }
+      }
+    },
+    {
+      "codeName": "chars3",
+      "displayName": "Team Builder",
+      "description": "Unlock 3 characters.",
+      "icon": "\u2728",
+      "requirement": {
+        "type": "charactersUnlocked",
+        "amount": 3
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      }
+    },
+    {
+      "codeName": "chars8",
+      "displayName": "Full Roster",
+      "description": "Unlock all 8 characters.",
+      "icon": "\ud83d\udc8e",
+      "requirement": {
+        "type": "charactersUnlocked",
+        "amount": 8
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.1
+        }
+      }
+    },
+    {
+      "codeName": "equipFull",
+      "displayName": "Fully Loaded",
+      "description": "Equip 9 slots on one character.",
+      "icon": "\ud83c\udfc5",
+      "requirement": {
+        "type": "equipmentSlotsFilled",
+        "amount": 9
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.06
+        }
+      }
+    },
+    {
+      "codeName": "item10",
+      "displayName": "Pack Rat",
+      "description": "Hold 10 of any item.",
+      "icon": "\u2b50",
+      "requirement": {
+        "type": "itemHeld",
+        "amount": 10
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
+        }
+      }
+    },
+    {
+      "codeName": "upgrade20",
+      "displayName": "Tinkerer",
+      "description": "Buy 20 upgrade levels total.",
+      "icon": "\ud83c\udfaf",
+      "requirement": {
+        "type": "upgradeLevels",
+        "amount": 20
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.97
+        }
+      }
+    },
+    {
+      "codeName": "upgrade100",
+      "displayName": "Master Tinkerer",
+      "description": "Buy 100 upgrade levels total.",
+      "icon": "\ud83d\udd25",
+      "requirement": {
+        "type": "upgradeLevels",
+        "amount": 100
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.94
+        }
+      }
+    },
+    {
+      "codeName": "event10",
+      "displayName": "Eventful",
+      "description": "Experience 10 random events.",
+      "icon": "\ud83d\udcab",
+      "requirement": {
+        "type": "eventsSeen",
+        "amount": 10
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.03
+        }
+      }
+    },
+    {
+      "codeName": "offline1h",
+      "displayName": "Away Strong",
+      "description": "Claim 1 hour offline progress.",
+      "icon": "\ud83c\udf1f",
+      "requirement": {
+        "type": "offlineSeconds",
+        "amount": 3600
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.05
+        }
+      }
+    },
+    {
+      "codeName": "shop5",
+      "displayName": "Investor",
+      "description": "Buy 5 total prestige shop levels.",
+      "icon": "\ud83c\udfc6",
+      "requirement": {
+        "type": "prestigeShopLevels",
+        "amount": 5
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      }
+    },
+    {
+      "codeName": "shop25",
+      "displayName": "Patron",
+      "description": "Buy 25 total prestige shop levels.",
+      "icon": "\ud83c\udf96\ufe0f",
+      "requirement": {
+        "type": "prestigeShopLevels",
+        "amount": 25
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.08
+        }
+      }
+    },
+    {
+      "codeName": "tier0Master",
+      "displayName": "Mortal Master",
+      "description": "Own 10+ of each tier-0 generator.",
+      "icon": "\u2728",
+      "requirement": {
+        "type": "generatorsOwnedTier",
+        "tier": 0,
+        "amount": 10
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.06
+        }
+      }
+    },
+    {
+      "codeName": "tier3Master",
+      "displayName": "Cosmic Master",
+      "description": "Own all tier-3 generators.",
+      "icon": "\ud83d\udc8e",
+      "requirement": {
+        "type": "generatorsOwnedTier",
+        "tier": 3,
+        "amount": 1
+      },
+      "reward": {
+        "type": "modifierUnlock",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.15
+        }
+      }
     }
   ]
 }

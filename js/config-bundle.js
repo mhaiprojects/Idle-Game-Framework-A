@@ -433,7 +433,7 @@ window.AFK_CONFIG = {
             "forGenerator": "quantumProcessor"
           }
         ],
-        "requiredFeature": "generators:quantumProcessor"
+        "requiredFeature": "generators:tier1"
       },
       {
         "codeName": "quantumProcessor",
@@ -485,7 +485,7 @@ window.AFK_CONFIG = {
             "forGenerator": "voidExtractor"
           }
         ],
-        "requiredFeature": "generators:quantumProcessor"
+        "requiredFeature": "generators:tier1"
       },
       {
         "codeName": "voidExtractor",
@@ -537,7 +537,8 @@ window.AFK_CONFIG = {
             "role": "unlockGate",
             "forGenerator": "chronoRefinery"
           }
-        ]
+        ],
+        "requiredFeature": "generators:tier1"
       },
       {
         "codeName": "chronoRefinery",
@@ -588,7 +589,8 @@ window.AFK_CONFIG = {
             "amount": 5,
             "role": "bonus"
           }
-        ]
+        ],
+        "requiredFeature": "generators:tier2"
       },
       {
         "codeName": "temporalEngine",
@@ -640,7 +642,8 @@ window.AFK_CONFIG = {
             "role": "unlockGate",
             "forGenerator": "cosmicFoundry"
           }
-        ]
+        ],
+        "requiredFeature": "generators:tier2"
       },
       {
         "codeName": "cosmicFoundry",
@@ -701,7 +704,8 @@ window.AFK_CONFIG = {
             "amount": 10,
             "role": "bonus"
           }
-        ]
+        ],
+        "requiredFeature": "generators:tier2"
       },
       {
         "codeName": "infinityChronometer",
@@ -754,9 +758,65 @@ window.AFK_CONFIG = {
             "resource": "quantumFlux",
             "amount": 50,
             "role": "bonus"
+          },
+          {
+            "resource": "voidMatter",
+            "amount": 10,
+            "role": "unlockGate",
+            "forGenerator": "voidArchitect"
           }
         ],
-        "requiredFeature": "systems:allGenerators"
+        "requiredFeature": "generators:tier3"
+      },
+      {
+        "codeName": "voidArchitect",
+        "displayName": "Eternity Forge",
+        "description": "Forges eternal timelines into concentrated chrono crystals.",
+        "icon": "\ud83d\udd25",
+        "category": "temporal",
+        "unlockConditions": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "type": "generatorOwned",
+              "generator": "voidArchitect",
+              "quantity": 1
+            },
+            {
+              "type": "ascensionTier",
+              "minTier": 3
+            }
+          ]
+        },
+        "baseCost": 10000000000,
+        "costMultiplier": 1.28,
+        "costResources": [
+          {
+            "resource": "timeShards",
+            "multiplier": 1
+          },
+          {
+            "resource": "chronoCrystals",
+            "multiplier": 500
+          },
+          {
+            "resource": "voidMatter",
+            "multiplier": 200
+          }
+        ],
+        "produces": [
+          {
+            "resource": "chronoCrystals",
+            "amount": 150,
+            "role": "primary"
+          },
+          {
+            "resource": "timeShards",
+            "amount": 10000,
+            "role": "bonus"
+          }
+        ],
+        "requiredFeature": "generators:tier3"
       }
     ]
   },
@@ -911,137 +971,546 @@ window.AFK_CONFIG = {
         }
       },
       {
-        "codeName": "starlightCape",
-        "displayName": "Starlight Cape",
-        "description": "A luminous cape woven from captured starlight.",
+        "codeName": "voidShard",
+        "displayName": "Void Shard",
+        "description": "Ingredient for advanced crafting.",
+        "icon": "\ud83e\udde9",
+        "type": "ingredient"
+      },
+      {
+        "codeName": "capeCommon",
+        "displayName": "Common Cape",
+        "description": "Common cape gear for the cape slot.",
         "icon": "\ud83e\udde3",
         "type": "equipable",
         "slot": "cape",
         "rarity": "common",
         "stackable": true,
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 1.05
-        }
-      },
-      {
-        "codeName": "chronoHelm",
-        "displayName": "Chrono Helm",
-        "description": "Helmet that bends time around the wearer.",
-        "icon": "\u26d1\ufe0f",
-        "type": "equipable",
-        "slot": "helmet",
-        "rarity": "uncommon",
-        "stackable": true,
-        "effect": {
-          "type": "costReduction",
-          "multiplier": 0.95
-        }
-      },
-      {
-        "codeName": "temporalLens",
-        "displayName": "Temporal Lens",
-        "description": "Equipment that focuses temporal energy.",
-        "icon": "\ud83d\udd0d",
-        "type": "equipable",
-        "slot": "amulet",
-        "rarity": "rare",
-        "stackable": true,
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 1.1
-        }
-      },
-      {
-        "codeName": "chronoBlade",
-        "displayName": "Chrono Blade",
-        "description": "A weapon forged from frozen time.",
-        "icon": "\u2694\ufe0f",
-        "type": "equipable",
-        "slot": "mainHand",
-        "rarity": "rare",
-        "stackable": true,
-        "effect": {
-          "type": "clickMultiplier",
-          "multiplier": 1.2
-        }
-      },
-      {
-        "codeName": "voidPlate",
-        "displayName": "Void Plate",
-        "description": "Armor plate harvested from the dimensional void.",
-        "icon": "\ud83d\udee1\ufe0f",
-        "type": "equipable",
-        "slot": "body",
-        "rarity": "epic",
-        "stackable": true,
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 1.08
-        }
-      },
-      {
-        "codeName": "fluxBuckler",
-        "displayName": "Flux Buckler",
-        "description": "Off-hand shield that stabilizes quantum flux.",
-        "icon": "\ud83d\udd30",
-        "type": "equipable",
-        "slot": "offHand",
-        "rarity": "uncommon",
-        "stackable": true,
+        "dropTier": "common",
         "effect": {
           "type": "globalMultiplier",
           "multiplier": 1.04
         }
       },
       {
-        "codeName": "phaseBoots",
-        "displayName": "Phase Boots",
-        "description": "Boots that step between timelines.",
-        "icon": "\ud83d\udc62",
+        "codeName": "capeRare",
+        "displayName": "Rare Cape",
+        "description": "Rare cape gear for the cape slot.",
+        "icon": "\ud83e\udde3",
         "type": "equipable",
-        "slot": "boots",
-        "rarity": "uncommon",
+        "slot": "cape",
+        "rarity": "rare",
         "stackable": true,
+        "dropTier": "rare",
         "effect": {
           "type": "clickMultiplier",
-          "multiplier": 1.1
+          "multiplier": 1.12
         }
       },
       {
-        "codeName": "timekeepersBelt",
-        "displayName": "Timekeeper's Belt",
-        "description": "Belt lined with chrono crystals.",
+        "codeName": "capeEpic",
+        "displayName": "Epic Cape",
+        "description": "Epic cape gear for the cape slot.",
+        "icon": "\ud83e\udde3",
+        "type": "equipable",
+        "slot": "cape",
+        "rarity": "epic",
+        "stackable": true,
+        "dropTier": "epic",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.9
+        }
+      },
+      {
+        "codeName": "helmetCommon",
+        "displayName": "Common Helmet",
+        "description": "Common helmet gear for the helmet slot.",
+        "icon": "\u26d1\ufe0f",
+        "type": "equipable",
+        "slot": "helmet",
+        "rarity": "common",
+        "stackable": true,
+        "dropTier": "common",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      },
+      {
+        "codeName": "helmetRare",
+        "displayName": "Rare Helmet",
+        "description": "Rare helmet gear for the helmet slot.",
+        "icon": "\u26d1\ufe0f",
+        "type": "equipable",
+        "slot": "helmet",
+        "rarity": "rare",
+        "stackable": true,
+        "dropTier": "rare",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.12
+        }
+      },
+      {
+        "codeName": "helmetEpic",
+        "displayName": "Epic Helmet",
+        "description": "Epic helmet gear for the helmet slot.",
+        "icon": "\u26d1\ufe0f",
+        "type": "equipable",
+        "slot": "helmet",
+        "rarity": "epic",
+        "stackable": true,
+        "dropTier": "epic",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.9
+        }
+      },
+      {
+        "codeName": "amuletCommon",
+        "displayName": "Common Amulet",
+        "description": "Common amulet gear for the amulet slot.",
+        "icon": "\ud83d\udd0d",
+        "type": "equipable",
+        "slot": "amulet",
+        "rarity": "common",
+        "stackable": true,
+        "dropTier": "common",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      },
+      {
+        "codeName": "amuletRare",
+        "displayName": "Rare Amulet",
+        "description": "Rare amulet gear for the amulet slot.",
+        "icon": "\ud83d\udd0d",
+        "type": "equipable",
+        "slot": "amulet",
+        "rarity": "rare",
+        "stackable": true,
+        "dropTier": "rare",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.12
+        }
+      },
+      {
+        "codeName": "amuletEpic",
+        "displayName": "Epic Amulet",
+        "description": "Epic amulet gear for the amulet slot.",
+        "icon": "\ud83d\udd0d",
+        "type": "equipable",
+        "slot": "amulet",
+        "rarity": "epic",
+        "stackable": true,
+        "dropTier": "epic",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.9
+        }
+      },
+      {
+        "codeName": "mainHandCommon",
+        "displayName": "Common Blade",
+        "description": "Common blade gear for the mainHand slot.",
+        "icon": "\u2694\ufe0f",
+        "type": "equipable",
+        "slot": "mainHand",
+        "rarity": "common",
+        "stackable": true,
+        "dropTier": "common",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      },
+      {
+        "codeName": "mainHandRare",
+        "displayName": "Rare Blade",
+        "description": "Rare blade gear for the mainHand slot.",
+        "icon": "\u2694\ufe0f",
+        "type": "equipable",
+        "slot": "mainHand",
+        "rarity": "rare",
+        "stackable": true,
+        "dropTier": "rare",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.12
+        }
+      },
+      {
+        "codeName": "mainHandEpic",
+        "displayName": "Epic Blade",
+        "description": "Epic blade gear for the mainHand slot.",
+        "icon": "\u2694\ufe0f",
+        "type": "equipable",
+        "slot": "mainHand",
+        "rarity": "epic",
+        "stackable": true,
+        "dropTier": "epic",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.9
+        }
+      },
+      {
+        "codeName": "bodyCommon",
+        "displayName": "Common Plate",
+        "description": "Common plate gear for the body slot.",
+        "icon": "\ud83d\udee1\ufe0f",
+        "type": "equipable",
+        "slot": "body",
+        "rarity": "common",
+        "stackable": true,
+        "dropTier": "common",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      },
+      {
+        "codeName": "bodyRare",
+        "displayName": "Rare Plate",
+        "description": "Rare plate gear for the body slot.",
+        "icon": "\ud83d\udee1\ufe0f",
+        "type": "equipable",
+        "slot": "body",
+        "rarity": "rare",
+        "stackable": true,
+        "dropTier": "rare",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.12
+        }
+      },
+      {
+        "codeName": "bodyEpic",
+        "displayName": "Epic Plate",
+        "description": "Epic plate gear for the body slot.",
+        "icon": "\ud83d\udee1\ufe0f",
+        "type": "equipable",
+        "slot": "body",
+        "rarity": "epic",
+        "stackable": true,
+        "dropTier": "epic",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.9
+        }
+      },
+      {
+        "codeName": "offHandCommon",
+        "displayName": "Common Buckler",
+        "description": "Common buckler gear for the offHand slot.",
+        "icon": "\ud83d\udd30",
+        "type": "equipable",
+        "slot": "offHand",
+        "rarity": "common",
+        "stackable": true,
+        "dropTier": "common",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      },
+      {
+        "codeName": "offHandRare",
+        "displayName": "Rare Buckler",
+        "description": "Rare buckler gear for the offHand slot.",
+        "icon": "\ud83d\udd30",
+        "type": "equipable",
+        "slot": "offHand",
+        "rarity": "rare",
+        "stackable": true,
+        "dropTier": "rare",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.12
+        }
+      },
+      {
+        "codeName": "offHandEpic",
+        "displayName": "Epic Buckler",
+        "description": "Epic buckler gear for the offHand slot.",
+        "icon": "\ud83d\udd30",
+        "type": "equipable",
+        "slot": "offHand",
+        "rarity": "epic",
+        "stackable": true,
+        "dropTier": "epic",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.9
+        }
+      },
+      {
+        "codeName": "bootsCommon",
+        "displayName": "Common Boots",
+        "description": "Common boots gear for the boots slot.",
+        "icon": "\ud83d\udc62",
+        "type": "equipable",
+        "slot": "boots",
+        "rarity": "common",
+        "stackable": true,
+        "dropTier": "common",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      },
+      {
+        "codeName": "bootsRare",
+        "displayName": "Rare Boots",
+        "description": "Rare boots gear for the boots slot.",
+        "icon": "\ud83d\udc62",
+        "type": "equipable",
+        "slot": "boots",
+        "rarity": "rare",
+        "stackable": true,
+        "dropTier": "rare",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.12
+        }
+      },
+      {
+        "codeName": "bootsEpic",
+        "displayName": "Epic Boots",
+        "description": "Epic boots gear for the boots slot.",
+        "icon": "\ud83d\udc62",
+        "type": "equipable",
+        "slot": "boots",
+        "rarity": "epic",
+        "stackable": true,
+        "dropTier": "epic",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.9
+        }
+      },
+      {
+        "codeName": "beltCommon",
+        "displayName": "Common Belt",
+        "description": "Common belt gear for the belt slot.",
+        "icon": "\ud83c\udf97\ufe0f",
+        "type": "equipable",
+        "slot": "belt",
+        "rarity": "common",
+        "stackable": true,
+        "dropTier": "common",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        }
+      },
+      {
+        "codeName": "beltRare",
+        "displayName": "Rare Belt",
+        "description": "Rare belt gear for the belt slot.",
         "icon": "\ud83c\udf97\ufe0f",
         "type": "equipable",
         "slot": "belt",
         "rarity": "rare",
         "stackable": true,
+        "dropTier": "rare",
         "effect": {
-          "type": "costReduction",
-          "multiplier": 0.92
+          "type": "clickMultiplier",
+          "multiplier": 1.12
         }
       },
       {
-        "codeName": "quantumMote",
-        "displayName": "Quantum Mote",
-        "description": "A tiny pet formed from probability foam.",
+        "codeName": "beltEpic",
+        "displayName": "Epic Belt",
+        "description": "Epic belt gear for the belt slot.",
+        "icon": "\ud83c\udf97\ufe0f",
+        "type": "equipable",
+        "slot": "belt",
+        "rarity": "epic",
+        "stackable": true,
+        "dropTier": "epic",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.9
+        }
+      },
+      {
+        "codeName": "petCommon",
+        "displayName": "Common Pet",
+        "description": "Common pet gear for the pet slot.",
         "icon": "\ud83d\udc3e",
         "type": "equipable",
         "slot": "pet",
         "rarity": "common",
         "stackable": true,
+        "dropTier": "common",
         "effect": {
           "type": "globalMultiplier",
-          "multiplier": 1.03
+          "multiplier": 1.04
         }
       },
       {
-        "codeName": "voidShard",
-        "displayName": "Void Shard",
-        "description": "Ingredient for advanced crafting.",
-        "icon": "\ud83e\udde9",
-        "type": "ingredient"
+        "codeName": "petRare",
+        "displayName": "Rare Pet",
+        "description": "Rare pet gear for the pet slot.",
+        "icon": "\ud83d\udc3e",
+        "type": "equipable",
+        "slot": "pet",
+        "rarity": "rare",
+        "stackable": true,
+        "dropTier": "rare",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.12
+        }
+      },
+      {
+        "codeName": "petEpic",
+        "displayName": "Epic Pet",
+        "description": "Epic pet gear for the pet slot.",
+        "icon": "\ud83d\udc3e",
+        "type": "equipable",
+        "slot": "pet",
+        "rarity": "epic",
+        "stackable": true,
+        "dropTier": "epic",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.9
+        }
+      },
+      {
+        "codeName": "fluxDrink",
+        "displayName": "Flux Drink",
+        "description": "Consumable boost: globalMultiplier.",
+        "icon": "\ud83e\udd64",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.35,
+          "durationSeconds": 45
+        }
+      },
+      {
+        "codeName": "tapSerum",
+        "displayName": "Tap Serum",
+        "description": "Consumable boost: clickMultiplier.",
+        "icon": "\ud83d\udc89",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 2.5,
+          "durationSeconds": 20
+        }
+      },
+      {
+        "codeName": "costCache",
+        "displayName": "Cost Cache",
+        "description": "Consumable boost: costReduction.",
+        "icon": "\ud83d\udce6",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.85,
+          "durationSeconds": 60
+        }
+      },
+      {
+        "codeName": "stellarRation",
+        "displayName": "Stellar Ration",
+        "description": "Consumable boost: globalMultiplier.",
+        "icon": "\ud83c\udf71",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.2,
+          "durationSeconds": 90
+        }
+      },
+      {
+        "codeName": "voidCapsule",
+        "displayName": "Void Capsule",
+        "description": "Consumable boost: clickMultiplier.",
+        "icon": "\ud83d\udc8a",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.8,
+          "durationSeconds": 30
+        }
+      },
+      {
+        "codeName": "chronoTea",
+        "displayName": "Chrono Tea",
+        "description": "Consumable boost: globalMultiplier.",
+        "icon": "\ud83c\udf75",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.15,
+          "durationSeconds": 120
+        }
+      },
+      {
+        "codeName": "quantumShot",
+        "displayName": "Quantum Shot",
+        "description": "Consumable boost: clickMultiplier.",
+        "icon": "\u2697\ufe0f",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 3,
+          "durationSeconds": 15
+        }
+      },
+      {
+        "codeName": "nebulaBar",
+        "displayName": "Nebula Bar",
+        "description": "Consumable boost: globalMultiplier.",
+        "icon": "\ud83c\udf6b",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.25,
+          "durationSeconds": 75
+        }
+      },
+      {
+        "codeName": "essenceVial",
+        "displayName": "Essence Vial",
+        "description": "Consumable boost: costReduction.",
+        "icon": "\ud83e\uddea",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.8,
+          "durationSeconds": 45
+        }
+      },
+      {
+        "codeName": "infinityDrop",
+        "displayName": "Infinity Drop",
+        "description": "Consumable boost: globalMultiplier.",
+        "icon": "\ud83d\udca7",
+        "type": "consumable",
+        "actionBarEligible": true,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.5,
+          "durationSeconds": 30
+        }
       }
     ]
   },
@@ -1090,6 +1559,311 @@ window.AFK_CONFIG = {
         "effect": {
           "type": "clickMultiplier",
           "multiplier": 2
+        }
+      },
+      {
+        "codeName": "fluxCoil",
+        "displayName": "Flux Coil",
+        "description": "Permanent globalMultiplier from quantumProcessor.",
+        "icon": "\u26a1",
+        "rarity": "uncommon",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.06
+        },
+        "dropRequirements": {
+          "generator": "quantumProcessor",
+          "minAscensionTier": 1
+        }
+      },
+      {
+        "codeName": "nebulaShard",
+        "displayName": "Nebula Shard",
+        "description": "Permanent categoryMultiplier from nebulaHarvester.",
+        "icon": "\ud83c\udf20",
+        "rarity": "common",
+        "effect": {
+          "type": "categoryMultiplier",
+          "multiplier": 1.15,
+          "category": "stellar"
+        },
+        "dropRequirements": {
+          "generator": "nebulaHarvester",
+          "minAscensionTier": 0
+        }
+      },
+      {
+        "codeName": "voidSigil",
+        "displayName": "Void Sigil",
+        "description": "Permanent costReduction from voidExtractor.",
+        "icon": "\ud83d\udf02",
+        "rarity": "rare",
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.92
+        },
+        "dropRequirements": {
+          "generator": "voidExtractor",
+          "minAscensionTier": 1
+        }
+      },
+      {
+        "codeName": "chronoDial",
+        "displayName": "Chrono Dial",
+        "description": "Permanent globalMultiplier from chronoRefinery.",
+        "icon": "\ud83d\udd70\ufe0f",
+        "rarity": "rare",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.12
+        },
+        "dropRequirements": {
+          "generator": "chronoRefinery",
+          "minAscensionTier": 1
+        }
+      },
+      {
+        "codeName": "temporalAnchor",
+        "displayName": "Temporal Anchor",
+        "description": "Permanent globalMultiplier from temporalEngine.",
+        "icon": "\u2693",
+        "rarity": "epic",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.18
+        },
+        "dropRequirements": {
+          "generator": "temporalEngine",
+          "minAscensionTier": 2
+        }
+      },
+      {
+        "codeName": "cosmicEmber",
+        "displayName": "Cosmic Ember",
+        "description": "Permanent categoryMultiplier from cosmicFoundry.",
+        "icon": "\ud83d\udd25",
+        "rarity": "uncommon",
+        "effect": {
+          "type": "categoryMultiplier",
+          "multiplier": 1.2,
+          "category": "stellar"
+        },
+        "dropRequirements": {
+          "generator": "cosmicFoundry",
+          "minAscensionTier": 2
+        }
+      },
+      {
+        "codeName": "quantumEcho",
+        "displayName": "Quantum Echo",
+        "description": "Permanent clickMultiplier from quantumProcessor.",
+        "icon": "\ud83d\udce1",
+        "rarity": "rare",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.3
+        },
+        "dropRequirements": {
+          "generator": "quantumProcessor",
+          "minAscensionTier": 1
+        }
+      },
+      {
+        "codeName": "stellarCore",
+        "displayName": "Stellar Core",
+        "description": "Permanent globalMultiplier from starForge.",
+        "icon": "\u2600\ufe0f",
+        "rarity": "epic",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.22
+        },
+        "dropRequirements": {
+          "generator": "starForge",
+          "minAscensionTier": 0
+        }
+      },
+      {
+        "codeName": "voidMirror",
+        "displayName": "Void Mirror",
+        "description": "Permanent clickMultiplier from voidExtractor.",
+        "icon": "\ud83e\ude9e",
+        "rarity": "legendary",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.5
+        },
+        "dropRequirements": {
+          "generator": "voidExtractor",
+          "minAscensionTier": 2
+        }
+      },
+      {
+        "codeName": "infinityLoop",
+        "displayName": "Infinity Loop",
+        "description": "Permanent globalMultiplier from infinityChronometer.",
+        "icon": "\ud83d\udd17",
+        "rarity": "legendary",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.25
+        },
+        "dropRequirements": {
+          "generator": "infinityChronometer",
+          "minAscensionTier": 3
+        }
+      },
+      {
+        "codeName": "timeCapsule",
+        "displayName": "Time Capsule",
+        "description": "Permanent globalMultiplier from timeWarden.",
+        "icon": "\ud83d\udc8a",
+        "rarity": "common",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.04
+        },
+        "dropRequirements": {
+          "generator": "timeWarden",
+          "minAscensionTier": 0
+        }
+      },
+      {
+        "codeName": "sailorChart",
+        "displayName": "Sailor Chart",
+        "description": "Permanent categoryMultiplier from cosmicSailor.",
+        "icon": "\ud83d\uddfa\ufe0f",
+        "rarity": "common",
+        "effect": {
+          "type": "categoryMultiplier",
+          "multiplier": 1.1,
+          "category": "stellar"
+        },
+        "dropRequirements": {
+          "generator": "cosmicSailor",
+          "minAscensionTier": 0
+        }
+      },
+      {
+        "codeName": "forgeHammer",
+        "displayName": "Forge Hammer",
+        "description": "Permanent globalMultiplier from starForge.",
+        "icon": "\ud83d\udd28",
+        "rarity": "uncommon",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.08
+        },
+        "dropRequirements": {
+          "generator": "starForge",
+          "minAscensionTier": 1
+        }
+      },
+      {
+        "codeName": "harvesterLens",
+        "displayName": "Harvester Lens",
+        "description": "Permanent globalMultiplier from nebulaHarvester.",
+        "icon": "\ud83d\udd2d",
+        "rarity": "uncommon",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.1
+        },
+        "dropRequirements": {
+          "generator": "nebulaHarvester",
+          "minAscensionTier": 1
+        }
+      },
+      {
+        "codeName": "processorChip",
+        "displayName": "Processor Chip",
+        "description": "Permanent categoryMultiplier from quantumProcessor.",
+        "icon": "\ud83d\udcbe",
+        "rarity": "rare",
+        "effect": {
+          "type": "categoryMultiplier",
+          "multiplier": 1.3,
+          "category": "quantum"
+        },
+        "dropRequirements": {
+          "generator": "quantumProcessor",
+          "minAscensionTier": 2
+        }
+      },
+      {
+        "codeName": "extractorFang",
+        "displayName": "Extractor Fang",
+        "description": "Permanent clickMultiplier from voidExtractor.",
+        "icon": "\ud83e\uddb7",
+        "rarity": "rare",
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 1.25
+        },
+        "dropRequirements": {
+          "generator": "voidExtractor",
+          "minAscensionTier": 2
+        }
+      },
+      {
+        "codeName": "refineryCoil",
+        "displayName": "Refinery Coil",
+        "description": "Permanent globalMultiplier from chronoRefinery.",
+        "icon": "\ud83c\udf00",
+        "rarity": "epic",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.16
+        },
+        "dropRequirements": {
+          "generator": "chronoRefinery",
+          "minAscensionTier": 2
+        }
+      },
+      {
+        "codeName": "engineCog",
+        "displayName": "Engine Cog",
+        "description": "Permanent globalMultiplier from temporalEngine.",
+        "icon": "\u2699\ufe0f",
+        "rarity": "epic",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.2
+        },
+        "dropRequirements": {
+          "generator": "temporalEngine",
+          "minAscensionTier": 2
+        }
+      },
+      {
+        "codeName": "foundryBrand",
+        "displayName": "Foundry Brand",
+        "description": "Permanent categoryMultiplier from cosmicFoundry.",
+        "icon": "\ud83c\udff7\ufe0f",
+        "rarity": "legendary",
+        "effect": {
+          "type": "categoryMultiplier",
+          "multiplier": 1.35,
+          "category": "stellar"
+        },
+        "dropRequirements": {
+          "generator": "cosmicFoundry",
+          "minAscensionTier": 3
+        }
+      },
+      {
+        "codeName": "chronometerHand",
+        "displayName": "Chronometer Hand",
+        "description": "Permanent globalMultiplier from infinityChronometer.",
+        "icon": "\ud83d\udd90\ufe0f",
+        "rarity": "legendary",
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 1.3
+        },
+        "dropRequirements": {
+          "generator": "infinityChronometer",
+          "minAscensionTier": 3
         }
       }
     ]
@@ -1186,6 +1960,182 @@ window.AFK_CONFIG = {
             "durationSeconds": 8
           }
         }
+      },
+      {
+        "codeName": "quantumSmith",
+        "displayName": "Quantum Smith",
+        "icon": "\ud83d\udd28",
+        "description": "Forges probability into production.",
+        "unlockConditions": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "type": "ascensionTier",
+              "minTier": 1
+            },
+            {
+              "type": "generatorOwned",
+              "generator": "quantumProcessor",
+              "quantity": 1
+            }
+          ]
+        },
+        "baseStats": {
+          "categoryMultiplier": {
+            "category": "quantum",
+            "multiplier": 1.12
+          }
+        },
+        "activeSkill": {
+          "codeName": "quantumForge",
+          "displayName": "Quantum Forge",
+          "icon": "\u269b\ufe0f",
+          "cooldownSeconds": 40,
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 2.2,
+            "durationSeconds": 12
+          }
+        }
+      },
+      {
+        "codeName": "voidScribe",
+        "displayName": "Void Scribe",
+        "icon": "\ud83d\udcdc",
+        "description": "Records losses between dimensions as power.",
+        "unlockConditions": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "type": "lifetimePrestiges",
+              "min": 3
+            },
+            {
+              "type": "resourceHeld",
+              "resource": "voidMatter",
+              "amount": 500
+            }
+          ]
+        },
+        "baseStats": {
+          "globalMultiplier": 1.08
+        },
+        "activeSkill": {
+          "codeName": "voidScript",
+          "displayName": "Void Script",
+          "icon": "\ud83d\udd73\ufe0f",
+          "cooldownSeconds": 55,
+          "effect": {
+            "type": "costReduction",
+            "multiplier": 0.7,
+            "durationSeconds": 20
+          }
+        }
+      },
+      {
+        "codeName": "chronoKnight",
+        "displayName": "Chrono Knight",
+        "icon": "\ud83d\udde1\ufe0f",
+        "description": "A warrior bound to frozen seconds.",
+        "unlockConditions": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "type": "ascensionTier",
+              "minTier": 2
+            },
+            {
+              "type": "generatorOwned",
+              "generator": "temporalEngine",
+              "quantity": 3
+            }
+          ]
+        },
+        "baseStats": {
+          "clickMultiplier": 1.25
+        },
+        "activeSkill": {
+          "codeName": "timeSlash",
+          "displayName": "Time Slash",
+          "icon": "\u2694\ufe0f",
+          "cooldownSeconds": 35,
+          "effect": {
+            "type": "clickMultiplier",
+            "multiplier": 4,
+            "durationSeconds": 10
+          }
+        }
+      },
+      {
+        "codeName": "stellarOracle",
+        "displayName": "Stellar Oracle",
+        "icon": "\ud83d\udd2e",
+        "description": "Reads futures in starlight patterns.",
+        "unlockConditions": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "type": "achievement",
+              "achievement": "firstPrestige"
+            },
+            {
+              "type": "generatorOwned",
+              "generator": "starForge",
+              "quantity": 10
+            }
+          ]
+        },
+        "baseStats": {
+          "categoryMultiplier": {
+            "category": "stellar",
+            "multiplier": 1.2
+          }
+        },
+        "activeSkill": {
+          "codeName": "starProphecy",
+          "displayName": "Star Prophecy",
+          "icon": "\u2728",
+          "cooldownSeconds": 50,
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 2.5,
+            "durationSeconds": 15
+          }
+        }
+      },
+      {
+        "codeName": "infinityWarden",
+        "displayName": "Infinity Warden",
+        "icon": "\u267e\ufe0f",
+        "description": "Guards the loop where all timelines converge.",
+        "unlockConditions": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "type": "ascensionTier",
+              "minTier": 3
+            },
+            {
+              "type": "lifetimePrestiges",
+              "min": 10
+            }
+          ]
+        },
+        "baseStats": {
+          "globalMultiplier": 1.15,
+          "clickMultiplier": 1.1
+        },
+        "activeSkill": {
+          "codeName": "infinityGuard",
+          "displayName": "Infinity Guard",
+          "icon": "\ud83d\udee1\ufe0f",
+          "cooldownSeconds": 90,
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 3,
+            "durationSeconds": 8
+          }
+        }
       }
     ]
   },
@@ -1201,9 +2151,11 @@ window.AFK_CONFIG = {
           "amount": 1
         },
         "reward": {
-          "type": "resourceBonus",
-          "resource": "timeShards",
-          "amount": 10
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.03
+          }
         }
       },
       {
@@ -1234,9 +2186,11 @@ window.AFK_CONFIG = {
           "amount": 10
         },
         "reward": {
-          "type": "resourceBonus",
-          "resource": "timeShards",
-          "amount": 100
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.03
+          }
         }
       },
       {
@@ -1266,8 +2220,11 @@ window.AFK_CONFIG = {
           "amount": 1
         },
         "reward": {
-          "type": "titleUnlock",
-          "title": "Time Traveler"
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.03
+          }
         }
       },
       {
@@ -1280,9 +2237,11 @@ window.AFK_CONFIG = {
           "amount": 1000
         },
         "reward": {
-          "type": "resourceBonus",
-          "resource": "timeShards",
-          "amount": 5000
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.03
+          }
         }
       },
       {
@@ -1312,9 +2271,529 @@ window.AFK_CONFIG = {
           "amount": 3
         },
         "reward": {
-          "type": "resourceBonus",
-          "resource": "timeShards",
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.03
+          }
+        }
+      },
+      {
+        "codeName": "tap500",
+        "displayName": "Tap Apprentice",
+        "description": "Tap 500 times.",
+        "icon": "\ud83c\udfc5",
+        "requirement": {
+          "type": "totalTaps",
+          "amount": 500
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "clickMultiplier",
+            "multiplier": 1.05
+          }
+        }
+      },
+      {
+        "codeName": "tap5000",
+        "displayName": "Tap Expert",
+        "description": "Tap 5,000 times.",
+        "icon": "\u2b50",
+        "requirement": {
+          "type": "totalTaps",
+          "amount": 5000
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "clickMultiplier",
+            "multiplier": 1.08
+          }
+        }
+      },
+      {
+        "codeName": "own25gen",
+        "displayName": "Industrialist",
+        "description": "Own 25 generators total.",
+        "icon": "\ud83c\udfaf",
+        "requirement": {
+          "type": "generatorCount",
+          "amount": 25
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.04
+          }
+        }
+      },
+      {
+        "codeName": "own100gen",
+        "displayName": "Megafactory",
+        "description": "Own 100 generators total.",
+        "icon": "\ud83d\udd25",
+        "requirement": {
+          "type": "generatorCount",
+          "amount": 100
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.08
+          }
+        }
+      },
+      {
+        "codeName": "prestige3",
+        "displayName": "Triple Reset",
+        "description": "Reach 3 lifetime prestiges.",
+        "icon": "\ud83d\udcab",
+        "requirement": {
+          "type": "lifetimePrestiges",
+          "amount": 3
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.05
+          }
+        }
+      },
+      {
+        "codeName": "prestige10",
+        "displayName": "Decade Reset",
+        "description": "Reach 10 lifetime prestiges.",
+        "icon": "\ud83c\udf1f",
+        "requirement": {
+          "type": "lifetimePrestiges",
+          "amount": 10
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.1
+          }
+        }
+      },
+      {
+        "codeName": "ascensionTier2",
+        "displayName": "Transcendent",
+        "description": "Reach ascension tier 2.",
+        "icon": "\ud83c\udfc6",
+        "requirement": {
+          "type": "ascensionTier",
+          "minTier": 2
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.06
+          }
+        }
+      },
+      {
+        "codeName": "ascensionTier3",
+        "displayName": "Cosmic Being",
+        "description": "Reach ascension tier 3.",
+        "icon": "\ud83c\udf96\ufe0f",
+        "requirement": {
+          "type": "ascensionTier",
+          "minTier": 3
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.12
+          }
+        }
+      },
+      {
+        "codeName": "artifact10",
+        "displayName": "Vault Keeper",
+        "description": "Collect 10 artifacts.",
+        "icon": "\u2728",
+        "requirement": {
+          "type": "artifactCount",
+          "amount": 10
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.07
+          }
+        }
+      },
+      {
+        "codeName": "artifact20",
+        "displayName": "Master Curator",
+        "description": "Collect 20 artifacts.",
+        "icon": "\ud83d\udc8e",
+        "requirement": {
+          "type": "artifactCount",
+          "amount": 20
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.12
+          }
+        }
+      },
+      {
+        "codeName": "rate10k",
+        "displayName": "Velocity",
+        "description": "Reach 10k primary currency/s.",
+        "icon": "\ud83c\udfc5",
+        "requirement": {
+          "type": "primaryCurrencyRateReached",
           "amount": 10000
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.05
+          }
+        }
+      },
+      {
+        "codeName": "rate1m",
+        "displayName": "Hypervelocity",
+        "description": "Reach 1M primary currency/s.",
+        "icon": "\u2b50",
+        "requirement": {
+          "type": "primaryCurrencyRateReached",
+          "amount": 1000000
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.1
+          }
+        }
+      },
+      {
+        "codeName": "ownSailor5",
+        "displayName": "Fleet Captain",
+        "description": "Own 5 Cosmic Sailors.",
+        "icon": "\ud83c\udfaf",
+        "requirement": {
+          "type": "generatorOwned",
+          "generator": "cosmicSailor",
+          "amount": 5
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.03
+          }
+        }
+      },
+      {
+        "codeName": "ownQuantum1",
+        "displayName": "Quantum Initiate",
+        "description": "Own a Quantum Processor.",
+        "icon": "\ud83d\udd25",
+        "requirement": {
+          "type": "generatorOwned",
+          "generator": "quantumProcessor",
+          "amount": 1
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "categoryMultiplier",
+            "multiplier": 1.1,
+            "category": "quantum"
+          }
+        }
+      },
+      {
+        "codeName": "ownInfinity1",
+        "displayName": "Infinity Touch",
+        "description": "Own Infinity Chronometer.",
+        "icon": "\ud83d\udcab",
+        "requirement": {
+          "type": "generatorOwned",
+          "generator": "infinityChronometer",
+          "amount": 1
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.15
+          }
+        }
+      },
+      {
+        "codeName": "earnCosmic",
+        "displayName": "Cosmic Hoard",
+        "description": "Earn 1M cosmic energy total.",
+        "icon": "\ud83c\udf1f",
+        "requirement": {
+          "type": "resourceEarned",
+          "resource": "cosmicEnergy",
+          "amount": 1000000
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.04
+          }
+        }
+      },
+      {
+        "codeName": "earnVoid",
+        "displayName": "Void Hoard",
+        "description": "Earn 100k void matter total.",
+        "icon": "\ud83c\udfc6",
+        "requirement": {
+          "type": "resourceEarned",
+          "resource": "voidMatter",
+          "amount": 100000
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.06
+          }
+        }
+      },
+      {
+        "codeName": "prestigeTier5",
+        "displayName": "Tier Veteran",
+        "description": "5 prestiges this tier.",
+        "icon": "\ud83c\udf96\ufe0f",
+        "requirement": {
+          "type": "prestigeCount",
+          "amount": 5
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "costReduction",
+            "multiplier": 0.98
+          }
+        }
+      },
+      {
+        "codeName": "chars3",
+        "displayName": "Team Builder",
+        "description": "Unlock 3 characters.",
+        "icon": "\u2728",
+        "requirement": {
+          "type": "charactersUnlocked",
+          "amount": 3
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.04
+          }
+        }
+      },
+      {
+        "codeName": "chars8",
+        "displayName": "Full Roster",
+        "description": "Unlock all 8 characters.",
+        "icon": "\ud83d\udc8e",
+        "requirement": {
+          "type": "charactersUnlocked",
+          "amount": 8
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.1
+          }
+        }
+      },
+      {
+        "codeName": "equipFull",
+        "displayName": "Fully Loaded",
+        "description": "Equip 9 slots on one character.",
+        "icon": "\ud83c\udfc5",
+        "requirement": {
+          "type": "equipmentSlotsFilled",
+          "amount": 9
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "clickMultiplier",
+            "multiplier": 1.06
+          }
+        }
+      },
+      {
+        "codeName": "item10",
+        "displayName": "Pack Rat",
+        "description": "Hold 10 of any item.",
+        "icon": "\u2b50",
+        "requirement": {
+          "type": "itemHeld",
+          "amount": 10
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.03
+          }
+        }
+      },
+      {
+        "codeName": "upgrade20",
+        "displayName": "Tinkerer",
+        "description": "Buy 20 upgrade levels total.",
+        "icon": "\ud83c\udfaf",
+        "requirement": {
+          "type": "upgradeLevels",
+          "amount": 20
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "costReduction",
+            "multiplier": 0.97
+          }
+        }
+      },
+      {
+        "codeName": "upgrade100",
+        "displayName": "Master Tinkerer",
+        "description": "Buy 100 upgrade levels total.",
+        "icon": "\ud83d\udd25",
+        "requirement": {
+          "type": "upgradeLevels",
+          "amount": 100
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "costReduction",
+            "multiplier": 0.94
+          }
+        }
+      },
+      {
+        "codeName": "event10",
+        "displayName": "Eventful",
+        "description": "Experience 10 random events.",
+        "icon": "\ud83d\udcab",
+        "requirement": {
+          "type": "eventsSeen",
+          "amount": 10
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.03
+          }
+        }
+      },
+      {
+        "codeName": "offline1h",
+        "displayName": "Away Strong",
+        "description": "Claim 1 hour offline progress.",
+        "icon": "\ud83c\udf1f",
+        "requirement": {
+          "type": "offlineSeconds",
+          "amount": 3600
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.05
+          }
+        }
+      },
+      {
+        "codeName": "shop5",
+        "displayName": "Investor",
+        "description": "Buy 5 total prestige shop levels.",
+        "icon": "\ud83c\udfc6",
+        "requirement": {
+          "type": "prestigeShopLevels",
+          "amount": 5
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.04
+          }
+        }
+      },
+      {
+        "codeName": "shop25",
+        "displayName": "Patron",
+        "description": "Buy 25 total prestige shop levels.",
+        "icon": "\ud83c\udf96\ufe0f",
+        "requirement": {
+          "type": "prestigeShopLevels",
+          "amount": 25
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.08
+          }
+        }
+      },
+      {
+        "codeName": "tier0Master",
+        "displayName": "Mortal Master",
+        "description": "Own 10+ of each tier-0 generator.",
+        "icon": "\u2728",
+        "requirement": {
+          "type": "generatorsOwnedTier",
+          "tier": 0,
+          "amount": 10
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.06
+          }
+        }
+      },
+      {
+        "codeName": "tier3Master",
+        "displayName": "Cosmic Master",
+        "description": "Own all tier-3 generators.",
+        "icon": "\ud83d\udc8e",
+        "requirement": {
+          "type": "generatorsOwnedTier",
+          "tier": 3,
+          "amount": 1
+        },
+        "reward": {
+          "type": "modifierUnlock",
+          "effect": {
+            "type": "globalMultiplier",
+            "multiplier": 1.15
+          }
         }
       }
     ]
@@ -1368,11 +2847,11 @@ window.AFK_CONFIG = {
       {
         "codeName": "passiveTick",
         "trigger": "tick",
-        "chancePerSecond": 0.1,
+        "chancePerSecond": 0.08,
         "entries": [
           {
             "item": "energyCell",
-            "weight": 80,
+            "weight": 10,
             "quantity": [
               1,
               1
@@ -1380,7 +2859,87 @@ window.AFK_CONFIG = {
           },
           {
             "item": "rareCrystal",
-            "weight": 20,
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "fluxDrink",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "tapSerum",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "costCache",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "stellarRation",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "voidCapsule",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "chronoTea",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "quantumShot",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "nebulaBar",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "essenceVial",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "infinityDrop",
+            "weight": 10,
             "quantity": [
               1,
               1
@@ -1391,19 +2950,99 @@ window.AFK_CONFIG = {
       {
         "codeName": "onClick",
         "trigger": "click",
-        "chance": 0.02,
+        "chance": 0.025,
         "entries": [
           {
             "item": "energyCell",
-            "weight": 60,
+            "weight": 10,
             "quantity": [
               1,
-              2
+              1
             ]
           },
           {
             "item": "rareCrystal",
-            "weight": 30,
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "fluxDrink",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "tapSerum",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "costCache",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "stellarRation",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "voidCapsule",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "chronoTea",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "quantumShot",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "nebulaBar",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "essenceVial",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ]
+          },
+          {
+            "item": "infinityDrop",
+            "weight": 10,
             "quantity": [
               1,
               1
@@ -1411,7 +3050,7 @@ window.AFK_CONFIG = {
           },
           {
             "item": "voidShard",
-            "weight": 10,
+            "weight": 5,
             "quantity": [
               1,
               1
@@ -1422,122 +3061,464 @@ window.AFK_CONFIG = {
       {
         "codeName": "equipmentDrop",
         "trigger": "tick",
-        "chancePerSecond": 0.015,
+        "chancePerSecond": 0.012,
+        "dynamicTierWeights": true,
         "entries": [
           {
-            "item": "starlightCape",
-            "weight": 14,
+            "item": "capeCommon",
+            "weight": 60,
             "quantity": [
               1,
               1
-            ]
+            ],
+            "dropTier": "common"
           },
           {
-            "item": "chronoHelm",
-            "weight": 12,
+            "item": "capeRare",
+            "weight": 30,
             "quantity": [
               1,
               1
-            ]
+            ],
+            "dropTier": "rare"
           },
           {
-            "item": "temporalLens",
+            "item": "capeEpic",
             "weight": 10,
             "quantity": [
               1,
               1
-            ]
+            ],
+            "dropTier": "epic"
           },
           {
-            "item": "chronoBlade",
+            "item": "helmetCommon",
+            "weight": 60,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "common"
+          },
+          {
+            "item": "helmetRare",
+            "weight": 30,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "rare"
+          },
+          {
+            "item": "helmetEpic",
             "weight": 10,
             "quantity": [
               1,
               1
-            ]
+            ],
+            "dropTier": "epic"
           },
           {
-            "item": "voidPlate",
-            "weight": 8,
+            "item": "amuletCommon",
+            "weight": 60,
             "quantity": [
               1,
               1
-            ]
+            ],
+            "dropTier": "common"
           },
           {
-            "item": "fluxBuckler",
+            "item": "amuletRare",
+            "weight": 30,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "rare"
+          },
+          {
+            "item": "amuletEpic",
             "weight": 10,
             "quantity": [
               1,
               1
-            ]
+            ],
+            "dropTier": "epic"
           },
           {
-            "item": "phaseBoots",
+            "item": "mainHandCommon",
+            "weight": 60,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "common"
+          },
+          {
+            "item": "mainHandRare",
+            "weight": 30,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "rare"
+          },
+          {
+            "item": "mainHandEpic",
             "weight": 10,
             "quantity": [
               1,
               1
-            ]
+            ],
+            "dropTier": "epic"
           },
           {
-            "item": "timekeepersBelt",
-            "weight": 8,
+            "item": "bodyCommon",
+            "weight": 60,
             "quantity": [
               1,
               1
-            ]
+            ],
+            "dropTier": "common"
           },
           {
-            "item": "quantumMote",
-            "weight": 12,
+            "item": "bodyRare",
+            "weight": 30,
             "quantity": [
               1,
               1
-            ]
+            ],
+            "dropTier": "rare"
+          },
+          {
+            "item": "bodyEpic",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "epic"
+          },
+          {
+            "item": "offHandCommon",
+            "weight": 60,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "common"
+          },
+          {
+            "item": "offHandRare",
+            "weight": 30,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "rare"
+          },
+          {
+            "item": "offHandEpic",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "epic"
+          },
+          {
+            "item": "bootsCommon",
+            "weight": 60,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "common"
+          },
+          {
+            "item": "bootsRare",
+            "weight": 30,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "rare"
+          },
+          {
+            "item": "bootsEpic",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "epic"
+          },
+          {
+            "item": "beltCommon",
+            "weight": 60,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "common"
+          },
+          {
+            "item": "beltRare",
+            "weight": 30,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "rare"
+          },
+          {
+            "item": "beltEpic",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "epic"
+          },
+          {
+            "item": "petCommon",
+            "weight": 60,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "common"
+          },
+          {
+            "item": "petRare",
+            "weight": 30,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "rare"
+          },
+          {
+            "item": "petEpic",
+            "weight": 10,
+            "quantity": [
+              1,
+              1
+            ],
+            "dropTier": "epic"
           }
         ]
       },
       {
         "codeName": "artifactDrop",
         "trigger": "tick",
-        "chancePerSecond": 0.001,
+        "chancePerSecond": 0.0008,
         "entries": [
           {
             "artifact": "chronoLens",
-            "weight": 40,
-            "quantity": [
-              1,
-              1
-            ]
+            "weight": 20
           },
           {
             "artifact": "starCompass",
-            "weight": 30,
-            "quantity": [
-              1,
-              1
-            ]
+            "weight": 30
           },
           {
             "artifact": "voidHeart",
-            "weight": 20,
-            "quantity": [
-              1,
-              1
-            ]
+            "weight": 5
           },
           {
             "artifact": "infinityGear",
-            "weight": 10,
-            "quantity": [
-              1,
-              1
-            ]
+            "weight": 5
+          },
+          {
+            "artifact": "fluxCoil",
+            "weight": 30,
+            "dropRequirements": {
+              "generator": "quantumProcessor",
+              "minAscensionTier": 1
+            }
+          },
+          {
+            "artifact": "nebulaShard",
+            "weight": 40,
+            "dropRequirements": {
+              "generator": "nebulaHarvester",
+              "minAscensionTier": 0
+            }
+          },
+          {
+            "artifact": "voidSigil",
+            "weight": 20,
+            "dropRequirements": {
+              "generator": "voidExtractor",
+              "minAscensionTier": 1
+            }
+          },
+          {
+            "artifact": "chronoDial",
+            "weight": 20,
+            "dropRequirements": {
+              "generator": "chronoRefinery",
+              "minAscensionTier": 1
+            }
+          },
+          {
+            "artifact": "temporalAnchor",
+            "weight": 12,
+            "dropRequirements": {
+              "generator": "temporalEngine",
+              "minAscensionTier": 2
+            }
+          },
+          {
+            "artifact": "cosmicEmber",
+            "weight": 30,
+            "dropRequirements": {
+              "generator": "cosmicFoundry",
+              "minAscensionTier": 2
+            }
+          },
+          {
+            "artifact": "quantumEcho",
+            "weight": 20,
+            "dropRequirements": {
+              "generator": "quantumProcessor",
+              "minAscensionTier": 1
+            }
+          },
+          {
+            "artifact": "stellarCore",
+            "weight": 12,
+            "dropRequirements": {
+              "generator": "starForge",
+              "minAscensionTier": 0
+            }
+          },
+          {
+            "artifact": "voidMirror",
+            "weight": 5,
+            "dropRequirements": {
+              "generator": "voidExtractor",
+              "minAscensionTier": 2
+            }
+          },
+          {
+            "artifact": "infinityLoop",
+            "weight": 5,
+            "dropRequirements": {
+              "generator": "infinityChronometer",
+              "minAscensionTier": 3
+            }
+          },
+          {
+            "artifact": "timeCapsule",
+            "weight": 40,
+            "dropRequirements": {
+              "generator": "timeWarden",
+              "minAscensionTier": 0
+            }
+          },
+          {
+            "artifact": "sailorChart",
+            "weight": 40,
+            "dropRequirements": {
+              "generator": "cosmicSailor",
+              "minAscensionTier": 0
+            }
+          },
+          {
+            "artifact": "forgeHammer",
+            "weight": 30,
+            "dropRequirements": {
+              "generator": "starForge",
+              "minAscensionTier": 1
+            }
+          },
+          {
+            "artifact": "harvesterLens",
+            "weight": 30,
+            "dropRequirements": {
+              "generator": "nebulaHarvester",
+              "minAscensionTier": 1
+            }
+          },
+          {
+            "artifact": "processorChip",
+            "weight": 20,
+            "dropRequirements": {
+              "generator": "quantumProcessor",
+              "minAscensionTier": 2
+            }
+          },
+          {
+            "artifact": "extractorFang",
+            "weight": 20,
+            "dropRequirements": {
+              "generator": "voidExtractor",
+              "minAscensionTier": 2
+            }
+          },
+          {
+            "artifact": "refineryCoil",
+            "weight": 12,
+            "dropRequirements": {
+              "generator": "chronoRefinery",
+              "minAscensionTier": 2
+            }
+          },
+          {
+            "artifact": "engineCog",
+            "weight": 12,
+            "dropRequirements": {
+              "generator": "temporalEngine",
+              "minAscensionTier": 2
+            }
+          },
+          {
+            "artifact": "foundryBrand",
+            "weight": 5,
+            "dropRequirements": {
+              "generator": "cosmicFoundry",
+              "minAscensionTier": 3
+            }
+          },
+          {
+            "artifact": "chronometerHand",
+            "weight": 5,
+            "dropRequirements": {
+              "generator": "infinityChronometer",
+              "minAscensionTier": 3
+            }
           }
         ]
       }
-    ]
+    ],
+    "equipmentDropModifiers": {
+      "tierWeightsByAscension": {
+        "0": {
+          "common": 0.75,
+          "rare": 0.22,
+          "epic": 0.03
+        },
+        "1": {
+          "common": 0.55,
+          "rare": 0.35,
+          "epic": 0.1
+        },
+        "2": {
+          "common": 0.4,
+          "rare": 0.42,
+          "epic": 0.18
+        },
+        "3": {
+          "common": 0.25,
+          "rare": 0.45,
+          "epic": 0.3
+        }
+      },
+      "quantityBonusPerGenerator": 0.002,
+      "categoryBoostPerOwned": 0.05
+    }
   },
   "ascension": {
     "maxTier": 3,
@@ -1554,7 +3535,9 @@ window.AFK_CONFIG = {
           "tab:achievements",
           "tab:stats",
           "tab:settings",
-          "tab:ascension"
+          "tab:ascension",
+          "generators:tier0",
+          "prestigeShop:tier0"
         ]
       },
       {
@@ -1591,7 +3574,9 @@ window.AFK_CONFIG = {
         "unlockedFeatures": [
           "systems:drops",
           "generators:quantumProcessor",
-          "resources:quantumFlux"
+          "resources:quantumFlux",
+          "generators:tier1",
+          "prestigeShop:tier1"
         ]
       },
       {
@@ -1627,7 +3612,8 @@ window.AFK_CONFIG = {
         },
         "unlockedFeatures": [
           "systems:randomEvents",
-          "prestigeShop:tier2"
+          "prestigeShop:tier2",
+          "generators:tier2"
         ]
       },
       {
@@ -1662,7 +3648,9 @@ window.AFK_CONFIG = {
           "clearArtifacts": false
         },
         "unlockedFeatures": [
-          "systems:allGenerators"
+          "systems:allGenerators",
+          "generators:tier3",
+          "prestigeShop:tier3"
         ]
       }
     ]
@@ -1678,7 +3666,9 @@ window.AFK_CONFIG = {
         "timeShards": 1,
         "cosmicEnergy": 0.5,
         "stardust": 0.3
-      }
+      },
+      "milestoneExponent": 2,
+      "rulesExplanation": "Prestige Shards are earned from weighted run earnings (ascension-available resources only). Each shard requires exponentially more weighted value; requirements scale with lifetime prestiges."
     },
     "prestigeMinimum": {
       "operator": "AND",
@@ -1748,7 +3738,8 @@ window.AFK_CONFIG = {
       "clearInventory": false,
       "clearArtifacts": false,
       "clearTemporaryBuffs": true,
-      "resetRunStats": true
+      "resetRunStats": true,
+      "resetPrestigeShopAllocation": true
     },
     "startingResourcesAfterPrestige": {
       "timeShards": 10
@@ -1764,7 +3755,8 @@ window.AFK_CONFIG = {
         "effect": {
           "type": "globalMultiplier",
           "multiplierPerLevel": 0.05
-        }
+        },
+        "requiredFeature": "prestigeShop:tier0"
       },
       {
         "codeName": "clickPower",
@@ -1776,7 +3768,62 @@ window.AFK_CONFIG = {
         "effect": {
           "type": "clickMultiplier",
           "multiplierPerLevel": 0.1
-        }
+        },
+        "requiredFeature": "prestigeShop:tier0"
+      },
+      {
+        "codeName": "offlineBoost",
+        "displayName": "Dream Harvest",
+        "description": "+3% offline efficiency per level",
+        "icon": "\ud83c\udf19",
+        "cost": 2,
+        "maxLevel": 10,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplierPerLevel": 0.03
+        },
+        "requiredFeature": "prestigeShop:tier0"
+      },
+      {
+        "codeName": "stellarResonance",
+        "displayName": "Stellar Resonance",
+        "description": "+8% stellar generators per level",
+        "icon": "\u2b50",
+        "cost": 3,
+        "maxLevel": 12,
+        "effect": {
+          "type": "categoryMultiplier",
+          "category": "stellar",
+          "multiplierPerLevel": 0.08
+        },
+        "requiredFeature": "prestigeShop:tier1"
+      },
+      {
+        "codeName": "quantumFocus",
+        "displayName": "Quantum Focus",
+        "description": "+8% quantum generators per level",
+        "icon": "\u269b\ufe0f",
+        "cost": 3,
+        "maxLevel": 12,
+        "effect": {
+          "type": "categoryMultiplier",
+          "category": "quantum",
+          "multiplierPerLevel": 0.08
+        },
+        "requiredFeature": "prestigeShop:tier1"
+      },
+      {
+        "codeName": "startingBonus",
+        "displayName": "Head Start",
+        "description": "+5 starting time shards per level after prestige",
+        "icon": "\ud83d\ude80",
+        "cost": 2,
+        "maxLevel": 10,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplierPerLevel": 0.02
+        },
+        "requiredFeature": "prestigeShop:tier1"
       },
       {
         "codeName": "costEfficiency",
@@ -1790,8 +3837,115 @@ window.AFK_CONFIG = {
           "multiplierPerLevel": 0.02
         },
         "requiredFeature": "prestigeShop:tier2"
+      },
+      {
+        "codeName": "voidDiscount",
+        "displayName": "Void Bargain",
+        "description": "+6% void generator output per level",
+        "icon": "\ud83d\udd73\ufe0f",
+        "cost": 4,
+        "maxLevel": 10,
+        "effect": {
+          "type": "categoryMultiplier",
+          "category": "void",
+          "multiplierPerLevel": 0.06
+        },
+        "requiredFeature": "prestigeShop:tier2"
+      },
+      {
+        "codeName": "upgradeBoost",
+        "displayName": "Upgrade Catalyst",
+        "description": "+4% global production per level",
+        "icon": "\ud83d\udd27",
+        "cost": 4,
+        "maxLevel": 15,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplierPerLevel": 0.04
+        },
+        "requiredFeature": "prestigeShop:tier2"
+      },
+      {
+        "codeName": "infinityAmp",
+        "displayName": "Infinity Amplifier",
+        "description": "+6% global production per level",
+        "icon": "\u267e\ufe0f",
+        "cost": 5,
+        "maxLevel": 20,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplierPerLevel": 0.06
+        },
+        "requiredFeature": "prestigeShop:tier3"
+      },
+      {
+        "codeName": "ascensionMemory",
+        "displayName": "Ascension Memory",
+        "description": "+5% click power per level",
+        "icon": "\ud83e\udde0",
+        "cost": 5,
+        "maxLevel": 15,
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplierPerLevel": 0.05
+        },
+        "requiredFeature": "prestigeShop:tier3"
+      },
+      {
+        "codeName": "masteryCore",
+        "displayName": "Mastery Core",
+        "description": "-3% costs per level",
+        "icon": "\ud83d\udc8e",
+        "cost": 6,
+        "maxLevel": 10,
+        "effect": {
+          "type": "costReduction",
+          "multiplierPerLevel": 0.03
+        },
+        "requiredFeature": "prestigeShop:tier3"
       }
-    ]
+    ],
+    "prestigeMinimumBase": {
+      "operator": "AND",
+      "conditions": [
+        {
+          "type": "resourceHeld",
+          "resource": "timeShards",
+          "amount": 1000
+        },
+        {
+          "type": "resourceHeld",
+          "resource": "cosmicEnergy",
+          "amount": 500
+        },
+        {
+          "type": "resourceHeld",
+          "resource": "stardust",
+          "amount": 100
+        }
+      ]
+    },
+    "prestigeMinimumTierResources": {
+      "1": [
+        {
+          "resource": "quantumFlux",
+          "amount": 50
+        }
+      ],
+      "2": [
+        {
+          "resource": "voidMatter",
+          "amount": 200
+        }
+      ],
+      "3": [
+        {
+          "resource": "chronoCrystals",
+          "amount": 100
+        }
+      ]
+    },
+    "prestigeMinimumScalePerPrestige": 0.2
   },
   "defaults": {
     "icons": {

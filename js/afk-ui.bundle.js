@@ -669,10 +669,11 @@ AFK_UI.UpgradePanel = {
 
 // --- js/ui/CharacterPanel.vue.js ---
 const EquipmentGrid = AFK_UI.EquipmentGrid;
+const CharacterEffectsList = AFK_UI.CharacterEffectsList;
 
 AFK_UI.CharacterPanel = {
   name: 'CharacterPanel',
-  components: { UnlockRequirementsList, MoreInfoButton, EquipmentGrid, PanelHeader, CardSection },
+  components: { UnlockRequirementsList, MoreInfoButton, EquipmentGrid, PanelHeader, CardSection, CharacterEffectsList },
   props: {
     characters: Array,
     maxActive: Number,
@@ -718,6 +719,9 @@ AFK_UI.CharacterPanel = {
               @equip="(c, s, i) => $emit('equip', c, s, i)"
               @unequip="(c, s) => $emit('unequip', c, s)"
               @more-info="(type, code) => $emit('more-info', type, code)" />
+          </CardSection>
+          <CardSection section-key="effects">
+            <CharacterEffectsList :effects="char.effectSummary || []" />
           </CardSection>
         </template>
       </div>
@@ -884,8 +888,9 @@ AFK_UI.AscensionPanel = {
   props: {
     tierName: String, currentTier: Number, prestigeCount: Number,
     lifetimePrestiges: Number, projectedGain: Number, canPrestige: Boolean,
-    canAscend: Boolean, nextTierName: String, prestigeRequirements: Array,
+    canAscend: Boolean, nextTierName: String,     prestigeRequirements: Array,
     ascensionRequirements: Array, prestigeLost: Array, prestigeKept: Array,
+    shardProgress: Object,
     ascendLost: Array, ascendKept: Array, featurePreview: Array,
     prestigeCurrency: Number, formatNumber: Function, maxTierReached: Boolean,
     difficulty: Object, primaryCurrencyLabel: String, prestigeBonuses: Array
@@ -915,6 +920,24 @@ AFK_UI.AscensionPanel = {
             :requirements="prestigeRequirements"
             section-key="prestigeRequirements"
             :first="true" />
+          <CardSection v-if="shardProgress" section-key="prestigeShards">
+            <p class="section-text muted">{{ shardProgress.rulesExplanation }}</p>
+            <p class="section-text">Weighted run value: {{ formatNumber(shardProgress.currentRunValue) }} / {{ formatNumber(shardProgress.nextMilestone) }} toward next shard</p>
+            <ResourceProgressList :entries="[{
+              code: 'shard-overall',
+              label: 'Overall shard progress',
+              progress: shardProgress.overallProgress,
+              met: shardProgress.overallMet
+            }]" />
+            <ResourceProgressList :entries="(shardProgress.subRequirements || []).map(r => ({
+              code: r.code,
+              icon: r.icon,
+              name: r.name,
+              label: r.label,
+              progress: r.progress,
+              met: r.met
+            }))" />
+          </CardSection>
           <CardSection section-key="rewards">
             <p class="section-text">Gain: +{{ projectedGain }} Prestige Shards</p>
             <p class="section-text muted">Cost mult: {{ difficulty?.costMultiplier?.toFixed(2) }}× | {{ primaryCurrencyLabel }}: {{ difficulty?.primaryCurrencyMultiplier?.toFixed(2) }}×</p>

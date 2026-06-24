@@ -7,7 +7,16 @@
       "displayName": "Mortal Realm",
       "isStartingTier": true,
       "difficultyProfile": "tier0",
-      "unlockedFeatures": ["tab:generators", "tab:upgrades", "tab:achievements", "tab:stats", "tab:settings", "tab:ascension"]
+      "unlockedFeatures": [
+        "tab:generators",
+        "tab:upgrades",
+        "tab:achievements",
+        "tab:stats",
+        "tab:settings",
+        "tab:ascension",
+        "generators:tier0",
+        "prestigeShop:tier0"
+      ]
     },
     {
       "tier": 1,
@@ -17,9 +26,19 @@
       "ascensionRequirements": {
         "operator": "AND",
         "conditions": [
-          { "type": "prestigeCount", "min": 3 },
-          { "type": "lifetimeResourcesGenerated", "resource": "timeShards", "min": 1000000 },
-          { "type": "lifetimeGeneratorPurchases", "min": 100 }
+          {
+            "type": "prestigeCount",
+            "min": 3
+          },
+          {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "timeShards",
+            "min": 1000000
+          },
+          {
+            "type": "lifetimeGeneratorPurchases",
+            "min": 100
+          }
         ]
       },
       "onAscend": {
@@ -33,7 +52,9 @@
       "unlockedFeatures": [
         "systems:drops",
         "generators:quantumProcessor",
-        "resources:quantumFlux"
+        "resources:quantumFlux",
+        "generators:tier1",
+        "prestigeShop:tier1"
       ]
     },
     {
@@ -44,9 +65,19 @@
       "ascensionRequirements": {
         "operator": "AND",
         "conditions": [
-          { "type": "prestigeCount", "min": 5 },
-          { "type": "lifetimeResourcesGenerated", "resource": "timeShards", "min": 1000000000 },
-          { "type": "lifetimeGeneratorPurchases", "min": 500 }
+          {
+            "type": "prestigeCount",
+            "min": 5
+          },
+          {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "timeShards",
+            "min": 1000000000
+          },
+          {
+            "type": "lifetimeGeneratorPurchases",
+            "min": 500
+          }
         ]
       },
       "onAscend": {
@@ -57,7 +88,11 @@
         "clearInventory": false,
         "clearArtifacts": false
       },
-      "unlockedFeatures": ["systems:randomEvents", "prestigeShop:tier2"]
+      "unlockedFeatures": [
+        "systems:randomEvents",
+        "prestigeShop:tier2",
+        "generators:tier2"
+      ]
     },
     {
       "tier": 3,
@@ -67,9 +102,19 @@
       "ascensionRequirements": {
         "operator": "AND",
         "conditions": [
-          { "type": "prestigeCount", "min": 10 },
-          { "type": "lifetimeResourcesGenerated", "resource": "timeShards", "min": 1000000000000 },
-          { "type": "lifetimeGeneratorPurchases", "min": 2000 }
+          {
+            "type": "prestigeCount",
+            "min": 10
+          },
+          {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "timeShards",
+            "min": 1000000000000
+          },
+          {
+            "type": "lifetimeGeneratorPurchases",
+            "min": 2000
+          }
         ]
       },
       "onAscend": {
@@ -80,7 +125,11 @@
         "clearInventory": false,
         "clearArtifacts": false
       },
-      "unlockedFeatures": ["systems:allGenerators"]
+      "unlockedFeatures": [
+        "systems:allGenerators",
+        "generators:tier3",
+        "prestigeShop:tier3"
+      ]
     }
   ]
 }

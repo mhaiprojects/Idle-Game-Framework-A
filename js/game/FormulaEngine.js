@@ -255,21 +255,123 @@ export const FormulaEngine = {
     return { elapsed: capped, gains };
   },
 
-  calculatePrestigeGain(state, config) {
+  getResourcesForAscensionTier(tier, config) {
+    const all = config.resources.resources.map(r => r.codeName);
+    const byTier = {
+      0: ['timeShards', 'cosmicEnergy', 'stardust'],
+      1: ['timeShards', 'cosmicEnergy', 'stardust', 'nebulaEssence', 'quantumFlux'],
+      2: ['timeShards', 'cosmicEnergy', 'stardust', 'nebulaEssence', 'quantumFlux', 'voidMatter', 'chronoCrystals'],
+      3: all
+    };
+    return byTier[Math.min(Math.max(tier, 0), 3)] || byTier[0];
+  },
+
+  getScaledPrestigeMinimum(state, config) {
     const prestige = config.prestige;
-    const weights = prestige.prestigeCurrency.resourceWeights;
+    const base = prestige.prestigeMinimumBase || prestige.prestigeMinimum;
+    if (!base) return prestige.prestigeMinimum;
+
+    const scale = Math.pow(
+      1 + (prestige.prestigeMinimumScalePerPrestige ?? 0.2),
+      state.meta.milestones.lifetimePrestiges || 0
+    );
+    const tier = state.meta.ascension.currentTier;
+    const tierExtras = prestige.prestigeMinimumTierResources?.[String(tier)] || [];
+
+    const conditions = (base.conditions || []).map(c => {
+      if (c.type === 'resourceHeld') {
+        return { ...c, amount: Math.ceil(c.amount * scale) };
+      }
+      return c;
+    });
+
+    for (const extra of tierExtras) {
+      conditions.push({
+        type: 'resourceHeld',
+        resource: extra.resource,
+        amount: Math.ceil(extra.amount * scale)
+      });
+    }
+
+    return { operator: base.operator || 'AND', conditions };
+  },
+
+  getWeightedRunValue(state, config) {
+    const prestige = config.prestige;
+    const allowed = this.getResourcesForAscensionTier(state.meta.ascension.currentTier, config);
+    const weights = prestige.prestigeCurrency.resourceWeights || {};
     let runValue = 0;
 
-    for (const [res, weight] of Object.entries(weights)) {
+    for (const res of allowed) {
+      const weight = weights[res];
+      if (!weight) continue;
       const earned = state.meta.prestige.run.resourcesEarnedThisRun[res] || 0;
       runValue += earned * weight;
     }
 
+    return runValue;
+  },
+
+  getPrestigeShardMilestone(state, config, shardIndex = null) {
+    const pc = config.prestige.prestigeCurrency;
+    const base = pc.minimumResourceValue;
+    const exp = pc.milestoneExponent || 2;
+    const idx = shardIndex ?? (this.calculatePrestigeGain(state, config) + 1);
+    return base * Math.pow(exp, Math.max(idx - 1, 0));
+  },
+
+  calculatePrestigeGain(state, config) {
+    const prestige = config.prestige;
+    const runValue = this.getWeightedRunValue(state, config);
     const minimum = prestige.prestigeCurrency.minimumResourceValue;
     if (runValue < minimum) return 0;
 
     const logBase = prestige.prestigeCurrency.logBase;
     return Math.floor(Math.log(Math.max(runValue / minimum, 1)) / Math.log(logBase));
+  },
+
+  getPrestigeShardProgress(state, config, formatNumber) {
+    const fmt = formatNumber || (n => n);
+    const prestige = config.prestige;
+    const pc = prestige.prestigeCurrency;
+    const allowed = this.getResourcesForAscensionTier(state.meta.ascension.currentTier, config);
+    const weights = pc.resourceWeights || {};
+    const runEarned = state.meta.prestige.run.resourcesEarnedThisRun || {};
+    const runValue = this.getWeightedRunValue(state, config);
+    const projectedGain = this.calculatePrestigeGain(state, config);
+    const nextMilestone = this.getPrestigeShardMilestone(state, config, projectedGain + 1);
+    const totalWeight = allowed.reduce((s, r) => s + (weights[r] || 0), 0) || 1;
+
+    const subRequirements = allowed
+      .filter(r => weights[r] > 0)
+      .map(res => {
+        const meta = config.resources.resources.find(r => r.codeName === res);
+        const weight = weights[res];
+        const earned = runEarned[res] || 0;
+        const weighted = earned * weight;
+        const shareRequired = nextMilestone * (weight / totalWeight);
+        const progress = shareRequired > 0 ? Math.min(1, weighted / shareRequired) : 0;
+        return {
+          code: res,
+          icon: meta?.icon || '💠',
+          name: meta?.displayName || res,
+          label: `${fmt(weighted)} / ${fmt(shareRequired)} weighted (${meta?.displayName || res})`,
+          progress,
+          met: weighted >= shareRequired,
+          current: weighted,
+          required: shareRequired
+        };
+      });
+
+    return {
+      rulesExplanation: pc.rulesExplanation || '',
+      projectedGain,
+      nextMilestone,
+      currentRunValue: runValue,
+      overallProgress: nextMilestone > 0 ? Math.min(1, runValue / nextMilestone) : 0,
+      overallMet: runValue >= nextMilestone,
+      subRequirements
+    };
   },
 
   calculateUpgradeCost(upgrade, purchaseCount, config) {

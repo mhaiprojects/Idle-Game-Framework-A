@@ -337,7 +337,28 @@
 
 ---
 
+### 2026-6-21-26-0-0 — Major content expansion (equipment tiers, prestige, generators)
+
+**Request:** Expand game content — tiered equipment drops, consumables, characters with effects summary, artifacts, achievement passives, scaled multi-currency prestige, shard progress UI, prestige shop allocation reset, 12 prestige shop options and 12 generators (3 per ascension tier).
+
+**Approval task list:** [content-expansion-approval.draft.prompt.md](./content-expansion-approval.draft.prompt.md)
+
+**Implemented:**
+- `scripts/generate-expansion-content.py` — bulk config for 27 tiered equipables, 10 consumables, 5 characters, 20 artifacts, 30 achievements, 12 prestige bonuses, 12 generators (incl. voidArchitect, eternityForge)
+- `config/*.json` — drops with dynamic tier weights; ascension feature unlocks per generator/prestige shop tier; prestige scaling (+20%/prestige, multi-currency minimum)
+- `FormulaEngine` — `getScaledPrestigeMinimum`, `getPrestigeShardProgress`, ascension-filtered shard weights, exponential shard milestones
+- `PrestigeSystem` — reset `purchasedBonuses` on prestige; keep shard currency; updated lost/kept lists
+- `DropSystem` — equipment tier filtering by ascension; artifact drops gated by generator + ascension
+- `AchievementSystem` — new requirement types; all achievements grant passive modifiers
+- `ModifierSystem.summarizeCharacterEffects` — character + equipment effect aggregation
+- `CharacterPanel` + `CharacterEffectsList` — Effects section below equipment
+- `AscensionPanel` — Prestige Shards rules + per-resource progress bars toward next shard
+- `GameState` / `EventSystem` / `GameLoop` — track `eventsSeen`, `offlineSecondsClaimed`
+
+---
+
 ## Related files
 
+- [content-expansion-approval.draft.prompt.md](./content-expansion-approval.draft.prompt.md) — numbered task breakdown for content expansion
 - [idle-game-framework.final.prompt.md](./idle-game-framework.final.prompt.md) — full implementation spec
 - [ai-prompt-defaults.final.prompt.md](./ai-prompt-defaults.final.prompt.md) — generic agent communication rules

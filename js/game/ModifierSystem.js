@@ -120,5 +120,57 @@ export const ModifierSystem = {
     state.activeBuffs = state.activeBuffs || [];
     state.activeBuffs.push({ codeName, effect, expiresAt });
     this.invalidate();
+  },
+
+  summarizeCharacterEffects(charCode, state, config, describeFn) {
+    const char = config.characters.characters.find(c => c.codeName === charCode);
+    const cs = state.characters[charCode];
+    if (!char || !cs) return [];
+
+    const describe = describeFn || (() => '');
+    const buckets = {};
+
+    const addEffect = (effect, source, activeOnly) => {
+      if (!effect?.type) return;
+      if (activeOnly && !cs.activated) return;
+      const key = `${effect.type}:${effect.category || ''}:${effect.resource || ''}:${effect.generator || ''}`;
+      if (!buckets[key]) {
+        buckets[key] = { effect: { ...effect }, sources: [], product: effect.type === 'costReduction' ? 1 : 1 };
+      }
+      buckets[key].sources.push(source);
+      const mult = effect.multiplier ?? 1;
+      if (effect.type === 'costReduction') {
+        buckets[key].product *= mult;
+        buckets[key].effect.multiplier = buckets[key].product;
+      } else {
+        buckets[key].product *= mult;
+        buckets[key].effect.multiplier = buckets[key].product;
+      }
+    };
+
+    if (char.baseStats?.globalMultiplier) {
+      addEffect({ type: 'globalMultiplier', multiplier: char.baseStats.globalMultiplier }, char.displayName, true);
+    }
+    if (char.baseStats?.clickMultiplier) {
+      addEffect({ type: 'clickMultiplier', multiplier: char.baseStats.clickMultiplier }, char.displayName, true);
+    }
+    if (char.baseStats?.categoryMultiplier) {
+      addEffect(char.baseStats.categoryMultiplier, char.displayName, true);
+    }
+
+    for (const itemCode of Object.values(cs.equipment || {})) {
+      if (!itemCode) continue;
+      const item = config.items.items.find(i => i.codeName === itemCode);
+      if (!item?.effect) continue;
+      const stackQty = state.inventory[itemCode] ?? ConfigManager.getDefaultCalc('equipmentStackMinCopies');
+      const effect = ConfigManager.getEffectiveItemEffect(item, stackQty);
+      addEffect(effect, item.displayName, false);
+    }
+
+    return Object.values(buckets).map(b => ({
+      label: describe(b.effect),
+      sources: b.sources.join(', '),
+      effect: b.effect
+    }));
   }
 };

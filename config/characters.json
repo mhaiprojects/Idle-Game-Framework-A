@@ -4,10 +4,15 @@
       "codeName": "temporalSage",
       "displayName": "Temporal Sage",
       "description": "An ancient keeper of time who guides your factory.",
-      "icon": "🧙",
+      "icon": "\ud83e\uddd9",
       "unlockConditions": {
         "operator": "AND",
-        "conditions": [{ "type": "lifetimePrestiges", "min": 1 }]
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 1
+          }
+        ]
       },
       "baseStats": {
         "globalMultiplier": 1.05
@@ -15,39 +20,61 @@
       "activeSkill": {
         "codeName": "temporalBurst",
         "displayName": "Temporal Burst",
-        "icon": "⚡",
+        "icon": "\u26a1",
         "cooldownSeconds": 30,
-        "effect": { "type": "globalMultiplier", "multiplier": 2, "durationSeconds": 10 }
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 2,
+          "durationSeconds": 10
+        }
       }
     },
     {
       "codeName": "stellarNavigator",
       "displayName": "Stellar Navigator",
       "description": "Charts courses through the cosmic void.",
-      "icon": "🧑‍🚀",
+      "icon": "\ud83e\uddd1\u200d\ud83d\ude80",
       "unlockConditions": {
         "operator": "AND",
-        "conditions": [{ "type": "lifetimePrestiges", "min": 1 }]
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 1
+          }
+        ]
       },
       "baseStats": {
-        "categoryMultiplier": { "category": "stellar", "multiplier": 1.15 }
+        "categoryMultiplier": {
+          "category": "stellar",
+          "multiplier": 1.15
+        }
       },
       "activeSkill": {
         "codeName": "stellarFlare",
         "displayName": "Stellar Flare",
-        "icon": "☀️",
+        "icon": "\u2600\ufe0f",
         "cooldownSeconds": 45,
-        "effect": { "type": "categoryMultiplier", "category": "stellar", "multiplier": 3, "durationSeconds": 15 }
+        "effect": {
+          "type": "categoryMultiplier",
+          "category": "stellar",
+          "multiplier": 3,
+          "durationSeconds": 15
+        }
       }
     },
     {
       "codeName": "voidWalker",
       "displayName": "Void Walker",
       "description": "Traverses dimensions to extract hidden power.",
-      "icon": "👤",
+      "icon": "\ud83d\udc64",
       "unlockConditions": {
         "operator": "AND",
-        "conditions": [{ "type": "lifetimePrestiges", "min": 2 }]
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 2
+          }
+        ]
       },
       "baseStats": {
         "clickMultiplier": 1.2
@@ -55,9 +82,189 @@
       "activeSkill": {
         "codeName": "voidStep",
         "displayName": "Void Step",
-        "icon": "🕳️",
+        "icon": "\ud83d\udd73\ufe0f",
         "cooldownSeconds": 60,
-        "effect": { "type": "clickMultiplier", "multiplier": 5, "durationSeconds": 8 }
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 5,
+          "durationSeconds": 8
+        }
+      }
+    },
+    {
+      "codeName": "quantumSmith",
+      "displayName": "Quantum Smith",
+      "icon": "\ud83d\udd28",
+      "description": "Forges probability into production.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "ascensionTier",
+            "minTier": 1
+          },
+          {
+            "type": "generatorOwned",
+            "generator": "quantumProcessor",
+            "quantity": 1
+          }
+        ]
+      },
+      "baseStats": {
+        "categoryMultiplier": {
+          "category": "quantum",
+          "multiplier": 1.12
+        }
+      },
+      "activeSkill": {
+        "codeName": "quantumForge",
+        "displayName": "Quantum Forge",
+        "icon": "\u269b\ufe0f",
+        "cooldownSeconds": 40,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 2.2,
+          "durationSeconds": 12
+        }
+      }
+    },
+    {
+      "codeName": "voidScribe",
+      "displayName": "Void Scribe",
+      "icon": "\ud83d\udcdc",
+      "description": "Records losses between dimensions as power.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "lifetimePrestiges",
+            "min": 3
+          },
+          {
+            "type": "resourceHeld",
+            "resource": "voidMatter",
+            "amount": 500
+          }
+        ]
+      },
+      "baseStats": {
+        "globalMultiplier": 1.08
+      },
+      "activeSkill": {
+        "codeName": "voidScript",
+        "displayName": "Void Script",
+        "icon": "\ud83d\udd73\ufe0f",
+        "cooldownSeconds": 55,
+        "effect": {
+          "type": "costReduction",
+          "multiplier": 0.7,
+          "durationSeconds": 20
+        }
+      }
+    },
+    {
+      "codeName": "chronoKnight",
+      "displayName": "Chrono Knight",
+      "icon": "\ud83d\udde1\ufe0f",
+      "description": "A warrior bound to frozen seconds.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "ascensionTier",
+            "minTier": 2
+          },
+          {
+            "type": "generatorOwned",
+            "generator": "temporalEngine",
+            "quantity": 3
+          }
+        ]
+      },
+      "baseStats": {
+        "clickMultiplier": 1.25
+      },
+      "activeSkill": {
+        "codeName": "timeSlash",
+        "displayName": "Time Slash",
+        "icon": "\u2694\ufe0f",
+        "cooldownSeconds": 35,
+        "effect": {
+          "type": "clickMultiplier",
+          "multiplier": 4,
+          "durationSeconds": 10
+        }
+      }
+    },
+    {
+      "codeName": "stellarOracle",
+      "displayName": "Stellar Oracle",
+      "icon": "\ud83d\udd2e",
+      "description": "Reads futures in starlight patterns.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "achievement",
+            "achievement": "firstPrestige"
+          },
+          {
+            "type": "generatorOwned",
+            "generator": "starForge",
+            "quantity": 10
+          }
+        ]
+      },
+      "baseStats": {
+        "categoryMultiplier": {
+          "category": "stellar",
+          "multiplier": 1.2
+        }
+      },
+      "activeSkill": {
+        "codeName": "starProphecy",
+        "displayName": "Star Prophecy",
+        "icon": "\u2728",
+        "cooldownSeconds": 50,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 2.5,
+          "durationSeconds": 15
+        }
+      }
+    },
+    {
+      "codeName": "infinityWarden",
+      "displayName": "Infinity Warden",
+      "icon": "\u267e\ufe0f",
+      "description": "Guards the loop where all timelines converge.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          {
+            "type": "ascensionTier",
+            "minTier": 3
+          },
+          {
+            "type": "lifetimePrestiges",
+            "min": 10
+          }
+        ]
+      },
+      "baseStats": {
+        "globalMultiplier": 1.15,
+        "clickMultiplier": 1.1
+      },
+      "activeSkill": {
+        "codeName": "infinityGuard",
+        "displayName": "Infinity Guard",
+        "icon": "\ud83d\udee1\ufe0f",
+        "cooldownSeconds": 90,
+        "effect": {
+          "type": "globalMultiplier",
+          "multiplier": 3,
+          "durationSeconds": 8
+        }
       }
     }
   ]

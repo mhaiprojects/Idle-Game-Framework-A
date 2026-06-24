@@ -3,10 +3,11 @@ import PanelHeader from './components/PanelHeader.vue.js';
 import MoreInfoButton from './components/MoreInfoButton.vue.js';
 import EquipmentGrid from './components/EquipmentGrid.vue.js';
 import CardSection from './components/CardSection.vue.js';
+import CharacterEffectsList from './components/CharacterEffectsList.vue.js';
 
 export default {
   name: 'CharacterPanel',
-  components: { UnlockRequirementsList, MoreInfoButton, EquipmentGrid, PanelHeader, CardSection },
+  components: { UnlockRequirementsList, MoreInfoButton, EquipmentGrid, PanelHeader, CardSection, CharacterEffectsList },
   props: {
     characters: Array,
     maxActive: Number,
@@ -52,6 +53,9 @@ export default {
               @equip="(c, s, i) => $emit('equip', c, s, i)"
               @unequip="(c, s) => $emit('unequip', c, s)"
               @more-info="(type, code) => $emit('more-info', type, code)" />
+          </CardSection>
+          <CardSection section-key="effects">
+            <CharacterEffectsList :effects="char.effectSummary || []" />
           </CardSection>
         </template>
       </div>

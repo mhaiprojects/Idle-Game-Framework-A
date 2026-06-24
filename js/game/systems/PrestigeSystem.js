@@ -5,7 +5,8 @@ import { ModifierSystem } from '../ModifierSystem.js';
 
 export const PrestigeSystem = {
   canPrestige(state, config) {
-    return FormulaEngine.evaluateUnlockConditions(config.prestige.prestigeMinimum, state, config).met;
+    const minimum = FormulaEngine.getScaledPrestigeMinimum(state, config);
+    return FormulaEngine.evaluateUnlockConditions(minimum, state, config).met;
   },
 
   getProjectedGain(state, config) {
@@ -49,6 +50,10 @@ export const PrestigeSystem = {
       }
     }
 
+    if (profile.resetPrestigeShopAllocation) {
+      state.meta.prestige.purchasedBonuses = {};
+    }
+
     const starting = config.prestige.startingResourcesAfterPrestige || {};
     for (const [res, amt] of Object.entries(starting)) {
       gameState.addResource(res, amt, 'prestige_start');
@@ -84,11 +89,13 @@ export const PrestigeSystem = {
 
   getLostKept(config) {
     const p = config.prestige.onPrestige;
+    const lost = ['Resource balances', 'Generator quantities', 'Upgrade levels', 'Temporary buffs', 'Run stats'].filter((_, i) =>
+      [p.clearCurrency, p.clearGeneratorQuantities, p.clearUpgrades, p.clearTemporaryBuffs, p.resetRunStats][i]
+    );
+    if (p.resetPrestigeShopAllocation) lost.push('Prestige shop levels (allocation reset)');
     return {
-      lost: ['Resource balances', 'Generator quantities', 'Upgrade levels', 'Temporary buffs', 'Run stats'].filter((_, i) =>
-        [p.clearCurrency, p.clearGeneratorQuantities, p.clearUpgrades, p.clearTemporaryBuffs, p.resetRunStats][i]
-      ),
-      kept: ['Artifacts', 'Generator unlocks', 'Achievements', 'Ascension tier', 'Prestige shop purchases', 'Characters', 'Lifetime milestones']
+      lost,
+      kept: ['Artifacts', 'Generator unlocks', 'Achievements', 'Ascension tier', 'Prestige Shards (currency)', 'Characters', 'Lifetime milestones']
     };
   }
 };

@@ -316,21 +316,123 @@ const FormulaEngine = {
     return { elapsed: capped, gains };
   },
 
-  calculatePrestigeGain(state, config) {
+  getResourcesForAscensionTier(tier, config) {
+    const all = config.resources.resources.map(r => r.codeName);
+    const byTier = {
+      0: ['timeShards', 'cosmicEnergy', 'stardust'],
+      1: ['timeShards', 'cosmicEnergy', 'stardust', 'nebulaEssence', 'quantumFlux'],
+      2: ['timeShards', 'cosmicEnergy', 'stardust', 'nebulaEssence', 'quantumFlux', 'voidMatter', 'chronoCrystals'],
+      3: all
+    };
+    return byTier[Math.min(Math.max(tier, 0), 3)] || byTier[0];
+  },
+
+  getScaledPrestigeMinimum(state, config) {
     const prestige = config.prestige;
-    const weights = prestige.prestigeCurrency.resourceWeights;
+    const base = prestige.prestigeMinimumBase || prestige.prestigeMinimum;
+    if (!base) return prestige.prestigeMinimum;
+
+    const scale = Math.pow(
+      1 + (prestige.prestigeMinimumScalePerPrestige ?? 0.2),
+      state.meta.milestones.lifetimePrestiges || 0
+    );
+    const tier = state.meta.ascension.currentTier;
+    const tierExtras = prestige.prestigeMinimumTierResources?.[String(tier)] || [];
+
+    const conditions = (base.conditions || []).map(c => {
+      if (c.type === 'resourceHeld') {
+        return { ...c, amount: Math.ceil(c.amount * scale) };
+      }
+      return c;
+    });
+
+    for (const extra of tierExtras) {
+      conditions.push({
+        type: 'resourceHeld',
+        resource: extra.resource,
+        amount: Math.ceil(extra.amount * scale)
+      });
+    }
+
+    return { operator: base.operator || 'AND', conditions };
+  },
+
+  getWeightedRunValue(state, config) {
+    const prestige = config.prestige;
+    const allowed = this.getResourcesForAscensionTier(state.meta.ascension.currentTier, config);
+    const weights = prestige.prestigeCurrency.resourceWeights || {};
     let runValue = 0;
 
-    for (const [res, weight] of Object.entries(weights)) {
+    for (const res of allowed) {
+      const weight = weights[res];
+      if (!weight) continue;
       const earned = state.meta.prestige.run.resourcesEarnedThisRun[res] || 0;
       runValue += earned * weight;
     }
 
+    return runValue;
+  },
+
+  getPrestigeShardMilestone(state, config, shardIndex = null) {
+    const pc = config.prestige.prestigeCurrency;
+    const base = pc.minimumResourceValue;
+    const exp = pc.milestoneExponent || 2;
+    const idx = shardIndex ?? (this.calculatePrestigeGain(state, config) + 1);
+    return base * Math.pow(exp, Math.max(idx - 1, 0));
+  },
+
+  calculatePrestigeGain(state, config) {
+    const prestige = config.prestige;
+    const runValue = this.getWeightedRunValue(state, config);
     const minimum = prestige.prestigeCurrency.minimumResourceValue;
     if (runValue < minimum) return 0;
 
     const logBase = prestige.prestigeCurrency.logBase;
     return Math.floor(Math.log(Math.max(runValue / minimum, 1)) / Math.log(logBase));
+  },
+
+  getPrestigeShardProgress(state, config, formatNumber) {
+    const fmt = formatNumber || (n => n);
+    const prestige = config.prestige;
+    const pc = prestige.prestigeCurrency;
+    const allowed = this.getResourcesForAscensionTier(state.meta.ascension.currentTier, config);
+    const weights = pc.resourceWeights || {};
+    const runEarned = state.meta.prestige.run.resourcesEarnedThisRun || {};
+    const runValue = this.getWeightedRunValue(state, config);
+    const projectedGain = this.calculatePrestigeGain(state, config);
+    const nextMilestone = this.getPrestigeShardMilestone(state, config, projectedGain + 1);
+    const totalWeight = allowed.reduce((s, r) => s + (weights[r] || 0), 0) || 1;
+
+    const subRequirements = allowed
+      .filter(r => weights[r] > 0)
+      .map(res => {
+        const meta = config.resources.resources.find(r => r.codeName === res);
+        const weight = weights[res];
+        const earned = runEarned[res] || 0;
+        const weighted = earned * weight;
+        const shareRequired = nextMilestone * (weight / totalWeight);
+        const progress = shareRequired > 0 ? Math.min(1, weighted / shareRequired) : 0;
+        return {
+          code: res,
+          icon: meta?.icon || '💠',
+          name: meta?.displayName || res,
+          label: `${fmt(weighted)} / ${fmt(shareRequired)} weighted (${meta?.displayName || res})`,
+          progress,
+          met: weighted >= shareRequired,
+          current: weighted,
+          required: shareRequired
+        };
+      });
+
+    return {
+      rulesExplanation: pc.rulesExplanation || '',
+      projectedGain,
+      nextMilestone,
+      currentRunValue: runValue,
+      overallProgress: nextMilestone > 0 ? Math.min(1, runValue / nextMilestone) : 0,
+      overallMet: runValue >= nextMilestone,
+      subRequirements
+    };
   },
 
   calculateUpgradeCost(upgrade, purchaseCount, config) {
@@ -1841,6 +1943,58 @@ const ModifierSystem = {
     state.activeBuffs = state.activeBuffs || [];
     state.activeBuffs.push({ codeName, effect, expiresAt });
     this.invalidate();
+  },
+
+  summarizeCharacterEffects(charCode, state, config, describeFn) {
+    const char = config.characters.characters.find(c => c.codeName === charCode);
+    const cs = state.characters[charCode];
+    if (!char || !cs) return [];
+
+    const describe = describeFn || (() => '');
+    const buckets = {};
+
+    const addEffect = (effect, source, activeOnly) => {
+      if (!effect?.type) return;
+      if (activeOnly && !cs.activated) return;
+      const key = `${effect.type}:${effect.category || ''}:${effect.resource || ''}:${effect.generator || ''}`;
+      if (!buckets[key]) {
+        buckets[key] = { effect: { ...effect }, sources: [], product: effect.type === 'costReduction' ? 1 : 1 };
+      }
+      buckets[key].sources.push(source);
+      const mult = effect.multiplier ?? 1;
+      if (effect.type === 'costReduction') {
+        buckets[key].product *= mult;
+        buckets[key].effect.multiplier = buckets[key].product;
+      } else {
+        buckets[key].product *= mult;
+        buckets[key].effect.multiplier = buckets[key].product;
+      }
+    };
+
+    if (char.baseStats?.globalMultiplier) {
+      addEffect({ type: 'globalMultiplier', multiplier: char.baseStats.globalMultiplier }, char.displayName, true);
+    }
+    if (char.baseStats?.clickMultiplier) {
+      addEffect({ type: 'clickMultiplier', multiplier: char.baseStats.clickMultiplier }, char.displayName, true);
+    }
+    if (char.baseStats?.categoryMultiplier) {
+      addEffect(char.baseStats.categoryMultiplier, char.displayName, true);
+    }
+
+    for (const itemCode of Object.values(cs.equipment || {})) {
+      if (!itemCode) continue;
+      const item = config.items.items.find(i => i.codeName === itemCode);
+      if (!item?.effect) continue;
+      const stackQty = state.inventory[itemCode] ?? ConfigManager.getDefaultCalc('equipmentStackMinCopies');
+      const effect = ConfigManager.getEffectiveItemEffect(item, stackQty);
+      addEffect(effect, item.displayName, false);
+    }
+
+    return Object.values(buckets).map(b => ({
+      label: describe(b.effect),
+      sources: b.sources.join(', '),
+      effect: b.effect
+    }));
   }
 };
 
@@ -1907,7 +2061,7 @@ function createInitialState(config) {
         run: { resourcesEarnedThisRun: {}, peakPrimaryCurrencyRateThisRun: 0 }
       }
     },
-    stats: { totalTaps: 0, totalClicks: 0, playTimeSeconds: 0 },
+    stats: { totalTaps: 0, totalClicks: 0, playTimeSeconds: 0, eventsSeen: 0, offlineSecondsClaimed: 0 },
     settings: {
       sidebarPosition: fw.ui.sidebarDefaultPosition,
       soundEnabled: true,
@@ -2253,7 +2407,10 @@ class GameState {
     EventBus.emit(EVENTS.GAME_TICK, { delta: deltaSeconds });
   }
 
-  applyOfflineGains(gains) {
+  applyOfflineGains(gains, elapsedSeconds) {
+    if (elapsedSeconds > 0) {
+      this.data.stats.offlineSecondsClaimed = (this.data.stats.offlineSecondsClaimed || 0) + elapsedSeconds;
+    }
     for (const [res, amt] of Object.entries(gains)) {
       if (amt > 0) this.addResource(res, amt, 'offline');
     }
@@ -2373,7 +2530,8 @@ const GeneratorSystem = {
 
 const PrestigeSystem = {
   canPrestige(state, config) {
-    return FormulaEngine.evaluateUnlockConditions(config.prestige.prestigeMinimum, state, config).met;
+    const minimum = FormulaEngine.getScaledPrestigeMinimum(state, config);
+    return FormulaEngine.evaluateUnlockConditions(minimum, state, config).met;
   },
 
   getProjectedGain(state, config) {
@@ -2417,6 +2575,10 @@ const PrestigeSystem = {
       }
     }
 
+    if (profile.resetPrestigeShopAllocation) {
+      state.meta.prestige.purchasedBonuses = {};
+    }
+
     const starting = config.prestige.startingResourcesAfterPrestige || {};
     for (const [res, amt] of Object.entries(starting)) {
       gameState.addResource(res, amt, 'prestige_start');
@@ -2452,11 +2614,13 @@ const PrestigeSystem = {
 
   getLostKept(config) {
     const p = config.prestige.onPrestige;
+    const lost = ['Resource balances', 'Generator quantities', 'Upgrade levels', 'Temporary buffs', 'Run stats'].filter((_, i) =>
+      [p.clearCurrency, p.clearGeneratorQuantities, p.clearUpgrades, p.clearTemporaryBuffs, p.resetRunStats][i]
+    );
+    if (p.resetPrestigeShopAllocation) lost.push('Prestige shop levels (allocation reset)');
     return {
-      lost: ['Resource balances', 'Generator quantities', 'Upgrade levels', 'Temporary buffs', 'Run stats'].filter((_, i) =>
-        [p.clearCurrency, p.clearGeneratorQuantities, p.clearUpgrades, p.clearTemporaryBuffs, p.resetRunStats][i]
-      ),
-      kept: ['Artifacts', 'Generator unlocks', 'Achievements', 'Ascension tier', 'Prestige shop purchases', 'Characters', 'Lifetime milestones']
+      lost,
+      kept: ['Artifacts', 'Generator unlocks', 'Achievements', 'Ascension tier', 'Prestige Shards (currency)', 'Characters', 'Lifetime milestones']
     };
   }
 };
@@ -2551,10 +2715,21 @@ const DropSystem = {
       if (table.trigger !== 'tick') continue;
       if (table.codeName === 'artifactDrop' && !ConfigManager.isFeatureUnlocked('tab:artifacts', state)) continue;
 
-      const chance = table.chancePerSecond * deltaSeconds;
+      let chance = table.chancePerSecond * deltaSeconds;
+      if (table.codeName === 'equipmentDrop') {
+        chance *= this._equipmentDropMultiplier(state, config);
+      }
+
       if (Math.random() > chance) continue;
 
-      const entry = this._rollEntry(table.entries);
+      let entry;
+      if (table.codeName === 'equipmentDrop') {
+        entry = this._rollEquipmentEntry(table, state, config);
+      } else if (table.codeName === 'artifactDrop') {
+        entry = this._rollArtifactEntry(table, state, config);
+      } else {
+        entry = this._rollEntry(table.entries);
+      }
       if (!entry) continue;
 
       if (entry.artifact) {
@@ -2583,8 +2758,45 @@ const DropSystem = {
     }
   },
 
+  _equipmentDropMultiplier(state, config) {
+    const mods = config.drops.equipmentDropModifiers;
+    if (!mods) return 1;
+    let totalOwned = 0;
+    for (const g of Object.values(state.generators)) totalOwned += g.quantityPurchased || 0;
+    return 1 + totalOwned * (mods.quantityBonusPerGenerator || 0);
+  },
+
+  _rollEquipmentEntry(table, state, config) {
+    const mods = config.drops.equipmentDropModifiers;
+    const tier = state.meta.ascension.currentTier;
+    const tierWeights = mods?.tierWeightsByAscension?.[String(tier)]
+      || mods?.tierWeightsByAscension?.['0']
+      || { common: 0.6, rare: 0.3, epic: 0.1 };
+
+    const eligible = table.entries.filter(e => {
+      const dropTier = e.dropTier || 'common';
+      const w = tierWeights[dropTier] ?? 0.33;
+      return Math.random() <= w;
+    });
+
+    return this._rollEntry(eligible.length ? eligible : table.entries);
+  },
+
+  _rollArtifactEntry(table, state, config) {
+    const tier = state.meta.ascension.currentTier;
+    const eligible = table.entries.filter(e => {
+      const req = e.dropRequirements;
+      if (!req) return true;
+      if (tier < (req.minAscensionTier || 0)) return false;
+      return (state.generators[req.generator]?.quantityPurchased || 0) > 0;
+    });
+    if (!eligible.length) return null;
+    return this._rollEntry(eligible);
+  },
+
   _rollEntry(entries) {
     const totalWeight = entries.reduce((s, e) => s + e.weight, 0);
+    if (totalWeight <= 0) return null;
     let roll = Math.random() * totalWeight;
     for (const entry of entries) {
       roll -= entry.weight;
@@ -2602,7 +2814,21 @@ const DropSystem = {
 
 // --- js/game/systems/AchievementSystem.js ---
 
+const GENERATOR_TIERS = {
+  0: ['timeWarden', 'cosmicSailor', 'starForge'],
+  1: ['nebulaHarvester', 'quantumProcessor', 'voidExtractor'],
+  2: ['chronoRefinery', 'temporalEngine', 'cosmicFoundry'],
+  3: ['infinityChronometer', 'voidArchitect', 'eternityForge']
+};
+
 const AchievementSystem = {
+  getGeneratorTier(codeName) {
+    for (const [tier, codes] of Object.entries(GENERATOR_TIERS)) {
+      if (codes.includes(codeName)) return Number(tier);
+    }
+    return 0;
+  },
+
   checkAll(state, config, gameState) {
     const mods = ModifierSystem.collect(state, config);
     const primary = config.resources.resources.find(r => r.isPrimary);
@@ -2724,6 +2950,81 @@ const AchievementSystem = {
         label = ConfigManager.formatAchievementLabel('playTime', { current, required: req.amount });
         break;
       }
+      case 'lifetimePrestiges': {
+        const current = state.meta.milestones.lifetimePrestiges || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🔄';
+        label = `${current} / ${req.amount} lifetime prestiges`;
+        break;
+      }
+      case 'ascensionTier': {
+        const current = state.meta.ascension.currentTier;
+        progress = req.minTier > 0 ? Math.min(1, current / req.minTier) : 1;
+        icon = '🌅';
+        label = `Ascension tier ${current} / ${req.minTier}`;
+        break;
+      }
+      case 'charactersUnlocked': {
+        const current = Object.values(state.characters).filter(c => c.unlocked).length;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '👥';
+        label = `${current} / ${req.amount} characters unlocked`;
+        break;
+      }
+      case 'equipmentSlotsFilled': {
+        const current = Math.max(...Object.values(state.characters).map(c =>
+          Object.values(c.equipment || {}).filter(Boolean).length
+        ), 0);
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🎒';
+        label = `${current} / ${req.amount} equipment slots filled (best character)`;
+        break;
+      }
+      case 'itemHeld': {
+        const current = Math.max(...Object.values(state.inventory), 0);
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '📦';
+        label = `Hold ${req.amount}+ of any item (best: ${current})`;
+        break;
+      }
+      case 'upgradeLevels': {
+        let current = 0;
+        for (const u of Object.values(state.upgrades)) current += u.purchaseCount || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🔧';
+        label = `${current} / ${req.amount} upgrade levels purchased`;
+        break;
+      }
+      case 'eventsSeen': {
+        const current = state.stats.eventsSeen || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🎲';
+        label = `${current} / ${req.amount} random events seen`;
+        break;
+      }
+      case 'offlineSeconds': {
+        const current = state.stats.offlineSecondsClaimed || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🌙';
+        label = `${Math.floor(current)}s / ${req.amount}s offline progress claimed`;
+        break;
+      }
+      case 'prestigeShopLevels': {
+        let current = 0;
+        for (const lvl of Object.values(state.meta.prestige.purchasedBonuses || {})) current += lvl || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🛒';
+        label = `${current} / ${req.amount} prestige shop levels purchased`;
+        break;
+      }
+      case 'generatorsOwnedTier': {
+        const codes = GENERATOR_TIERS[req.tier] || [];
+        const current = codes.filter(c => (state.generators[c]?.quantityPurchased || 0) >= (req.amount || 1)).length;
+        progress = codes.length > 0 ? Math.min(1, current / codes.length) : 0;
+        icon = '🏭';
+        label = `${current} / ${codes.length} tier-${req.tier} generators owned`;
+        break;
+      }
       default:
         break;
     }
@@ -2762,6 +3063,39 @@ const AchievementSystem = {
         return (state.inventory[req.item] || 0) >= req.amount;
       case 'playTime':
         return state.stats.playTimeSeconds >= req.amount;
+      case 'lifetimePrestiges':
+        return (state.meta.milestones.lifetimePrestiges || 0) >= req.amount;
+      case 'ascensionTier':
+        return state.meta.ascension.currentTier >= req.minTier;
+      case 'charactersUnlocked':
+        return Object.values(state.characters).filter(c => c.unlocked).length >= req.amount;
+      case 'equipmentSlotsFilled':
+        return Object.values(state.characters).some(c =>
+          Object.values(c.equipment || {}).filter(Boolean).length >= req.amount
+        );
+      case 'itemHeld':
+        return Object.values(state.inventory).some(qty => qty >= req.amount);
+      case 'upgradeLevels': {
+        let total = 0;
+        for (const u of Object.values(state.upgrades)) total += u.purchaseCount || 0;
+        return total >= req.amount;
+      }
+      case 'eventsSeen':
+        return (state.stats.eventsSeen || 0) >= req.amount;
+      case 'offlineSeconds':
+        return (state.stats.offlineSecondsClaimed || 0) >= req.amount;
+      case 'prestigeShopLevels': {
+        let total = 0;
+        for (const lvl of Object.values(state.meta.prestige.purchasedBonuses || {})) total += lvl || 0;
+        return total >= req.amount;
+      }
+      case 'generatorsOwnedTier': {
+        const codes = GENERATOR_TIERS[req.tier] || [];
+        if (req.tier === 0 && req.amount > 1) {
+          return codes.every(c => (state.generators[c]?.quantityPurchased || 0) >= req.amount);
+        }
+        return codes.every(c => (state.generators[c]?.quantityPurchased || 0) >= (req.amount || 1));
+      }
       default:
         return false;
     }
@@ -2799,6 +3133,7 @@ const EventSystem = {
     const evt = events[Math.floor(Math.random() * events.length)];
     const expiresAt = Date.now() + evt.duration * 1000;
     state.activeEvents.push({ codeName: evt.codeName, effect: evt.effect, expiresAt, displayName: evt.displayName, icon: evt.icon });
+    state.stats.eventsSeen = (state.stats.eventsSeen || 0) + 1;
     ModifierSystem.invalidate();
     gameState._bumpModCache();
     gameState.showToast(`${evt.icon} ${evt.displayName}!`);
@@ -2819,6 +3154,7 @@ const EventSystem = {
     if (!evt) return;
     const expiresAt = Date.now() + evt.duration * 1000;
     state.activeEvents.push({ codeName: evt.codeName, effect: evt.effect, expiresAt, displayName: evt.displayName, icon: evt.icon });
+    state.stats.eventsSeen = (state.stats.eventsSeen || 0) + 1;
     ModifierSystem.invalidate();
     gameState._bumpModCache();
     EventBus.emit(EVENTS.RANDOM_EVENT_START, { event: evt.codeName });
@@ -2906,7 +3242,7 @@ class GameLoop {
       elapsedSec, this.gameState.state, this.config, mods, fw.save.offlineCapSeconds
     );
 
-    this.gameState.applyOfflineGains(result.gains);
+    this.gameState.applyOfflineGains(result.gains, result.elapsed);
     return {
       ...result,
       elapsedSec,

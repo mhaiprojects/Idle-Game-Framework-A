@@ -10,8 +10,9 @@ export default {
   props: {
     tierName: String, currentTier: Number, prestigeCount: Number,
     lifetimePrestiges: Number, projectedGain: Number, canPrestige: Boolean,
-    canAscend: Boolean, nextTierName: String, prestigeRequirements: Array,
+    canAscend: Boolean, nextTierName: String,     prestigeRequirements: Array,
     ascensionRequirements: Array, prestigeLost: Array, prestigeKept: Array,
+    shardProgress: Object,
     ascendLost: Array, ascendKept: Array, featurePreview: Array,
     prestigeCurrency: Number, formatNumber: Function, maxTierReached: Boolean,
     difficulty: Object, primaryCurrencyLabel: String, prestigeBonuses: Array
@@ -41,6 +42,24 @@ export default {
             :requirements="prestigeRequirements"
             section-key="prestigeRequirements"
             :first="true" />
+          <CardSection v-if="shardProgress" section-key="prestigeShards">
+            <p class="section-text muted">{{ shardProgress.rulesExplanation }}</p>
+            <p class="section-text">Weighted run value: {{ formatNumber(shardProgress.currentRunValue) }} / {{ formatNumber(shardProgress.nextMilestone) }} toward next shard</p>
+            <ResourceProgressList :entries="[{
+              code: 'shard-overall',
+              label: 'Overall shard progress',
+              progress: shardProgress.overallProgress,
+              met: shardProgress.overallMet
+            }]" />
+            <ResourceProgressList :entries="(shardProgress.subRequirements || []).map(r => ({
+              code: r.code,
+              icon: r.icon,
+              name: r.name,
+              label: r.label,
+              progress: r.progress,
+              met: r.met
+            }))" />
+          </CardSection>
           <CardSection section-key="rewards">
             <p class="section-text">Gain: +{{ projectedGain }} Prestige Shards</p>
             <p class="section-text muted">Cost mult: {{ difficulty?.costMultiplier?.toFixed(2) }}× | {{ primaryCurrencyLabel }}: {{ difficulty?.primaryCurrencyMultiplier?.toFixed(2) }}×</p>
