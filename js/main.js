@@ -1122,6 +1122,8 @@
       listGames: () => AFK.ConfigManager.getAvailableGames().map(g => g.id),
       clearAllSaves: () => AFK.SaveManager.clearAll(),
       activeTab: () => game.state.ui.activeTab,
+      setSpeed: (mult) => game.setSpeed(mult),
+      runFullPlaythrough: (options) => window.AFK_FULL_PLAYTHROUGH.run(game, options),
       runSelfTest: async () => {
         const results = [];
         const assert = (name, fn) => {
