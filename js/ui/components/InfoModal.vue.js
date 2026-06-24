@@ -17,15 +17,15 @@ export default {
           <span v-if="info.icon" class="card-icon">{{ info.icon }}</span>
           <h3>{{ info.title }}</h3>
         </div>
+        <p v-if="info.description" class="card-description">{{ info.description }}</p>
+        <CardSection v-if="info.productionRows" section-key="production" :first="true">
+          <GeneratorProductionList :rows="info.productionRows" :format-number="formatNumber" />
+        </CardSection>
         <CardSection v-for="(section, i) in info.sections" :key="i"
           :section-key="section.sectionKey"
           :title="section.title || section.heading"
-          :first="i === 0">
-          <GeneratorProductionList
-            v-if="section.productionRows"
-            :rows="section.productionRows"
-            :format-number="formatNumber" />
-          <p v-else class="section-text">{{ section.body }}</p>
+          :first="!info.description && !info.productionRows && i === 0">
+          <p class="section-text">{{ section.body }}</p>
         </CardSection>
         <UnlockRequirementsList v-if="info.requirements?.length" :requirements="info.requirements" />
         <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">Close</button>

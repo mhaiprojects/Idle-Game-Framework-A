@@ -161,7 +161,14 @@ AFK_UI.GeneratorProductionList = {
           <span>{{ row.name }}</span>
         </span>
         <span class="production-stats">
-          <span>{{ formatNumber(row.rate) }}/s</span>
+          <span class="production-metric">
+            <span class="production-metric-label">{{ perUnitLabel }}</span>
+            <span>{{ formatNumber(row.unitRate) }}/s</span>
+          </span>
+          <span class="production-metric">
+            <span class="production-metric-label">{{ totalLabel }}</span>
+            <span>{{ formatNumber(row.totalRate) }}/s</span>
+          </span>
           <span class="efficiency-tag">{{ row.percent.toFixed(1) }}%</span>
         </span>
       </div>
@@ -171,6 +178,12 @@ AFK_UI.GeneratorProductionList = {
   computed: {
     emptyLabel() {
       return AFK?.ConfigManager?.getDefaultLabel?.('noProductionDefined') || '';
+    },
+    perUnitLabel() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('productionPerUnit') || 'Each';
+    },
+    totalLabel() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('productionTotal') || 'Total';
     }
   }
 };
@@ -416,15 +429,15 @@ AFK_UI.InfoModal = {
           <span v-if="info.icon" class="card-icon">{{ info.icon }}</span>
           <h3>{{ info.title }}</h3>
         </div>
+        <p v-if="info.description" class="card-description">{{ info.description }}</p>
+        <CardSection v-if="info.productionRows" section-key="production" :first="true">
+          <GeneratorProductionList :rows="info.productionRows" :format-number="formatNumber" />
+        </CardSection>
         <CardSection v-for="(section, i) in info.sections" :key="i"
           :section-key="section.sectionKey"
           :title="section.title || section.heading"
-          :first="i === 0">
-          <GeneratorProductionList
-            v-if="section.productionRows"
-            :rows="section.productionRows"
-            :format-number="formatNumber" />
-          <p v-else class="section-text">{{ section.body }}</p>
+          :first="!info.description && !info.productionRows && i === 0">
+          <p class="section-text">{{ section.body }}</p>
         </CardSection>
         <UnlockRequirementsList v-if="info.requirements?.length" :requirements="info.requirements" />
         <button class="btn btn-primary" style="margin-top:1rem" @click="$emit('close')">Close</button>

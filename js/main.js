@@ -408,8 +408,6 @@
             this.state, this.config, this.gameState.getMods(), codeName
           );
           const sections = [
-            section('description', gen.description || L('noDescription')),
-            { sectionKey: 'production', productionRows },
             section('owned', L('unitsOwned', { count: gs?.quantityPurchased || 0 }))
           ];
           const requirements = AFK.ConfigManager.getCombinedUnlockRequirements(
@@ -420,6 +418,8 @@
           return {
             title: gen.displayName,
             icon: gen.icon,
+            description: gen.description || L('noDescription'),
+            productionRows,
             sections,
             requirements: requirements.length ? requirements : undefined
           };

@@ -12,7 +12,14 @@ export default {
           <span>{{ row.name }}</span>
         </span>
         <span class="production-stats">
-          <span>{{ formatNumber(row.rate) }}/s</span>
+          <span class="production-metric">
+            <span class="production-metric-label">{{ perUnitLabel }}</span>
+            <span>{{ formatNumber(row.unitRate) }}/s</span>
+          </span>
+          <span class="production-metric">
+            <span class="production-metric-label">{{ totalLabel }}</span>
+            <span>{{ formatNumber(row.totalRate) }}/s</span>
+          </span>
           <span class="efficiency-tag">{{ row.percent.toFixed(1) }}%</span>
         </span>
       </div>
@@ -22,6 +29,12 @@ export default {
   computed: {
     emptyLabel() {
       return AFK?.ConfigManager?.getDefaultLabel?.('noProductionDefined') || '';
+    },
+    perUnitLabel() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('productionPerUnit') || 'Each';
+    },
+    totalLabel() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('productionTotal') || 'Total';
     }
   }
 };

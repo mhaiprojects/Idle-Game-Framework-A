@@ -1819,6 +1819,8 @@ window.AFK_CONFIG = {
       "noPassiveBonuses": "No passive bonuses.",
       "nothingEquipped": "Nothing equipped.",
       "noProductionDefined": "No production defined.",
+      "productionPerUnit": "Each",
+      "productionTotal": "Total",
       "maxLevelReached": "Max level reached",
       "commonRarity": "Common",
       "ascensionTierFallback": "Ascension {tier}",

@@ -192,33 +192,37 @@ export const FormulaEngine = {
 
     const gs = state.generators[genCode];
     const owned = gs?.quantityPurchased || 0;
-    const preview = owned <= 0;
     const difficulty = this.getEffectiveDifficulty(state, config);
     const primary = config.resources.resources.find(r => r.isPrimary);
 
     return (gen.produces || []).map(prod => {
-      const units = preview ? 1 : owned;
-      let base = prod.amount * units;
-      const genMods = mods.filter(m =>
-        m.target === 'global' ||
-        (m.target === 'generator' && m.targetId === gen.codeName) ||
-        (m.target === 'category' && m.targetId === gen.category)
-      );
-      const result = this.applyModifierStack(base, genMods);
-      let rate = result.value;
-      if (prod.resource === primary.codeName) {
-        rate *= difficulty.primaryCurrencyMultiplier;
-      }
+      const calcRateForProd = (units) => {
+        if (units <= 0) return 0;
+        let base = prod.amount * units;
+        const genMods = mods.filter(m =>
+          m.target === 'global' ||
+          (m.target === 'generator' && m.targetId === gen.codeName) ||
+          (m.target === 'category' && m.targetId === gen.category)
+        );
+        const result = this.applyModifierStack(base, genMods);
+        let rate = result.value;
+        if (prod.resource === primary.codeName) {
+          rate *= difficulty.primaryCurrencyMultiplier;
+        }
+        return rate;
+      };
 
+      const unitRate = calcRateForProd(1);
+      const totalRate = owned > 0 ? calcRateForProd(owned) : 0;
       const totalForResource = this.calculateResourceRate(state, config, mods, prod.resource);
-      const percent = preview || totalForResource <= 0 ? 0 : (rate / totalForResource) * 100;
+      const percent = totalForResource > 0 && totalRate > 0 ? (totalRate / totalForResource) * 100 : 0;
 
       return {
         resource: prod.resource,
-        rate,
+        unitRate,
+        totalRate,
         percent,
-        role: prod.role,
-        preview
+        role: prod.role
       };
     });
   },

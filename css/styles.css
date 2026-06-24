@@ -947,6 +947,23 @@ html, body {
   align-items: center;
   gap: 0.35rem;
   flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.production-metric {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+}
+
+.production-metric-label {
+  color: var(--color-muted);
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .hint-text { font-size: 0.75rem; color: var(--color-muted); margin-bottom: 0.5rem; }
