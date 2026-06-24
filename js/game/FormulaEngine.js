@@ -38,8 +38,9 @@ export const FormulaEngine = {
     }
 
     const prestigeCount = state.meta.ascension.tiers[tier]?.prestigeCount || 0;
-    const pdc = diff.prestigeDifficultyPerCount;
-    costMult *= (1 + pdc.costIncreasePerPrestige * prestigeCount);
+    const pdc = diff.prestigeDifficultyPerCount || {};
+    const costIncrease = pdc.costIncreasePerPrestige ?? 0;
+    costMult *= (1 + costIncrease * prestigeCount);
     const primaryDecrease = pdc.primaryCurrencyDecreasePerPrestige ?? pdc.ppsDecreasePerPrestige
       ?? this._calc(config, 'primaryCurrencyDecreaseFallback');
     primaryCurrencyMult *= (1 - primaryDecrease * prestigeCount);

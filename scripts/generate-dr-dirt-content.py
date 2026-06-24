@@ -341,6 +341,11 @@ def main():
             'tier2': {'costMultiplier': 2.5, 'primaryCurrencyMultiplier': 1.5, 'offlineEfficiency': 0.9},
             'tier3': {'costMultiplier': 4.0, 'primaryCurrencyMultiplier': 2.0, 'offlineEfficiency': 0.85},
             'tier4': {'costMultiplier': 6.0, 'primaryCurrencyMultiplier': 3.0, 'offlineEfficiency': 0.8}
+        },
+        'stacking': 'multiplicative',
+        'prestigeDifficultyPerCount': {
+            'costIncreasePerPrestige': 0.02,
+            'primaryCurrencyDecreasePerPrestige': 0.01
         }
     })
 

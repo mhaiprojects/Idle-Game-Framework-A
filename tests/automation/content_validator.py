@@ -86,6 +86,12 @@ def validate_content_pack(content_id: str) -> list[str]:
             if code not in gen_codes:
                 errors.append(f"{content_id}: generatorTiers[{tier}] references unknown {code}")
 
+    pdc = pack.get("difficulty", {}).get("prestigeDifficultyPerCount")
+    if not isinstance(pdc, dict):
+        errors.append(f"{content_id}: difficulty.prestigeDifficultyPerCount required")
+    elif "costIncreasePerPrestige" not in pdc:
+        errors.append(f"{content_id}: difficulty.prestigeDifficultyPerCount.costIncreasePerPrestige required")
+
     return errors
 
 

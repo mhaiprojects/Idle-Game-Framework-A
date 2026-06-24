@@ -4751,6 +4751,11 @@ window.AFK_CONTENT = {
           "primaryCurrencyMultiplier": 3.0,
           "offlineEfficiency": 0.8
         }
+      },
+      "stacking": "multiplicative",
+      "prestigeDifficultyPerCount": {
+        "costIncreasePerPrestige": 0.02,
+        "primaryCurrencyDecreasePerPrestige": 0.01
       }
     },
     "resources": {
