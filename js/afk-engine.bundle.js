@@ -576,7 +576,6 @@ let contentRegistry = null;
 let currentContentId = null;
 
 const CONTENT_SELECTION_KEY = 'afk_selected_content';
-const LEGACY_STORAGE_KEY = 'afk_ai_save';
 
 const CONFIG_FILES = [
   'framework', 'difficulty', 'resources', 'generators', 'upgrades',
@@ -706,6 +705,9 @@ const ConfigManager = {
   getAll() { return config; },
   getAvailableGames() { return contentRegistry?.games || []; },
   getGeneratorTiers() { return config?.framework?.generatorTiers || {}; },
+  getCurrentContentId() { return getCurrentContentId(); },
+  getCurrentManifest() { return getCurrentManifest(); },
+  getContentRegistry() { return getContentRegistry(); },
   getDefaults() { return config.defaults; },
   getDefaultIcon(key) {
     return config.defaults.icons[key] ?? config.defaults.icons.unknown;
