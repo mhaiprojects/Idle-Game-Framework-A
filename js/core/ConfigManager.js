@@ -391,7 +391,130 @@ export const ConfigManager = {
         detail = { icon: this.getDefaultIcon('unknown'), label: cond.type };
     }
 
-    return { ...detail, progress, met };
+    return { ...detail, progress, met, kind: this.getRequirementKind(cond), ...this.getRequirementMergeFields(cond) };
+  },
+
+  getRequirementKind(cond) {
+    if (!cond?.type) return 'unknown';
+    switch (cond.type) {
+      case 'achievement':
+        return `achievement:${cond.achievement}`;
+      case 'resourceHeld':
+        return `resourceHeld:${cond.resource}`;
+      case 'generatorOwned':
+        return `generatorOwned:${cond.generator}`;
+      case 'canAffordFirstPurchase':
+        return `canAffordFirstPurchase:${cond.generator || 'unknown'}`;
+      case 'upgradePurchased':
+        return `upgradePurchased:${cond.upgrade}`;
+      case 'ascensionTier':
+        return 'ascensionTier';
+      case 'prestigeCount':
+        return 'prestigeCount';
+      case 'lifetimeResourcesGenerated':
+        return `lifetimeResourcesGenerated:${cond.resource}`;
+      case 'lifetimeGeneratorPurchases':
+        return 'lifetimeGeneratorPurchases';
+      case 'lifetimePrestiges':
+        return 'lifetimePrestiges';
+      default:
+        return cond.type;
+    }
+  },
+
+  getRequirementMergeFields(cond) {
+    switch (cond?.type) {
+      case 'ascensionTier':
+        return { minTier: cond.minTier ?? this.getDefaultCalc('numericZero') };
+      case 'prestigeCount':
+      case 'lifetimePrestiges':
+      case 'lifetimeGeneratorPurchases':
+        return { requiredMin: cond.min ?? this.getDefaultCalc('numericZero') };
+      case 'resourceHeld':
+        return { resource: cond.resource, requiredMin: cond.amount ?? this.getDefaultCalc('numericZero') };
+      case 'generatorOwned':
+        return {
+          generator: cond.generator,
+          requiredMin: cond.quantity || cond.amount || this.getDefaultCalc('unlockConditionQuantity')
+        };
+      case 'upgradePurchased':
+        return {
+          upgrade: cond.upgrade,
+          requiredMin: cond.level || this.getDefaultCalc('unlockConditionLevel')
+        };
+      case 'lifetimeResourcesGenerated':
+        return { resource: cond.resource, requiredMin: cond.min ?? this.getDefaultCalc('numericZero') };
+      case 'achievement':
+        return { achievement: cond.achievement };
+      default:
+        return {};
+    }
+  },
+
+  mergeRequirementRows(a, b, state, formatNumber) {
+    const kind = a.kind || b.kind;
+    const fmt = formatNumber || (n => n);
+
+    if (kind === 'ascensionTier') {
+      const minTier = Math.max(a.minTier ?? 0, b.minTier ?? 0);
+      return this.formatUnlockConditionDetail({ type: 'ascensionTier', minTier }, state, fmt);
+    }
+    if (kind === 'lifetimePrestiges' || kind === 'prestigeCount' || kind === 'lifetimeGeneratorPurchases') {
+      const min = Math.max(a.requiredMin ?? 0, b.requiredMin ?? 0);
+      const type = kind;
+      return this.formatUnlockConditionDetail({ type, min }, state, fmt);
+    }
+    if (kind.startsWith('resourceHeld:')) {
+      const resource = a.resource || b.resource || kind.slice('resourceHeld:'.length);
+      const requiredMin = Math.max(a.requiredMin ?? 0, b.requiredMin ?? 0);
+      return this.formatUnlockConditionDetail(
+        { type: 'resourceHeld', resource, amount: requiredMin }, state, fmt
+      );
+    }
+    if (kind.startsWith('generatorOwned:')) {
+      const generator = a.generator || b.generator;
+      const requiredMin = Math.max(a.requiredMin ?? 0, b.requiredMin ?? 0);
+      return this.formatUnlockConditionDetail(
+        { type: 'generatorOwned', generator, quantity: requiredMin }, state, fmt
+      );
+    }
+    if (kind.startsWith('upgradePurchased:')) {
+      const upgrade = a.upgrade || b.upgrade;
+      const requiredMin = Math.max(a.requiredMin ?? 0, b.requiredMin ?? 0);
+      return this.formatUnlockConditionDetail(
+        { type: 'upgradePurchased', upgrade, level: requiredMin }, state, fmt
+      );
+    }
+    if (kind.startsWith('lifetimeResourcesGenerated:')) {
+      const resource = a.resource || b.resource;
+      const requiredMin = Math.max(a.requiredMin ?? 0, b.requiredMin ?? 0);
+      return this.formatUnlockConditionDetail(
+        { type: 'lifetimeResourcesGenerated', resource, min: requiredMin }, state, fmt
+      );
+    }
+
+    if (a.met && !b.met) return b;
+    if (!a.met && b.met) return a;
+    return (a.progress ?? 0) <= (b.progress ?? 0) ? a : b;
+  },
+
+  dedupeRequirementRows(rows, state, formatNumber) {
+    if (!rows?.length) return [];
+    const merged = [];
+    const indexByKind = new Map();
+
+    for (const row of rows) {
+      const kind = row.kind || row.label;
+      if (!indexByKind.has(kind)) {
+        indexByKind.set(kind, merged.length);
+        merged.push(row);
+        continue;
+      }
+      const idx = indexByKind.get(kind);
+      merged[idx] = this.mergeRequirementRows(merged[idx], row, state, formatNumber);
+    }
+
+    return merged;
   },
 
   flattenUnlockConditions(unlockConditions) {
@@ -544,7 +667,10 @@ export const ConfigManager = {
             required: fmt(required)
           }),
           progress,
-          met: held >= required
+          met: held >= required,
+          kind: `resourceHeld:${code}`,
+          resource: code,
+          requiredMin: required
         };
       });
       return rows.length ? rows : [{
@@ -558,8 +684,9 @@ export const ConfigManager = {
   },
 
   buildUnlockRequirements(unlockConditions, state, formatNumber) {
-    return this.flattenUnlockConditions(unlockConditions)
+    const rows = this.flattenUnlockConditions(unlockConditions)
       .flatMap(c => this.buildRequirementRows(c, state, formatNumber));
+    return this.dedupeRequirementRows(rows, state, formatNumber);
   },
 
   getCombinedUnlockRequirements({ unlockConditions, requiredFeature }, state, formatNumber) {
@@ -573,7 +700,7 @@ export const ConfigManager = {
       requirements.push(...this.buildUnlockRequirements(unlockConditions, state, formatNumber));
     }
 
-    return requirements;
+    return this.dedupeRequirementRows(requirements, state, formatNumber);
   },
 
   formatUnlockRequirementsText(requirements) {
@@ -613,18 +740,14 @@ export const ConfigManager = {
 
     const tierInfo = this.getFeatureUnlockTier(featureCode);
     if (tierInfo) {
-      const met = state.meta.ascension.currentTier >= tierInfo.tier;
+      const minTier = tierInfo.tier;
+      const met = state.meta.ascension.currentTier >= minTier;
       return {
         title: this.getFeatureDisplayName(featureCode),
         met,
-        requirements: [{
-          icon: this.getDefaultIcon('ascension'),
-          label: this.formatAscensionTierLabel(tierInfo.tier),
-          progress: tierInfo.tier > 0
-            ? Math.min(1, state.meta.ascension.currentTier / tierInfo.tier)
-            : (state.meta.ascension.currentTier >= tierInfo.tier ? 1 : 0),
-          met
-        }]
+        requirements: [
+          this.formatUnlockConditionDetail({ type: 'ascensionTier', minTier }, state, formatNumber)
+        ]
       };
     }
 
