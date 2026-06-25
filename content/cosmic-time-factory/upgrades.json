@@ -11,7 +11,7 @@
       "costScale": 2.5,
       "effect": { "type": "clickMultiplier", "multiplier": 2 },
       "unlockConditions": null,
-      "maxPurchases": 5
+      "maxLevel": 5
     },
     {
       "codeName": "globalBoost",
@@ -27,7 +27,7 @@
         "operator": "AND",
         "conditions": [{ "type": "generatorOwned", "generator": "timeWarden", "quantity": 5 }]
       },
-      "maxPurchases": 10
+      "maxLevel": 10
     },
     {
       "codeName": "stellarBoost",
@@ -43,7 +43,7 @@
         "operator": "AND",
         "conditions": [{ "type": "generatorOwned", "generator": "starForge", "quantity": 1 }]
       },
-      "maxPurchases": 5
+      "maxLevel": 5
     },
     {
       "codeName": "costReduction",
@@ -59,7 +59,7 @@
         "operator": "AND",
         "conditions": [{ "type": "generatorOwned", "generator": "nebulaHarvester", "quantity": 1 }]
       },
-      "maxPurchases": 8
+      "maxLevel": 8
     },
     {
       "codeName": "temporalBoost",
@@ -75,7 +75,7 @@
         "operator": "AND",
         "conditions": [{ "type": "generatorOwned", "generator": "temporalEngine", "quantity": 1 }]
       },
-      "maxPurchases": 3
+      "maxLevel": 3
     }
   ]
 }

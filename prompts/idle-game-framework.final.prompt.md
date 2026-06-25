@@ -1014,7 +1014,7 @@ unlock | flatResourceBonus
       "costResource": "timeShards",
       "effect": { "type": "clickMultiplier", "multiplier": 3 },
       "unlockConditions": null,
-      "maxPurchases": 5
+      "maxLevel": 5
     }
   ]
 }
@@ -1022,7 +1022,7 @@ unlock | flatResourceBonus
 
 ### Rules
 
-- One-time vs repeatable controlled by `maxPurchases` (null = unlimited)
+- One-time vs repeatable controlled by `maxLevel` (null = unlimited; legacy `maxPurchases` still supported)
 - Cost scaling for repeatable: `cost × costScale^purchaseCount` (both values in upgrade config)
 - Upgrades may also use `unlockConditions` (same schema as generators)
 - Purchasing recalculates modifiers and checks achievement/unlock conditions

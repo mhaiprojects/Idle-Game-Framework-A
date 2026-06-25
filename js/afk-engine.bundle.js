@@ -775,6 +775,19 @@ const ConfigManager = {
     return config.upgrades.upgrades.find(u => u.codeName === codeName);
   },
 
+  /** Standard upgrade cap field: maxLevel (legacy content may use maxPurchases). null = unlimited. */
+  getUpgradeMaxLevel(upgrade) {
+    if (!upgrade) return null;
+    if (upgrade.maxLevel != null) return upgrade.maxLevel;
+    if (upgrade.maxPurchases != null) return upgrade.maxPurchases;
+    return null;
+  },
+
+  isUpgradeMaxed(upgrade, purchaseCount = 0) {
+    const max = this.getUpgradeMaxLevel(upgrade);
+    return max != null && purchaseCount >= max;
+  },
+
   getItem(codeName) {
     return config.items.items.find(i => i.codeName === codeName);
   },
@@ -2311,7 +2324,7 @@ class GameState {
     if (!upgrade) return false;
 
     const us = this.data.upgrades[codeName];
-    if (upgrade.maxPurchases !== null && us.purchaseCount >= upgrade.maxPurchases) return false;
+    if (ConfigManager.isUpgradeMaxed(upgrade, us.purchaseCount)) return false;
 
     const unlock = FormulaEngine.evaluateUnlockConditions(upgrade.unlockConditions, this.data, this.config);
     if (!unlock.met) return false;

@@ -28,7 +28,7 @@ export default {
         <div class="card-header">
           <span class="card-icon">{{ upg.icon }}</span>
           <span class="card-name">{{ upg.displayName }}</span>
-          <span class="card-owned" v-if="upg.maxPurchases">{{ upg.purchaseCount }}/{{ upg.maxPurchases }}</span>
+          <span class="card-owned" v-if="upg.maxLevel != null">{{ upg.purchaseCount }}/{{ upg.maxLevel }}</span>
           <span class="card-owned" v-else>Lv {{ upg.purchaseCount }}</span>
           <span v-if="upg.codeName === bestUpgradeCode && upg.canBuy" class="efficiency-tag">Best</span>
           <MoreInfoButton @click="$emit('more-info', 'upgrade', upg.codeName)" />

@@ -145,7 +145,8 @@
         const cost = AFK.FormulaEngine.calculateUpgradeCost(u, us.purchaseCount, this.config);
         const fmt = (v) => this.formatNumber(v);
         const canAfford = (this.state.resources[u.costResource]?.quantity || 0) >= cost;
-        const maxed = u.maxPurchases !== null && us.purchaseCount >= u.maxPurchases;
+        const maxLevel = AFK.ConfigManager.getUpgradeMaxLevel(u);
+        const maxed = AFK.ConfigManager.isUpgradeMaxed(u, us.purchaseCount);
         let efficiency = 0;
         if (u.effect?.type === 'globalMultiplier' && cost > 0) {
           efficiency = (primaryRate * (u.effect.multiplier - 1)) / cost;
@@ -159,6 +160,7 @@
         }
         return {
           ...u,
+          maxLevel,
           purchaseCount: us.purchaseCount,
           cost,
           unlocked: unlock.met,
@@ -169,14 +171,14 @@
             { unlockConditions: u.unlockConditions }, this.state, (v) => this.formatNumber(v)
           ),
           costProgress: AFK.ConfigManager.buildCostProgressEntries({ [u.costResource]: cost }, this.state, fmt),
-          levelProgress: u.maxPurchases != null
+          levelProgress: maxLevel != null
             ? AFK.ConfigManager.buildProgressEntry({
               current: us.purchaseCount,
-              required: u.maxPurchases,
+              required: maxLevel,
               icon: u.icon,
               name: u.displayName,
               code: `${u.codeName}-level`,
-              label: `Level ${us.purchaseCount} / ${u.maxPurchases}`,
+              label: `Level ${us.purchaseCount} / ${maxLevel}`,
               formatNumber: (n) => String(n)
             })
             : null
@@ -452,7 +454,7 @@
               section('purchaseRequirements',
                 `${fmt(upg.cost)} ${res?.icon || ''} ${res?.displayName || upg.costResource} per level`),
               section('levelProgress',
-                `Level ${us?.purchaseCount || 0}${upg.maxPurchases != null ? ' / ' + upg.maxPurchases : ''}`)
+                `Level ${us?.purchaseCount || 0}${AFK.ConfigManager.getUpgradeMaxLevel(upg) != null ? ' / ' + AFK.ConfigManager.getUpgradeMaxLevel(upg) : ''}`)
             ],
             requirements: requirements.length ? requirements : undefined
           };

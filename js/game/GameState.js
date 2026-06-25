@@ -210,7 +210,7 @@ export class GameState {
     if (!upgrade) return false;
 
     const us = this.data.upgrades[codeName];
-    if (upgrade.maxPurchases !== null && us.purchaseCount >= upgrade.maxPurchases) return false;
+    if (ConfigManager.isUpgradeMaxed(upgrade, us.purchaseCount)) return false;
 
     const unlock = FormulaEngine.evaluateUnlockConditions(upgrade.unlockConditions, this.data, this.config);
     if (!unlock.met) return false;

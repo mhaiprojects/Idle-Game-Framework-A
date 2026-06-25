@@ -957,7 +957,7 @@ window.AFK_CONTENT = {
             "multiplier": 2
           },
           "unlockConditions": null,
-          "maxPurchases": 5
+          "maxLevel": 5
         },
         {
           "codeName": "globalBoost",
@@ -982,7 +982,7 @@ window.AFK_CONTENT = {
               }
             ]
           },
-          "maxPurchases": 10
+          "maxLevel": 10
         },
         {
           "codeName": "stellarBoost",
@@ -1008,7 +1008,7 @@ window.AFK_CONTENT = {
               }
             ]
           },
-          "maxPurchases": 5
+          "maxLevel": 5
         },
         {
           "codeName": "costReduction",
@@ -1033,7 +1033,7 @@ window.AFK_CONTENT = {
               }
             ]
           },
-          "maxPurchases": 8
+          "maxLevel": 8
         },
         {
           "codeName": "temporalBoost",
@@ -1059,7 +1059,7 @@ window.AFK_CONTENT = {
               }
             ]
           },
-          "maxPurchases": 3
+          "maxLevel": 3
         }
       ]
     },
