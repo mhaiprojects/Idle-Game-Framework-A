@@ -4675,24 +4675,34 @@ window.AFK_CONTENT = {
         "0": [
           "rockGatherer",
           "woodcutter",
-          "campfire"
+          "hunter",
+          "farmer",
+          "charcoalKiln",
+          "campfire",
+          "mason",
+          "prospector"
         ],
         "1": [
           "copperMine",
-          "bronzeSmelter",
+          "copperSmelter",
+          "tinSmelter",
           "bronzeForge"
         ],
         "2": [
           "ironMine",
+          "ironSmelter",
           "blacksmith",
           "tradeCaravan"
         ],
         "3": [
           "coalMine",
-          "steelMill",
-          "powerPlant"
+          "steelForge",
+          "foodPackagingFactory",
+          "powerPlant",
+          "broadcastTower"
         ],
         "4": [
+          "internetHub",
           "dataCenter",
           "mlLaboratory",
           "agiCore"
@@ -4702,13 +4712,21 @@ window.AFK_CONTENT = {
         "0": [
           "stone",
           "wood",
-          "food"
+          "game",
+          "plants",
+          "food",
+          "brick",
+          "charcoal"
         ],
         "1": [
+          "copperOre",
+          "tinOre",
           "copper",
+          "tin",
           "bronze"
         ],
         "2": [
+          "ironOre",
           "iron",
           "gold"
         ],
@@ -4763,7 +4781,7 @@ window.AFK_CONTENT = {
         {
           "codeName": "stone",
           "displayName": "Stone",
-          "description": "Raw stone \u2014 the foundation of early civilization.",
+          "description": "Raw stone \u2014 gather from outcrops; process into brick at a Mason.",
           "icon": "\ud83e\udea8",
           "color": "#78716c",
           "isPrimary": true,
@@ -4779,36 +4797,108 @@ window.AFK_CONTENT = {
           "baseValue": 0
         },
         {
+          "codeName": "game",
+          "displayName": "Game",
+          "description": "Raw meat from hunting \u2014 cook at a Campfire for food.",
+          "icon": "\ud83e\udd8c",
+          "color": "#854d0e",
+          "isPrimary": false,
+          "baseValue": 0
+        },
+        {
+          "codeName": "plants",
+          "displayName": "Plants",
+          "description": "Cultivated crops from farming.",
+          "icon": "\ud83c\udf3e",
+          "color": "#65a30d",
+          "isPrimary": false,
+          "baseValue": 0
+        },
+        {
           "codeName": "food",
           "displayName": "Food",
-          "description": "Sustenance for your growing tribe.",
+          "description": "Cooked sustenance for your growing tribe.",
           "icon": "\ud83c\udf56",
           "color": "#ea580c",
           "isPrimary": false,
           "baseValue": 0
         },
         {
+          "codeName": "brick",
+          "displayName": "Brick",
+          "description": "Fired stone blocks for sturdy structures.",
+          "icon": "\ud83e\uddf1",
+          "color": "#b91c1c",
+          "isPrimary": false,
+          "baseValue": 0
+        },
+        {
+          "codeName": "charcoal",
+          "displayName": "Charcoal",
+          "description": "Processed fuel from wood \u2014 powers smelters and forges.",
+          "icon": "\u2b1b",
+          "color": "#292524",
+          "isPrimary": false,
+          "baseValue": 0
+        },
+        {
+          "codeName": "copperOre",
+          "displayName": "Copper Ore",
+          "description": "Raw copper-bearing rock \u2014 smelt into copper ingots.",
+          "icon": "\ud83d\udfe4",
+          "color": "#92400e",
+          "isPrimary": false,
+          "baseValue": 0
+        },
+        {
+          "codeName": "tinOre",
+          "displayName": "Tin Ore",
+          "description": "Raw tin-bearing rock \u2014 smelt into tin ingots.",
+          "icon": "\u2b1c",
+          "color": "#a8a29e",
+          "isPrimary": false,
+          "baseValue": 0
+        },
+        {
           "codeName": "copper",
           "displayName": "Copper",
-          "description": "First metal of the Bronze Age.",
-          "icon": "\ud83d\udfe4",
+          "description": "Refined copper ingot \u2014 alloy with tin for bronze.",
+          "icon": "\ud83d\udfeb",
           "color": "#b45309",
+          "isPrimary": false,
+          "baseValue": 0
+        },
+        {
+          "codeName": "tin",
+          "displayName": "Tin",
+          "description": "Refined tin ingot \u2014 alloy with copper for bronze.",
+          "icon": "\ud83d\udd29",
+          "color": "#78716c",
           "isPrimary": false,
           "baseValue": 0
         },
         {
           "codeName": "bronze",
           "displayName": "Bronze",
-          "description": "Alloy that unlocks advanced tools.",
+          "description": "Copper-tin alloy that unlocks advanced tools.",
           "icon": "\ud83d\udd36",
           "color": "#d97706",
           "isPrimary": false,
           "baseValue": 0
         },
         {
+          "codeName": "ironOre",
+          "displayName": "Iron Ore",
+          "description": "Raw iron-bearing rock \u2014 smelt into iron ingots.",
+          "icon": "\ud83e\udea8",
+          "color": "#57534e",
+          "isPrimary": false,
+          "baseValue": 0
+        },
+        {
           "codeName": "iron",
           "displayName": "Iron",
-          "description": "Strong metal of empires and war.",
+          "description": "Refined iron ingot \u2014 steel, tools, and trade goods.",
           "icon": "\u2699\ufe0f",
           "color": "#52525b",
           "isPrimary": false,
@@ -4817,7 +4907,7 @@ window.AFK_CONTENT = {
         {
           "codeName": "gold",
           "displayName": "Gold",
-          "description": "Wealth that fuels trade routes.",
+          "description": "Wealth from crafted goods and trade routes.",
           "icon": "\ud83e\ude99",
           "color": "#eab308",
           "isPrimary": false,
@@ -4826,7 +4916,7 @@ window.AFK_CONTENT = {
         {
           "codeName": "coal",
           "displayName": "Coal",
-          "description": "Fuel of the industrial revolution.",
+          "description": "Mineral fuel of the industrial revolution.",
           "icon": "\u2b1b",
           "color": "#1c1917",
           "isPrimary": false,
@@ -4835,8 +4925,8 @@ window.AFK_CONTENT = {
         {
           "codeName": "steel",
           "displayName": "Steel",
-          "description": "Industrial backbone of modern industry.",
-          "icon": "\ud83d\udd29",
+          "description": "Iron-carbon alloy \u2014 backbone of industry.",
+          "icon": "\ud83d\udd27",
           "color": "#64748b",
           "isPrimary": false,
           "baseValue": 0
@@ -4862,7 +4952,7 @@ window.AFK_CONTENT = {
         {
           "codeName": "compute",
           "displayName": "Compute",
-          "description": "Processing power for machine learning.",
+          "description": "Processing power for training models on datasets.",
           "icon": "\ud83d\udda5\ufe0f",
           "color": "#8b5cf6",
           "isPrimary": false,
@@ -4885,11 +4975,12 @@ window.AFK_CONTENT = {
           "codeName": "rockGatherer",
           "displayName": "Rock Gatherer",
           "icon": "\ud83e\udea8",
-          "category": "stone",
+          "category": "primitive",
           "description": "Collects stone from riverbeds and outcrops.",
           "unlockConditions": null,
           "baseCost": 10,
           "costMultiplier": 1.15,
+          "requiredFeature": "generators:tier0",
           "costResources": [
             {
               "resource": "stone",
@@ -4914,7 +5005,7 @@ window.AFK_CONTENT = {
           "codeName": "woodcutter",
           "displayName": "Woodcutter",
           "icon": "\ud83e\ude93",
-          "category": "stone",
+          "category": "primitive",
           "description": "Fells trees and prepares timber.",
           "unlockConditions": {
             "operator": "AND",
@@ -4933,6 +5024,7 @@ window.AFK_CONTENT = {
           },
           "baseCost": 50,
           "costMultiplier": 1.15,
+          "requiredFeature": "generators:tier0",
           "costResources": [
             {
               "resource": "stone",
@@ -4950,10 +5042,169 @@ window.AFK_CONTENT = {
               "role": "primary"
             },
             {
-              "resource": "food",
+              "resource": "game",
               "amount": 0.4,
               "role": "unlockGate",
+              "forGenerator": "hunter"
+            }
+          ]
+        },
+        {
+          "codeName": "hunter",
+          "displayName": "Hunter",
+          "icon": "\ud83c\udff9",
+          "category": "primitive",
+          "description": "Hunts game with stone-tipped spears bound with wood.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "woodcutter",
+                "quantity": 1
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "wood",
+                "amount": 15
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "stone",
+                "amount": 20
+              }
+            ]
+          },
+          "baseCost": 120,
+          "costMultiplier": 1.15,
+          "requiredFeature": "generators:tier0",
+          "costResources": [
+            {
+              "resource": "stone",
+              "multiplier": 1
+            },
+            {
+              "resource": "wood",
+              "multiplier": 1
+            }
+          ],
+          "produces": [
+            {
+              "resource": "game",
+              "amount": 1,
+              "role": "primary"
+            },
+            {
+              "resource": "plants",
+              "amount": 0.2,
+              "role": "unlockGate",
+              "forGenerator": "farmer"
+            }
+          ]
+        },
+        {
+          "codeName": "farmer",
+          "displayName": "Farmer",
+          "icon": "\ud83c\udf3e",
+          "category": "primitive",
+          "description": "Cultivates crops to supplement hunting.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "hunter",
+                "quantity": 1
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "game",
+                "amount": 10
+              }
+            ]
+          },
+          "baseCost": 300,
+          "costMultiplier": 1.16,
+          "requiredFeature": "generators:tier0",
+          "costResources": [
+            {
+              "resource": "stone",
+              "multiplier": 1
+            },
+            {
+              "resource": "wood",
+              "multiplier": 1
+            },
+            {
+              "resource": "game",
+              "multiplier": 1
+            }
+          ],
+          "produces": [
+            {
+              "resource": "plants",
+              "amount": 1,
+              "role": "primary"
+            },
+            {
+              "resource": "food",
+              "amount": 0.15,
+              "role": "unlockGate",
               "forGenerator": "campfire"
+            }
+          ]
+        },
+        {
+          "codeName": "charcoalKiln",
+          "displayName": "Charcoal Kiln",
+          "icon": "\u26ab",
+          "category": "primitive",
+          "description": "Slow-burns wood into charcoal fuel for smelters and forges.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "woodcutter",
+                "quantity": 2
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "wood",
+                "amount": 30
+              }
+            ]
+          },
+          "baseCost": 150,
+          "costMultiplier": 1.16,
+          "requiredFeature": "generators:tier0",
+          "costResources": [
+            {
+              "resource": "stone",
+              "multiplier": 1
+            },
+            {
+              "resource": "wood",
+              "multiplier": 2
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "wood",
+              "amount": 0.5
+            }
+          ],
+          "produces": [
+            {
+              "resource": "charcoal",
+              "amount": 0.8,
+              "role": "primary"
+            },
+            {
+              "resource": "charcoal",
+              "amount": 0.05,
+              "role": "bonus",
+              "forGenerator": "copperSmelter"
             }
           ]
         },
@@ -4961,25 +5212,26 @@ window.AFK_CONTENT = {
           "codeName": "campfire",
           "displayName": "Campfire",
           "icon": "\ud83d\udd25",
-          "category": "stone",
-          "description": "Cooks food and preserves tribal knowledge.",
+          "category": "primitive",
+          "description": "Cooks raw game into food using wood fuel.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
               {
                 "type": "generatorOwned",
-                "generator": "woodcutter",
-                "quantity": 3
+                "generator": "hunter",
+                "quantity": 2
               },
               {
                 "type": "resourceHeld",
-                "resource": "food",
+                "resource": "game",
                 "amount": 25
               }
             ]
           },
-          "baseCost": 200,
+          "baseCost": 400,
           "costMultiplier": 1.16,
+          "requiredFeature": "generators:tier0",
           "costResources": [
             {
               "resource": "stone",
@@ -4990,8 +5242,18 @@ window.AFK_CONTENT = {
               "multiplier": 2
             },
             {
-              "resource": "food",
+              "resource": "game",
               "multiplier": 1
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "wood",
+              "amount": 0.3
+            },
+            {
+              "resource": "game",
+              "amount": 0.4
             }
           ],
           "produces": [
@@ -5001,15 +5263,132 @@ window.AFK_CONTENT = {
               "role": "primary"
             },
             {
+              "resource": "copperOre",
+              "amount": 0.02,
+              "role": "unlockGate",
+              "forGenerator": "prospector"
+            }
+          ]
+        },
+        {
+          "codeName": "mason",
+          "displayName": "Mason",
+          "icon": "\ud83e\uddf1",
+          "category": "primitive",
+          "description": "Shapes stone into sturdy bricks for permanent structures.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "resourceHeld",
+                "resource": "stone",
+                "amount": 50
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "wood",
+                "amount": 40
+              }
+            ]
+          },
+          "baseCost": 250,
+          "costMultiplier": 1.16,
+          "requiredFeature": "generators:tier0",
+          "costResources": [
+            {
+              "resource": "stone",
+              "multiplier": 2
+            },
+            {
+              "resource": "wood",
+              "multiplier": 1
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "stone",
+              "amount": 0.5
+            }
+          ],
+          "produces": [
+            {
+              "resource": "brick",
+              "amount": 0.6,
+              "role": "primary"
+            },
+            {
+              "resource": "brick",
+              "amount": 0.1,
+              "role": "unlockGate",
+              "forGenerator": "prospector"
+            }
+          ]
+        },
+        {
+          "codeName": "prospector",
+          "displayName": "Prospector",
+          "icon": "\ud83d\udd0d",
+          "category": "primitive",
+          "description": "Surveys terrain for useful stone and metal traces.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "mason",
+                "quantity": 1
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "brick",
+                "amount": 10
+              }
+            ]
+          },
+          "baseCost": 800,
+          "costMultiplier": 1.17,
+          "requiredFeature": "generators:tier0",
+          "costResources": [
+            {
+              "resource": "stone",
+              "multiplier": 1
+            },
+            {
+              "resource": "brick",
+              "multiplier": 1
+            },
+            {
+              "resource": "wood",
+              "multiplier": 1
+            }
+          ],
+          "produces": [
+            {
               "resource": "stone",
               "amount": 0.5,
               "role": "bonus"
             },
             {
-              "resource": "copper",
-              "amount": 0.05,
+              "resource": "copperOre",
+              "amount": 0.08,
               "role": "unlockGate",
               "forGenerator": "copperMine"
+            },
+            {
+              "resource": "tinOre",
+              "amount": 0.06,
+              "role": "unlockGate",
+              "forGenerator": "copperMine"
+            },
+            {
+              "resource": "ironOre",
+              "amount": 0.02,
+              "role": "bonus",
+              "requiresUnlock": {
+                "type": "characterUnlocked",
+                "character": "bronzeSmith"
+              },
+              "forGenerator": "ironMine"
             }
           ]
         },
@@ -5018,7 +5397,7 @@ window.AFK_CONTENT = {
           "displayName": "Copper Mine",
           "icon": "\u26cf\ufe0f",
           "category": "bronze",
-          "description": "Extracts copper ore from shallow deposits.",
+          "description": "Extracts copper ore from shallow deposits after the Bronze Age dawn.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
@@ -5028,7 +5407,7 @@ window.AFK_CONTENT = {
               },
               {
                 "type": "resourceHeld",
-                "resource": "copper",
+                "resource": "copperOre",
                 "amount": 20
               }
             ]
@@ -5046,47 +5425,176 @@ window.AFK_CONTENT = {
               "multiplier": 2
             },
             {
-              "resource": "copper",
+              "resource": "copperOre",
               "multiplier": 1
             }
           ],
           "produces": [
             {
-              "resource": "copper",
+              "resource": "copperOre",
               "amount": 1,
               "role": "primary"
             },
             {
-              "resource": "bronze",
-              "amount": 0.1,
+              "resource": "copperOre",
+              "amount": 0.2,
               "role": "unlockGate",
-              "forGenerator": "bronzeSmelter"
+              "forGenerator": "copperSmelter"
             }
           ]
         },
         {
-          "codeName": "bronzeSmelter",
-          "displayName": "Bronze Smelter",
+          "codeName": "copperSmelter",
+          "displayName": "Copper Smelter",
           "icon": "\ud83c\udffa",
           "category": "bronze",
-          "description": "Smelts copper into bronze alloy.",
+          "description": "Smelts copper ore into copper ingots using charcoal fuel.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
               {
                 "type": "generatorOwned",
                 "generator": "copperMine",
-                "quantity": 2
+                "quantity": 1
               },
               {
                 "type": "resourceHeld",
-                "resource": "bronze",
+                "resource": "copperOre",
+                "amount": 30
+              }
+            ]
+          },
+          "baseCost": 5000,
+          "costMultiplier": 1.18,
+          "requiredFeature": "generators:tier1",
+          "costResources": [
+            {
+              "resource": "stone",
+              "multiplier": 1
+            },
+            {
+              "resource": "copperOre",
+              "multiplier": 3
+            },
+            {
+              "resource": "charcoal",
+              "multiplier": 1
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "copperOre",
+              "amount": 0.8
+            },
+            {
+              "resource": "charcoal",
+              "amount": 0.3
+            }
+          ],
+          "produces": [
+            {
+              "resource": "copper",
+              "amount": 0.7,
+              "role": "primary"
+            },
+            {
+              "resource": "copper",
+              "amount": 0.1,
+              "role": "bonus",
+              "forGenerator": "bronzeForge"
+            }
+          ]
+        },
+        {
+          "codeName": "tinSmelter",
+          "displayName": "Tin Smelter",
+          "icon": "\u2699\ufe0f",
+          "category": "bronze",
+          "description": "Smelts tin ore into tin ingots using charcoal fuel.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "copperSmelter",
+                "quantity": 1
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "tinOre",
+                "amount": 25
+              }
+            ]
+          },
+          "baseCost": 6000,
+          "costMultiplier": 1.18,
+          "requiredFeature": "generators:tier1",
+          "costResources": [
+            {
+              "resource": "stone",
+              "multiplier": 1
+            },
+            {
+              "resource": "tinOre",
+              "multiplier": 3
+            },
+            {
+              "resource": "charcoal",
+              "multiplier": 1
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "tinOre",
+              "amount": 0.8
+            },
+            {
+              "resource": "charcoal",
+              "amount": 0.3
+            }
+          ],
+          "produces": [
+            {
+              "resource": "tin",
+              "amount": 0.7,
+              "role": "primary"
+            },
+            {
+              "resource": "tin",
+              "amount": 0.1,
+              "role": "unlockGate",
+              "forGenerator": "bronzeForge"
+            }
+          ]
+        },
+        {
+          "codeName": "bronzeForge",
+          "displayName": "Bronze Forge",
+          "icon": "\ud83d\udd28",
+          "category": "bronze",
+          "description": "Alloys copper and tin ingots into bronze using charcoal fuel.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "tinSmelter",
+                "quantity": 1
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "copper",
+                "amount": 20
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "tin",
                 "amount": 15
               }
             ]
           },
-          "baseCost": 8000,
-          "costMultiplier": 1.18,
+          "baseCost": 15000,
+          "costMultiplier": 1.19,
           "requiredFeature": "generators:tier1",
           "costResources": [
             {
@@ -5098,74 +5606,33 @@ window.AFK_CONTENT = {
               "multiplier": 3
             },
             {
-              "resource": "bronze",
+              "resource": "tin",
+              "multiplier": 2
+            },
+            {
+              "resource": "charcoal",
               "multiplier": 1
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "copper",
+              "amount": 0.5
+            },
+            {
+              "resource": "tin",
+              "amount": 0.3
+            },
+            {
+              "resource": "charcoal",
+              "amount": 0.2
             }
           ],
           "produces": [
             {
               "resource": "bronze",
-              "amount": 1.2,
+              "amount": 0.8,
               "role": "primary"
-            },
-            {
-              "resource": "iron",
-              "amount": 0.08,
-              "role": "unlockGate",
-              "forGenerator": "ironMine"
-            }
-          ]
-        },
-        {
-          "codeName": "bronzeForge",
-          "displayName": "Bronze Forge",
-          "icon": "\ud83d\udd28",
-          "category": "bronze",
-          "description": "Forges bronze tools and weapons.",
-          "unlockConditions": {
-            "operator": "AND",
-            "conditions": [
-              {
-                "type": "generatorOwned",
-                "generator": "bronzeSmelter",
-                "quantity": 3
-              },
-              {
-                "type": "resourceHeld",
-                "resource": "bronze",
-                "amount": 100
-              }
-            ]
-          },
-          "baseCost": 40000,
-          "costMultiplier": 1.19,
-          "requiredFeature": "generators:tier1",
-          "costResources": [
-            {
-              "resource": "stone",
-              "multiplier": 1
-            },
-            {
-              "resource": "bronze",
-              "multiplier": 5
-            }
-          ],
-          "produces": [
-            {
-              "resource": "bronze",
-              "amount": 3,
-              "role": "primary"
-            },
-            {
-              "resource": "stone",
-              "amount": 2,
-              "role": "bonus"
-            },
-            {
-              "resource": "iron",
-              "amount": 0.15,
-              "role": "unlockGate",
-              "forGenerator": "ironMine"
             }
           ]
         },
@@ -5174,7 +5641,7 @@ window.AFK_CONTENT = {
           "displayName": "Iron Mine",
           "icon": "\ud83c\udfd4\ufe0f",
           "category": "medieval",
-          "description": "Deep mines yield iron for empires.",
+          "description": "Deep mines yield iron ore for the medieval era.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
@@ -5184,7 +5651,7 @@ window.AFK_CONTENT = {
               },
               {
                 "type": "resourceHeld",
-                "resource": "iron",
+                "resource": "ironOre",
                 "amount": 50
               }
             ]
@@ -5202,21 +5669,83 @@ window.AFK_CONTENT = {
               "multiplier": 3
             },
             {
-              "resource": "iron",
+              "resource": "ironOre",
               "multiplier": 1
             }
           ],
           "produces": [
             {
-              "resource": "iron",
+              "resource": "ironOre",
               "amount": 1,
+              "role": "primary"
+            },
+            {
+              "resource": "iron",
+              "amount": 0.05,
+              "role": "unlockGate",
+              "forGenerator": "ironSmelter"
+            }
+          ]
+        },
+        {
+          "codeName": "ironSmelter",
+          "displayName": "Iron Smelter",
+          "icon": "\ud83d\udd25",
+          "category": "medieval",
+          "description": "Smelts iron ore into iron ingots using charcoal fuel.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "ironMine",
+                "quantity": 1
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "ironOre",
+                "amount": 100
+              }
+            ]
+          },
+          "baseCost": 800000,
+          "costMultiplier": 1.21,
+          "requiredFeature": "generators:tier2",
+          "costResources": [
+            {
+              "resource": "stone",
+              "multiplier": 1
+            },
+            {
+              "resource": "ironOre",
+              "multiplier": 4
+            },
+            {
+              "resource": "charcoal",
+              "multiplier": 2
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "ironOre",
+              "amount": 0.9
+            },
+            {
+              "resource": "charcoal",
+              "amount": 0.4
+            }
+          ],
+          "produces": [
+            {
+              "resource": "iron",
+              "amount": 0.8,
               "role": "primary"
             },
             {
               "resource": "gold",
               "amount": 0.05,
               "role": "unlockGate",
-              "forGenerator": "tradeCaravan"
+              "forGenerator": "blacksmith"
             }
           ]
         },
@@ -5225,23 +5754,23 @@ window.AFK_CONTENT = {
           "displayName": "Blacksmith",
           "icon": "\u2692\ufe0f",
           "category": "medieval",
-          "description": "Shapes iron into tools of conquest.",
+          "description": "Forges iron tools and sells them for gold.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
               {
                 "type": "generatorOwned",
-                "generator": "ironMine",
-                "quantity": 3
+                "generator": "ironSmelter",
+                "quantity": 2
               },
               {
                 "type": "resourceHeld",
                 "resource": "iron",
-                "amount": 200
+                "amount": 100
               }
             ]
           },
-          "baseCost": 1000000,
+          "baseCost": 2000000,
           "costMultiplier": 1.21,
           "requiredFeature": "generators:tier2",
           "costResources": [
@@ -5252,12 +5781,26 @@ window.AFK_CONTENT = {
             {
               "resource": "iron",
               "multiplier": 5
+            },
+            {
+              "resource": "charcoal",
+              "multiplier": 2
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "iron",
+              "amount": 0.6
+            },
+            {
+              "resource": "charcoal",
+              "amount": 0.3
             }
           ],
           "produces": [
             {
-              "resource": "iron",
-              "amount": 2.5,
+              "resource": "gold",
+              "amount": 0.4,
               "role": "primary"
             },
             {
@@ -5265,12 +5808,6 @@ window.AFK_CONTENT = {
               "amount": 0.1,
               "role": "unlockGate",
               "forGenerator": "tradeCaravan"
-            },
-            {
-              "resource": "coal",
-              "amount": 0.02,
-              "role": "unlockGate",
-              "forGenerator": "coalMine"
             }
           ]
         },
@@ -5279,7 +5816,7 @@ window.AFK_CONTENT = {
           "displayName": "Trade Caravan",
           "icon": "\ud83d\udc2a",
           "category": "medieval",
-          "description": "Routes goods and gold across kingdoms.",
+          "description": "Routes surplus food and wood across kingdoms for gold.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
@@ -5291,21 +5828,21 @@ window.AFK_CONTENT = {
               {
                 "type": "resourceHeld",
                 "resource": "gold",
-                "amount": 100
+                "amount": 50
               }
             ]
           },
-          "baseCost": 5000000,
+          "baseCost": 8000000,
           "costMultiplier": 1.22,
           "requiredFeature": "generators:tier2",
           "costResources": [
             {
-              "resource": "stone",
-              "multiplier": 1
+              "resource": "food",
+              "multiplier": 3
             },
             {
-              "resource": "iron",
-              "multiplier": 10
+              "resource": "wood",
+              "multiplier": 2
             },
             {
               "resource": "gold",
@@ -5315,22 +5852,22 @@ window.AFK_CONTENT = {
           "produces": [
             {
               "resource": "gold",
-              "amount": 1,
+              "amount": 1.2,
               "role": "primary"
             },
             {
-              "resource": "stone",
-              "amount": 10,
-              "role": "bonus"
-            },
-            {
-              "resource": "iron",
+              "resource": "food",
               "amount": 0.5,
               "role": "bonus"
             },
             {
+              "resource": "wood",
+              "amount": 0.3,
+              "role": "bonus"
+            },
+            {
               "resource": "coal",
-              "amount": 0.1,
+              "amount": 0.08,
               "role": "unlockGate",
               "forGenerator": "coalMine"
             }
@@ -5341,18 +5878,13 @@ window.AFK_CONTENT = {
           "displayName": "Coal Mine",
           "icon": "\u2b1b",
           "category": "industrial",
-          "description": "Fuels the furnaces of industry.",
+          "description": "Extracts mineral coal to fuel the industrial revolution.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
               {
                 "type": "ascensionTier",
                 "minTier": 3
-              },
-              {
-                "type": "resourceHeld",
-                "resource": "coal",
-                "amount": 100
               }
             ]
           },
@@ -5369,8 +5901,8 @@ window.AFK_CONTENT = {
               "multiplier": 5
             },
             {
-              "resource": "coal",
-              "multiplier": 1
+              "resource": "gold",
+              "multiplier": 2
             }
           ],
           "produces": [
@@ -5381,40 +5913,40 @@ window.AFK_CONTENT = {
             },
             {
               "resource": "steel",
-              "amount": 0.1,
+              "amount": 0.08,
               "role": "unlockGate",
-              "forGenerator": "steelMill"
+              "forGenerator": "steelForge"
             }
           ]
         },
         {
-          "codeName": "steelMill",
-          "displayName": "Steel Mill",
+          "codeName": "steelForge",
+          "displayName": "Steel Forge",
           "icon": "\ud83c\udfed",
           "category": "industrial",
-          "description": "Mass-produces steel from coal and iron.",
+          "description": "Forges steel from iron ingots and coal.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
               {
                 "type": "generatorOwned",
                 "generator": "coalMine",
-                "quantity": 3
+                "quantity": 2
               },
               {
                 "type": "resourceHeld",
-                "resource": "steel",
-                "amount": 50
+                "resource": "coal",
+                "amount": 100
               }
             ]
           },
-          "baseCost": 500000000,
+          "baseCost": 400000000,
           "costMultiplier": 1.24,
           "requiredFeature": "generators:tier3",
           "costResources": [
             {
-              "resource": "stone",
-              "multiplier": 1
+              "resource": "iron",
+              "multiplier": 5
             },
             {
               "resource": "coal",
@@ -5425,15 +5957,91 @@ window.AFK_CONTENT = {
               "multiplier": 1
             }
           ],
+          "consumes": [
+            {
+              "resource": "iron",
+              "amount": 0.7
+            },
+            {
+              "resource": "coal",
+              "amount": 0.5
+            }
+          ],
           "produces": [
             {
               "resource": "steel",
-              "amount": 1,
+              "amount": 0.9,
+              "role": "primary"
+            },
+            {
+              "resource": "food",
+              "amount": 0.2,
+              "role": "unlockGate",
+              "forGenerator": "foodPackagingFactory"
+            }
+          ]
+        },
+        {
+          "codeName": "foodPackagingFactory",
+          "displayName": "Food Packaging Factory",
+          "icon": "\ud83c\udf7d\ufe0f",
+          "category": "industrial",
+          "description": "Mass-packages game, plants, and steel into shelf-stable food.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "steelForge",
+                "quantity": 2
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "steel",
+                "amount": 50
+              }
+            ]
+          },
+          "baseCost": 800000000,
+          "costMultiplier": 1.24,
+          "requiredFeature": "generators:tier3",
+          "costResources": [
+            {
+              "resource": "steel",
+              "multiplier": 3
+            },
+            {
+              "resource": "game",
+              "multiplier": 2
+            },
+            {
+              "resource": "plants",
+              "multiplier": 2
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "steel",
+              "amount": 0.2
+            },
+            {
+              "resource": "game",
+              "amount": 0.4
+            },
+            {
+              "resource": "plants",
+              "amount": 0.4
+            }
+          ],
+          "produces": [
+            {
+              "resource": "food",
+              "amount": 5,
               "role": "primary"
             },
             {
               "resource": "electricity",
-              "amount": 0.05,
+              "amount": 0.03,
               "role": "unlockGate",
               "forGenerator": "powerPlant"
             }
@@ -5444,19 +6052,19 @@ window.AFK_CONTENT = {
           "displayName": "Power Plant",
           "icon": "\u26a1",
           "category": "industrial",
-          "description": "Generates electricity for the modern age.",
+          "description": "Burns coal and steel infrastructure to generate electricity.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
               {
                 "type": "generatorOwned",
-                "generator": "steelMill",
+                "generator": "steelForge",
                 "quantity": 2
               },
               {
                 "type": "resourceHeld",
-                "resource": "electricity",
-                "amount": 100
+                "resource": "coal",
+                "amount": 200
               }
             ]
           },
@@ -5465,16 +6073,22 @@ window.AFK_CONTENT = {
           "requiredFeature": "generators:tier3",
           "costResources": [
             {
-              "resource": "stone",
-              "multiplier": 1
+              "resource": "coal",
+              "multiplier": 10
             },
             {
               "resource": "steel",
               "multiplier": 10
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "coal",
+              "amount": 0.8
             },
             {
-              "resource": "electricity",
-              "multiplier": 1
+              "resource": "steel",
+              "amount": 0.1
             }
           ],
           "produces": [
@@ -5484,13 +6098,124 @@ window.AFK_CONTENT = {
               "role": "primary"
             },
             {
-              "resource": "stone",
-              "amount": 100,
-              "role": "bonus"
+              "resource": "data",
+              "amount": 0.02,
+              "role": "unlockGate",
+              "forGenerator": "broadcastTower"
+            }
+          ]
+        },
+        {
+          "codeName": "broadcastTower",
+          "displayName": "Broadcast Tower",
+          "icon": "\ud83d\udcfa",
+          "category": "industrial",
+          "description": "Transmits analog signals that seed the digital information age.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "powerPlant",
+                "quantity": 2
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "electricity",
+                "amount": 100
+              }
+            ]
+          },
+          "baseCost": 20000000000,
+          "costMultiplier": 1.25,
+          "requiredFeature": "generators:tier3",
+          "costResources": [
+            {
+              "resource": "steel",
+              "multiplier": 5
+            },
+            {
+              "resource": "electricity",
+              "multiplier": 3
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "electricity",
+              "amount": 0.5
+            }
+          ],
+          "produces": [
+            {
+              "resource": "data",
+              "amount": 0.3,
+              "role": "primary"
             },
             {
               "resource": "data",
-              "amount": 0.02,
+              "amount": 0.1,
+              "role": "unlockGate",
+              "forGenerator": "internetHub"
+            }
+          ]
+        },
+        {
+          "codeName": "internetHub",
+          "displayName": "Internet Hub",
+          "icon": "\ud83c\udf10",
+          "category": "digital",
+          "description": "Routes packets between networks, amplifying the flow of data.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "generatorOwned",
+                "generator": "broadcastTower",
+                "quantity": 1
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "data",
+                "amount": 25
+              }
+            ]
+          },
+          "baseCost": 80000000000,
+          "costMultiplier": 1.26,
+          "requiredFeature": "generators:tier3",
+          "costResources": [
+            {
+              "resource": "steel",
+              "multiplier": 3
+            },
+            {
+              "resource": "electricity",
+              "multiplier": 5
+            },
+            {
+              "resource": "data",
+              "multiplier": 1
+            }
+          ],
+          "consumes": [
+            {
+              "resource": "electricity",
+              "amount": 0.4
+            },
+            {
+              "resource": "data",
+              "amount": 0.1
+            }
+          ],
+          "produces": [
+            {
+              "resource": "data",
+              "amount": 0.8,
+              "role": "primary"
+            },
+            {
+              "resource": "data",
+              "amount": 0.2,
               "role": "unlockGate",
               "forGenerator": "dataCenter"
             }
@@ -5501,7 +6226,7 @@ window.AFK_CONTENT = {
           "displayName": "Data Center",
           "icon": "\ud83d\udda5\ufe0f",
           "category": "digital",
-          "description": "Stores and processes the world's information.",
+          "description": "Stores and processes the world's information at scale.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
@@ -5516,13 +6241,13 @@ window.AFK_CONTENT = {
               }
             ]
           },
-          "baseCost": 50000000000,
+          "baseCost": 500000000000,
           "costMultiplier": 1.26,
           "requiredFeature": "generators:tier4",
           "costResources": [
             {
-              "resource": "stone",
-              "multiplier": 1
+              "resource": "steel",
+              "multiplier": 5
             },
             {
               "resource": "electricity",
@@ -5536,7 +6261,7 @@ window.AFK_CONTENT = {
           "produces": [
             {
               "resource": "data",
-              "amount": 1,
+              "amount": 1.5,
               "role": "primary"
             },
             {
@@ -5552,7 +6277,7 @@ window.AFK_CONTENT = {
           "displayName": "ML Laboratory",
           "icon": "\ud83e\uddea",
           "category": "digital",
-          "description": "Trains models on vast datasets.",
+          "description": "Trains models on vast datasets to produce compute.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
@@ -5573,8 +6298,8 @@ window.AFK_CONTENT = {
           "requiredFeature": "generators:tier4",
           "costResources": [
             {
-              "resource": "stone",
-              "multiplier": 1
+              "resource": "steel",
+              "multiplier": 3
             },
             {
               "resource": "data",
@@ -5625,12 +6350,12 @@ window.AFK_CONTENT = {
           "requiredFeature": "generators:tier4",
           "costResources": [
             {
-              "resource": "stone",
-              "multiplier": 1
-            },
-            {
               "resource": "compute",
               "multiplier": 20
+            },
+            {
+              "resource": "data",
+              "multiplier": 10
             },
             {
               "resource": "intelligence",
@@ -5639,18 +6364,13 @@ window.AFK_CONTENT = {
           ],
           "produces": [
             {
-              "resource": "stone",
-              "amount": 10000,
+              "resource": "intelligence",
+              "amount": 5,
               "role": "primary"
             },
             {
-              "resource": "intelligence",
-              "amount": 5,
-              "role": "bonus"
-            },
-            {
               "resource": "compute",
-              "amount": 10,
+              "amount": 0.5,
               "role": "bonus"
             }
           ]
@@ -5662,14 +6382,16 @@ window.AFK_CONTENT = {
         {
           "codeName": "sharperTools",
           "displayName": "Sharper Tools",
-          "description": "+10% stone production per level",
+          "description": "+10% primitive generator output per level",
           "icon": "\ud83e\ude93",
           "cost": 50,
           "costResource": "stone",
           "costScale": 1.12,
           "maxLevel": 25,
+          "category": "primitive",
           "effect": {
-            "type": "globalMultiplier",
+            "type": "categoryMultiplier",
+            "category": "primitive",
             "multiplier": 1.1
           }
         },
@@ -5700,6 +6422,82 @@ window.AFK_CONTENT = {
             "type": "costReduction",
             "multiplier": 0.97
           }
+        },
+        {
+          "codeName": "bronzeCasting",
+          "displayName": "Bronze Casting",
+          "description": "+8% bronze generator output per level",
+          "icon": "\ud83d\udd36",
+          "cost": 500,
+          "costResource": "bronze",
+          "costScale": 1.2,
+          "maxLevel": 15,
+          "unlockConditions": {
+            "type": "ascensionTier",
+            "minTier": 1
+          },
+          "effect": {
+            "type": "categoryMultiplier",
+            "category": "bronze",
+            "multiplier": 1.08
+          }
+        },
+        {
+          "codeName": "feudalLogistics",
+          "displayName": "Feudal Logistics",
+          "description": "+8% medieval generator output per level",
+          "icon": "\ud83c\udff0",
+          "cost": 5000,
+          "costResource": "iron",
+          "costScale": 1.22,
+          "maxLevel": 12,
+          "unlockConditions": {
+            "type": "ascensionTier",
+            "minTier": 2
+          },
+          "effect": {
+            "type": "categoryMultiplier",
+            "category": "medieval",
+            "multiplier": 1.08
+          }
+        },
+        {
+          "codeName": "industrialEfficiency",
+          "displayName": "Industrial Efficiency",
+          "description": "+10% industrial generator output per level",
+          "icon": "\ud83c\udfed",
+          "cost": 50000,
+          "costResource": "steel",
+          "costScale": 1.25,
+          "maxLevel": 12,
+          "unlockConditions": {
+            "type": "ascensionTier",
+            "minTier": 3
+          },
+          "effect": {
+            "type": "categoryMultiplier",
+            "category": "industrial",
+            "multiplier": 1.1
+          }
+        },
+        {
+          "codeName": "neuralOptimization",
+          "displayName": "Neural Optimization",
+          "description": "+10% digital generator output per level",
+          "icon": "\ud83e\udde0",
+          "cost": 500000,
+          "costResource": "compute",
+          "costScale": 1.28,
+          "maxLevel": 10,
+          "unlockConditions": {
+            "type": "ascensionTier",
+            "minTier": 4
+          },
+          "effect": {
+            "type": "categoryMultiplier",
+            "category": "digital",
+            "multiplier": 1.1
+          }
         }
       ]
     },
@@ -5707,7 +6505,7 @@ window.AFK_CONTENT = {
       "items": [
         {
           "codeName": "rationPack",
-          "displayName": "Ration Pack",
+          "displayName": "Travel Rations",
           "description": "Boosts production briefly.",
           "icon": "\ud83c\udf71",
           "type": "consumable",
@@ -5719,12 +6517,42 @@ window.AFK_CONTENT = {
           }
         },
         {
+          "codeName": "driedMeat",
+          "displayName": "Dried Meat",
+          "description": "Boosts hunting yields briefly.",
+          "icon": "\ud83e\udd69",
+          "type": "consumable",
+          "actionBarEligible": true,
+          "requiredFeature": "generators:tier0",
+          "effect": {
+            "type": "resourceMultiplier",
+            "resource": "game",
+            "multiplier": 1.5,
+            "durationSeconds": 25
+          }
+        },
+        {
+          "codeName": "herbalTea",
+          "displayName": "Herbal Tea",
+          "description": "Calming brew \u2014 cheaper purchases briefly.",
+          "icon": "\ud83c\udf75",
+          "type": "consumable",
+          "actionBarEligible": true,
+          "requiredFeature": "generators:tier0",
+          "effect": {
+            "type": "costReduction",
+            "multiplier": 0.9,
+            "durationSeconds": 30
+          }
+        },
+        {
           "codeName": "energyDrink",
           "displayName": "Energy Drink",
-          "description": "Boosts manual labor (taps).",
+          "description": "Industrial stimulant \u2014 boosts manual labor (taps).",
           "icon": "\ud83e\udd64",
           "type": "consumable",
           "actionBarEligible": true,
+          "requiredFeature": "generators:tier3",
           "effect": {
             "type": "clickMultiplier",
             "multiplier": 2.5,
@@ -5743,6 +6571,70 @@ window.AFK_CONTENT = {
           "effect": {
             "type": "globalMultiplier",
             "multiplier": 1.05
+          }
+        },
+        {
+          "codeName": "bronzeAxe",
+          "displayName": "Bronze Axe",
+          "description": "Bronze-age woodcutting tool.",
+          "icon": "\ud83e\ude93",
+          "type": "equipable",
+          "slot": "tool",
+          "rarity": "uncommon",
+          "stackable": true,
+          "requiredFeature": "generators:tier1",
+          "effect": {
+            "type": "categoryMultiplier",
+            "category": "primitive",
+            "multiplier": 1.08
+          }
+        },
+        {
+          "codeName": "ironSword",
+          "displayName": "Iron Sword",
+          "description": "Medieval weapon of trade and war.",
+          "icon": "\u2694\ufe0f",
+          "type": "equipable",
+          "slot": "mainHand",
+          "rarity": "rare",
+          "stackable": true,
+          "requiredFeature": "generators:tier2",
+          "effect": {
+            "type": "categoryMultiplier",
+            "category": "medieval",
+            "multiplier": 1.1
+          }
+        },
+        {
+          "codeName": "steamWrench",
+          "displayName": "Steam Wrench",
+          "description": "Industrial maintenance gear.",
+          "icon": "\ud83d\udd27",
+          "type": "equipable",
+          "slot": "tool",
+          "rarity": "rare",
+          "stackable": true,
+          "requiredFeature": "generators:tier3",
+          "effect": {
+            "type": "categoryMultiplier",
+            "category": "industrial",
+            "multiplier": 1.12
+          }
+        },
+        {
+          "codeName": "neuralHeadset",
+          "displayName": "Neural Headset",
+          "description": "Digital interface for the AI age.",
+          "icon": "\ud83c\udfa7",
+          "type": "equipable",
+          "slot": "head",
+          "rarity": "epic",
+          "stackable": true,
+          "requiredFeature": "generators:tier4",
+          "effect": {
+            "type": "categoryMultiplier",
+            "category": "digital",
+            "multiplier": 1.15
           }
         },
         {
@@ -5809,6 +6701,22 @@ window.AFK_CONTENT = {
           }
         },
         {
+          "codeName": "gutenbergPress",
+          "displayName": "Gutenberg Press",
+          "description": "+8% medieval generators",
+          "icon": "\ud83d\udda8\ufe0f",
+          "rarity": "uncommon",
+          "effect": {
+            "type": "categoryMultiplier",
+            "category": "medieval",
+            "multiplier": 1.08
+          },
+          "dropRequirements": {
+            "generator": "tradeCaravan",
+            "minAscensionTier": 2
+          }
+        },
+        {
           "codeName": "ironCrown",
           "displayName": "Iron Crown",
           "description": "+12% global production",
@@ -5842,7 +6750,7 @@ window.AFK_CONTENT = {
         {
           "codeName": "neuralChip",
           "displayName": "Neural Chip",
-          "description": "Double tap power",
+          "description": "Silicon synapse \u2014 double tap power",
           "icon": "\ud83d\udcbe",
           "rarity": "legendary",
           "effect": {
@@ -5883,7 +6791,7 @@ window.AFK_CONTENT = {
           "codeName": "bronzeSmith",
           "displayName": "Bronze Smith",
           "icon": "\ud83d\udd28",
-          "description": "Master of the bronze age forge.",
+          "description": "Better tools let your prospectors spot iron.",
           "unlockConditions": {
             "operator": "AND",
             "conditions": [
@@ -5895,6 +6803,11 @@ window.AFK_CONTENT = {
                 "type": "generatorOwned",
                 "generator": "bronzeForge",
                 "quantity": 1
+              },
+              {
+                "type": "resourceHeld",
+                "resource": "bronze",
+                "amount": 50
               }
             ]
           },
@@ -5917,6 +6830,43 @@ window.AFK_CONTENT = {
           }
         },
         {
+          "codeName": "knightCommander",
+          "displayName": "Knight Commander",
+          "icon": "\u2694\ufe0f",
+          "description": "Commands the forge and the realm's defenses.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "ascensionTier",
+                "minTier": 2
+              },
+              {
+                "type": "generatorOwned",
+                "generator": "blacksmith",
+                "quantity": 1
+              }
+            ]
+          },
+          "baseStats": {
+            "categoryMultiplier": {
+              "category": "medieval",
+              "multiplier": 1.12
+            }
+          },
+          "activeSkill": {
+            "codeName": "warCry",
+            "displayName": "War Cry",
+            "icon": "\ud83d\udee1\ufe0f",
+            "cooldownSeconds": 55,
+            "effect": {
+              "type": "globalMultiplier",
+              "multiplier": 2.2,
+              "durationSeconds": 14
+            }
+          }
+        },
+        {
           "codeName": "industrialist",
           "displayName": "Industrialist",
           "icon": "\ud83c\udfed",
@@ -5929,8 +6879,9 @@ window.AFK_CONTENT = {
                 "minTier": 3
               },
               {
-                "type": "lifetimePrestiges",
-                "min": 3
+                "type": "generatorOwned",
+                "generator": "steelForge",
+                "quantity": 1
               }
             ]
           },
@@ -5949,6 +6900,44 @@ window.AFK_CONTENT = {
               "type": "globalMultiplier",
               "multiplier": 3,
               "durationSeconds": 10
+            }
+          }
+        },
+        {
+          "codeName": "aiArchitect",
+          "displayName": "AI Architect",
+          "icon": "\ud83e\udd16",
+          "description": "Designs the minds of tomorrow.",
+          "unlockConditions": {
+            "operator": "AND",
+            "conditions": [
+              {
+                "type": "ascensionTier",
+                "minTier": 4
+              },
+              {
+                "type": "generatorOwned",
+                "generator": "mlLaboratory",
+                "quantity": 1
+              }
+            ]
+          },
+          "baseStats": {
+            "categoryMultiplier": {
+              "category": "digital",
+              "multiplier": 1.18
+            }
+          },
+          "activeSkill": {
+            "codeName": "modelBreakthrough",
+            "displayName": "Model Breakthrough",
+            "icon": "\ud83e\udde0",
+            "cooldownSeconds": 65,
+            "effect": {
+              "type": "resourceMultiplier",
+              "resource": "compute",
+              "multiplier": 3,
+              "durationSeconds": 12
             }
           }
         }
@@ -5992,6 +6981,82 @@ window.AFK_CONTENT = {
           }
         },
         {
+          "codeName": "firstHunter",
+          "displayName": "First Hunt",
+          "description": "Own a Hunter.",
+          "icon": "\ud83c\udff9",
+          "requirement": {
+            "type": "generatorOwned",
+            "generator": "hunter",
+            "amount": 1
+          },
+          "reward": {
+            "type": "modifierUnlock",
+            "effect": {
+              "type": "resourceMultiplier",
+              "resource": "game",
+              "multiplier": 1.05
+            }
+          }
+        },
+        {
+          "codeName": "firstBronze",
+          "displayName": "First Bronze Ingot",
+          "description": "Generate 1,000 bronze lifetime.",
+          "icon": "\ud83d\udd36",
+          "requirement": {
+            "type": "resourceEarned",
+            "resource": "bronze",
+            "amount": 1000
+          },
+          "reward": {
+            "type": "modifierUnlock",
+            "effect": {
+              "type": "categoryMultiplier",
+              "category": "bronze",
+              "multiplier": 1.05
+            }
+          }
+        },
+        {
+          "codeName": "firstKilowatt",
+          "displayName": "First Kilowatt",
+          "description": "Generate 1,000 electricity lifetime.",
+          "icon": "\u26a1",
+          "requirement": {
+            "type": "resourceEarned",
+            "resource": "electricity",
+            "amount": 1000
+          },
+          "reward": {
+            "type": "modifierUnlock",
+            "effect": {
+              "type": "resourceMultiplier",
+              "resource": "electricity",
+              "multiplier": 1.08
+            }
+          }
+        },
+        {
+          "codeName": "firstModel",
+          "displayName": "First Model Trained",
+          "description": "Generate 500 compute lifetime.",
+          "icon": "\ud83d\udda5\ufe0f",
+          "requirement": {
+            "type": "resourceEarned",
+            "resource": "compute",
+            "amount": 500
+          },
+          "reward": {
+            "type": "modifierUnlock",
+            "effect": {
+              "type": "resourceMultiplier",
+              "resource": "compute",
+              "multiplier": 1.1
+            }
+          }
+        },
+        {
           "codeName": "firstPrestige",
           "displayName": "New Beginning",
           "description": "Perform your first prestige.",
@@ -6012,7 +7077,7 @@ window.AFK_CONTENT = {
           "codeName": "bronzeAge",
           "displayName": "Bronze Dawn",
           "description": "Ascend to the Bronze Age.",
-          "icon": "\ud83d\udd36",
+          "icon": "\ud83e\udd49",
           "requirement": {
             "type": "ascensionTier",
             "minTier": 1
@@ -6089,7 +7154,78 @@ window.AFK_CONTENT = {
           "minInterval": 120,
           "maxInterval": 300,
           "effect": {
-            "type": "globalMultiplier",
+            "type": "resourceMultiplier",
+            "resource": "food",
+            "multiplier": 2
+          }
+        },
+        {
+          "codeName": "huntSeason",
+          "displayName": "Hunt Season",
+          "icon": "\ud83c\udff9",
+          "description": "Double raw game from hunting.",
+          "duration": 25,
+          "minInterval": 150,
+          "maxInterval": 350,
+          "effect": {
+            "type": "resourceMultiplier",
+            "resource": "game",
+            "multiplier": 2
+          }
+        },
+        {
+          "codeName": "meteorShower",
+          "displayName": "Meteor Shower",
+          "icon": "\u2604\ufe0f",
+          "description": "Bonus copper ore from the skies.",
+          "duration": 20,
+          "minInterval": 200,
+          "maxInterval": 450,
+          "effect": {
+            "type": "resourceMultiplier",
+            "resource": "copperOre",
+            "multiplier": 2
+          }
+        },
+        {
+          "codeName": "royalFeast",
+          "displayName": "Royal Feast",
+          "icon": "\ud83d\udc51",
+          "description": "Trade and tribute boost gold.",
+          "duration": 30,
+          "minInterval": 180,
+          "maxInterval": 400,
+          "effect": {
+            "type": "resourceMultiplier",
+            "resource": "gold",
+            "multiplier": 2
+          }
+        },
+        {
+          "codeName": "factoryShift",
+          "displayName": "Factory Shift",
+          "icon": "\ud83c\udfed",
+          "description": "Industrial surge \u2014 double steel output.",
+          "duration": 25,
+          "minInterval": 160,
+          "maxInterval": 380,
+          "effect": {
+            "type": "resourceMultiplier",
+            "resource": "steel",
+            "multiplier": 2
+          }
+        },
+        {
+          "codeName": "modelBreakthrough",
+          "displayName": "Model Breakthrough",
+          "icon": "\ud83e\udde0",
+          "description": "Double compute from training runs.",
+          "duration": 20,
+          "minInterval": 200,
+          "maxInterval": 500,
+          "effect": {
+            "type": "resourceMultiplier",
+            "resource": "compute",
             "multiplier": 2
           }
         },
@@ -6209,6 +7345,14 @@ window.AFK_CONTENT = {
               }
             },
             {
+              "artifact": "gutenbergPress",
+              "weight": 22,
+              "dropRequirements": {
+                "generator": "tradeCaravan",
+                "minAscensionTier": 2
+              }
+            },
+            {
               "artifact": "ironCrown",
               "weight": 20,
               "dropRequirements": {
@@ -6273,6 +7417,7 @@ window.AFK_CONTENT = {
           "tier": 0,
           "codeName": "stoneAge",
           "displayName": "Stone Age",
+          "icon": "\ud83e\udea8",
           "isStartingTier": true,
           "difficultyProfile": "tier0",
           "unlockedFeatures": [
@@ -6283,13 +7428,21 @@ window.AFK_CONTENT = {
             "tab:settings",
             "tab:ascension",
             "generators:tier0",
-            "prestigeShop:tier0"
+            "prestigeShop:tier0",
+            "resources:stone",
+            "resources:wood",
+            "resources:game",
+            "resources:plants",
+            "resources:food",
+            "resources:brick",
+            "resources:charcoal"
           ]
         },
         {
           "tier": 1,
           "codeName": "bronzeAge",
           "displayName": "Bronze Age",
+          "icon": "\ud83e\udd49",
           "difficultyProfile": "tier1",
           "ascensionRequirements": {
             "operator": "AND",
@@ -6304,6 +7457,16 @@ window.AFK_CONTENT = {
                 "min": 100000
               },
               {
+                "type": "lifetimeResourcesGenerated",
+                "resource": "copperOre",
+                "min": 100
+              },
+              {
+                "type": "lifetimeResourcesGenerated",
+                "resource": "tinOre",
+                "min": 100
+              },
+              {
                 "type": "lifetimeGeneratorPurchases",
                 "min": 50
               }
@@ -6315,7 +7478,11 @@ window.AFK_CONTENT = {
             "keepGeneratorUnlocks": true,
             "clearUpgrades": false,
             "clearInventory": false,
-            "clearArtifacts": false
+            "clearArtifacts": false,
+            "grantResources": {
+              "copperOre": 1000,
+              "tinOre": 1000
+            }
           },
           "unlockedFeatures": [
             "systems:drops",
@@ -6323,7 +7490,10 @@ window.AFK_CONTENT = {
             "tab:inventory",
             "generators:tier1",
             "prestigeShop:tier1",
+            "resources:copperOre",
+            "resources:tinOre",
             "resources:copper",
+            "resources:tin",
             "resources:bronze"
           ]
         },
@@ -6331,6 +7501,7 @@ window.AFK_CONTENT = {
           "tier": 2,
           "codeName": "medieval",
           "displayName": "Medieval Era",
+          "icon": "\ud83c\udff0",
           "difficultyProfile": "tier2",
           "ascensionRequirements": {
             "operator": "AND",
@@ -6341,8 +7512,13 @@ window.AFK_CONTENT = {
               },
               {
                 "type": "lifetimeResourcesGenerated",
-                "resource": "stone",
-                "min": 10000000
+                "resource": "bronze",
+                "min": 50000
+              },
+              {
+                "type": "lifetimeResourcesGenerated",
+                "resource": "ironOre",
+                "min": 1000
               },
               {
                 "type": "lifetimeGeneratorPurchases",
@@ -6362,6 +7538,7 @@ window.AFK_CONTENT = {
             "tab:artifacts",
             "generators:tier2",
             "prestigeShop:tier2",
+            "resources:ironOre",
             "resources:iron",
             "resources:gold"
           ]
@@ -6370,6 +7547,7 @@ window.AFK_CONTENT = {
           "tier": 3,
           "codeName": "industrial",
           "displayName": "Industrial Age",
+          "icon": "\ud83c\udfed",
           "difficultyProfile": "tier3",
           "ascensionRequirements": {
             "operator": "AND",
@@ -6380,8 +7558,8 @@ window.AFK_CONTENT = {
               },
               {
                 "type": "lifetimeResourcesGenerated",
-                "resource": "stone",
-                "min": 1000000000
+                "resource": "steel",
+                "min": 100000
               },
               {
                 "type": "lifetimeGeneratorPurchases",
@@ -6410,6 +7588,7 @@ window.AFK_CONTENT = {
           "tier": 4,
           "codeName": "aiAge",
           "displayName": "AI Age",
+          "icon": "\ud83e\udde0",
           "difficultyProfile": "tier4",
           "ascensionRequirements": {
             "operator": "AND",
@@ -6420,8 +7599,8 @@ window.AFK_CONTENT = {
               },
               {
                 "type": "lifetimeResourcesGenerated",
-                "resource": "stone",
-                "min": 1000000000000
+                "resource": "intelligence",
+                "min": 10000
               },
               {
                 "type": "lifetimeGeneratorPurchases",
@@ -6459,8 +7638,14 @@ window.AFK_CONTENT = {
           "stone": 1,
           "wood": 0.4,
           "food": 0.3,
+          "game": 0.25,
+          "plants": 0.25,
+          "copperOre": 0.45,
+          "tinOre": 0.45,
           "copper": 0.5,
+          "tin": 0.5,
           "bronze": 0.6,
+          "ironOre": 0.55,
           "iron": 0.7,
           "gold": 0.8,
           "coal": 0.9,
@@ -6507,7 +7692,7 @@ window.AFK_CONTENT = {
         ],
         "3": [
           {
-            "resource": "coal",
+            "resource": "electricity",
             "amount": 150
           }
         ],
@@ -6649,7 +7834,7 @@ window.AFK_CONTENT = {
             "category": "medieval",
             "multiplierPerLevel": 0.06
           },
-          "requiredFeature": "prestigeShop:tier1"
+          "requiredFeature": "prestigeShop:tier2"
         },
         {
           "codeName": "writtenWord",
@@ -6662,7 +7847,7 @@ window.AFK_CONTENT = {
             "type": "globalMultiplier",
             "multiplierPerLevel": 0.04
           },
-          "requiredFeature": "prestigeShop:tier1"
+          "requiredFeature": "prestigeShop:tier2"
         },
         {
           "codeName": "assemblyLine",
@@ -6675,7 +7860,7 @@ window.AFK_CONTENT = {
             "type": "costReduction",
             "multiplierPerLevel": 0.02
           },
-          "requiredFeature": "prestigeShop:tier2"
+          "requiredFeature": "prestigeShop:tier3"
         },
         {
           "codeName": "steelWorks",

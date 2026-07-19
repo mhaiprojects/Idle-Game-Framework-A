@@ -85,6 +85,13 @@
         || AFK.ConfigManager.getDefaultIcon('primaryCurrency');
     }
 
+    getAscensionTierIcon() {
+      void this._reactiveTick;
+      const tier = this.state.meta.ascension.currentTier;
+      const tierDef = this.config.ascension.ascensionTiers.find(t => t.tier === tier);
+      return tierDef?.icon || '🪨';
+    }
+
     getGeneratorDisplay() {
       void this._reactiveTick;
       const fmt = (v) => this.formatNumber(v);

@@ -3,44 +3,84 @@
     {
       "codeName": "sharperTools",
       "displayName": "Sharper Tools",
-      "description": "+10% stone production per level",
-      "icon": "\ud83e\ude93",
+      "description": "+10% primitive generator output per level",
+      "icon": "🪓",
       "cost": 50,
       "costResource": "stone",
       "costScale": 1.12,
       "maxLevel": 25,
-      "effect": {
-        "type": "globalMultiplier",
-        "multiplier": 1.1
-      }
+      "category": "primitive",
+      "effect": { "type": "categoryMultiplier", "category": "primitive", "multiplier": 1.1 }
     },
     {
       "codeName": "betterForaging",
       "displayName": "Better Foraging",
       "description": "+15% tap power per level",
-      "icon": "\ud83d\udc46",
+      "icon": "👆",
       "cost": 100,
       "costResource": "stone",
       "costScale": 1.15,
       "maxLevel": 20,
-      "effect": {
-        "type": "clickMultiplier",
-        "multiplier": 1.15
-      }
+      "effect": { "type": "clickMultiplier", "multiplier": 1.15 }
     },
     {
       "codeName": "efficientLabor",
       "displayName": "Efficient Labor",
       "description": "-3% costs per level",
-      "icon": "\ud83d\udcc9",
+      "icon": "📉",
       "cost": 200,
       "costResource": "stone",
       "costScale": 1.18,
       "maxLevel": 15,
-      "effect": {
-        "type": "costReduction",
-        "multiplier": 0.97
-      }
+      "effect": { "type": "costReduction", "multiplier": 0.97 }
+    },
+    {
+      "codeName": "bronzeCasting",
+      "displayName": "Bronze Casting",
+      "description": "+8% bronze generator output per level",
+      "icon": "🔶",
+      "cost": 500,
+      "costResource": "bronze",
+      "costScale": 1.2,
+      "maxLevel": 15,
+      "unlockConditions": { "type": "ascensionTier", "minTier": 1 },
+      "effect": { "type": "categoryMultiplier", "category": "bronze", "multiplier": 1.08 }
+    },
+    {
+      "codeName": "feudalLogistics",
+      "displayName": "Feudal Logistics",
+      "description": "+8% medieval generator output per level",
+      "icon": "🏰",
+      "cost": 5000,
+      "costResource": "iron",
+      "costScale": 1.22,
+      "maxLevel": 12,
+      "unlockConditions": { "type": "ascensionTier", "minTier": 2 },
+      "effect": { "type": "categoryMultiplier", "category": "medieval", "multiplier": 1.08 }
+    },
+    {
+      "codeName": "industrialEfficiency",
+      "displayName": "Industrial Efficiency",
+      "description": "+10% industrial generator output per level",
+      "icon": "🏭",
+      "cost": 50000,
+      "costResource": "steel",
+      "costScale": 1.25,
+      "maxLevel": 12,
+      "unlockConditions": { "type": "ascensionTier", "minTier": 3 },
+      "effect": { "type": "categoryMultiplier", "category": "industrial", "multiplier": 1.1 }
+    },
+    {
+      "codeName": "neuralOptimization",
+      "displayName": "Neural Optimization",
+      "description": "+10% digital generator output per level",
+      "icon": "🧠",
+      "cost": 500000,
+      "costResource": "compute",
+      "costScale": 1.28,
+      "maxLevel": 10,
+      "unlockConditions": { "type": "ascensionTier", "minTier": 4 },
+      "effect": { "type": "categoryMultiplier", "category": "digital", "multiplier": 1.1 }
     }
   ]
 }

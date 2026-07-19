@@ -3,95 +3,109 @@
     {
       "codeName": "tribalElder",
       "displayName": "Tribal Elder",
-      "icon": "\ud83e\uddd3",
+      "icon": "🧓",
       "description": "Wise leader of the stone-age tribe.",
       "unlockConditions": null,
-      "baseStats": {
-        "globalMultiplier": 1.05
-      },
+      "baseStats": { "globalMultiplier": 1.05 },
       "activeSkill": {
         "codeName": "rally",
         "displayName": "Rally",
-        "icon": "\ud83d\udce3",
+        "icon": "📣",
         "cooldownSeconds": 45,
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 2,
-          "durationSeconds": 15
-        }
+        "effect": { "type": "globalMultiplier", "multiplier": 2, "durationSeconds": 15 }
       }
     },
     {
       "codeName": "bronzeSmith",
       "displayName": "Bronze Smith",
-      "icon": "\ud83d\udd28",
-      "description": "Master of the bronze age forge.",
+      "icon": "🔨",
+      "description": "Better tools let your prospectors spot iron.",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          {
-            "type": "ascensionTier",
-            "minTier": 1
-          },
-          {
-            "type": "generatorOwned",
-            "generator": "bronzeForge",
-            "quantity": 1
-          }
+          { "type": "ascensionTier", "minTier": 1 },
+          { "type": "generatorOwned", "generator": "bronzeForge", "quantity": 1 },
+          { "type": "resourceHeld", "resource": "bronze", "amount": 50 }
         ]
       },
       "baseStats": {
-        "categoryMultiplier": {
-          "category": "bronze",
-          "multiplier": 1.15
-        }
+        "categoryMultiplier": { "category": "bronze", "multiplier": 1.15 }
       },
       "activeSkill": {
         "codeName": "moltenBurst",
         "displayName": "Molten Burst",
-        "icon": "\ud83d\udd25",
+        "icon": "🔥",
         "cooldownSeconds": 50,
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 2.5,
-          "durationSeconds": 12
-        }
+        "effect": { "type": "globalMultiplier", "multiplier": 2.5, "durationSeconds": 12 }
+      }
+    },
+    {
+      "codeName": "knightCommander",
+      "displayName": "Knight Commander",
+      "icon": "⚔️",
+      "description": "Commands the forge and the realm's defenses.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "ascensionTier", "minTier": 2 },
+          { "type": "generatorOwned", "generator": "blacksmith", "quantity": 1 }
+        ]
+      },
+      "baseStats": {
+        "categoryMultiplier": { "category": "medieval", "multiplier": 1.12 }
+      },
+      "activeSkill": {
+        "codeName": "warCry",
+        "displayName": "War Cry",
+        "icon": "🛡️",
+        "cooldownSeconds": 55,
+        "effect": { "type": "globalMultiplier", "multiplier": 2.2, "durationSeconds": 14 }
       }
     },
     {
       "codeName": "industrialist",
       "displayName": "Industrialist",
-      "icon": "\ud83c\udfed",
+      "icon": "🏭",
       "description": "Titan of the industrial revolution.",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
-          {
-            "type": "ascensionTier",
-            "minTier": 3
-          },
-          {
-            "type": "lifetimePrestiges",
-            "min": 3
-          }
+          { "type": "ascensionTier", "minTier": 3 },
+          { "type": "generatorOwned", "generator": "steelForge", "quantity": 1 }
         ]
       },
       "baseStats": {
-        "categoryMultiplier": {
-          "category": "industrial",
-          "multiplier": 1.2
-        }
+        "categoryMultiplier": { "category": "industrial", "multiplier": 1.2 }
       },
       "activeSkill": {
         "codeName": "massProduction",
         "displayName": "Mass Production",
-        "icon": "\u2699\ufe0f",
+        "icon": "⚙️",
         "cooldownSeconds": 60,
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 3,
-          "durationSeconds": 10
-        }
+        "effect": { "type": "globalMultiplier", "multiplier": 3, "durationSeconds": 10 }
+      }
+    },
+    {
+      "codeName": "aiArchitect",
+      "displayName": "AI Architect",
+      "icon": "🤖",
+      "description": "Designs the minds of tomorrow.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "ascensionTier", "minTier": 4 },
+          { "type": "generatorOwned", "generator": "mlLaboratory", "quantity": 1 }
+        ]
+      },
+      "baseStats": {
+        "categoryMultiplier": { "category": "digital", "multiplier": 1.18 }
+      },
+      "activeSkill": {
+        "codeName": "modelBreakthrough",
+        "displayName": "Model Breakthrough",
+        "icon": "🧠",
+        "cooldownSeconds": 65,
+        "effect": { "type": "resourceMultiplier", "resource": "compute", "multiplier": 3, "durationSeconds": 12 }
       }
     }
   ]

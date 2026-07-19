@@ -2,71 +2,123 @@
   "items": [
     {
       "codeName": "rationPack",
-      "displayName": "Ration Pack",
+      "displayName": "Travel Rations",
       "description": "Boosts production briefly.",
-      "icon": "\ud83c\udf71",
+      "icon": "🍱",
       "type": "consumable",
       "actionBarEligible": true,
-      "effect": {
-        "type": "globalMultiplier",
-        "multiplier": 1.5,
-        "durationSeconds": 30
-      }
+      "effect": { "type": "globalMultiplier", "multiplier": 1.5, "durationSeconds": 30 }
+    },
+    {
+      "codeName": "driedMeat",
+      "displayName": "Dried Meat",
+      "description": "Boosts hunting yields briefly.",
+      "icon": "🥩",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "requiredFeature": "generators:tier0",
+      "effect": { "type": "resourceMultiplier", "resource": "game", "multiplier": 1.5, "durationSeconds": 25 }
+    },
+    {
+      "codeName": "herbalTea",
+      "displayName": "Herbal Tea",
+      "description": "Calming brew — cheaper purchases briefly.",
+      "icon": "🍵",
+      "type": "consumable",
+      "actionBarEligible": true,
+      "requiredFeature": "generators:tier0",
+      "effect": { "type": "costReduction", "multiplier": 0.9, "durationSeconds": 30 }
     },
     {
       "codeName": "energyDrink",
       "displayName": "Energy Drink",
-      "description": "Boosts manual labor (taps).",
-      "icon": "\ud83e\udd64",
+      "description": "Industrial stimulant — boosts manual labor (taps).",
+      "icon": "🥤",
       "type": "consumable",
       "actionBarEligible": true,
-      "effect": {
-        "type": "clickMultiplier",
-        "multiplier": 2.5,
-        "durationSeconds": 20
-      }
+      "requiredFeature": "generators:tier3",
+      "effect": { "type": "clickMultiplier", "multiplier": 2.5, "durationSeconds": 20 }
     },
     {
       "codeName": "stonePick",
       "displayName": "Stone Pick",
       "description": "Basic gathering tool.",
-      "icon": "\u26cf\ufe0f",
+      "icon": "⛏️",
       "type": "equipable",
       "slot": "tool",
       "rarity": "common",
       "stackable": true,
-      "effect": {
-        "type": "globalMultiplier",
-        "multiplier": 1.05
-      }
+      "effect": { "type": "globalMultiplier", "multiplier": 1.05 }
+    },
+    {
+      "codeName": "bronzeAxe",
+      "displayName": "Bronze Axe",
+      "description": "Bronze-age woodcutting tool.",
+      "icon": "🪓",
+      "type": "equipable",
+      "slot": "tool",
+      "rarity": "uncommon",
+      "stackable": true,
+      "requiredFeature": "generators:tier1",
+      "effect": { "type": "categoryMultiplier", "category": "primitive", "multiplier": 1.08 }
+    },
+    {
+      "codeName": "ironSword",
+      "displayName": "Iron Sword",
+      "description": "Medieval weapon of trade and war.",
+      "icon": "⚔️",
+      "type": "equipable",
+      "slot": "mainHand",
+      "rarity": "rare",
+      "stackable": true,
+      "requiredFeature": "generators:tier2",
+      "effect": { "type": "categoryMultiplier", "category": "medieval", "multiplier": 1.1 }
+    },
+    {
+      "codeName": "steamWrench",
+      "displayName": "Steam Wrench",
+      "description": "Industrial maintenance gear.",
+      "icon": "🔧",
+      "type": "equipable",
+      "slot": "tool",
+      "rarity": "rare",
+      "stackable": true,
+      "requiredFeature": "generators:tier3",
+      "effect": { "type": "categoryMultiplier", "category": "industrial", "multiplier": 1.12 }
+    },
+    {
+      "codeName": "neuralHeadset",
+      "displayName": "Neural Headset",
+      "description": "Digital interface for the AI age.",
+      "icon": "🎧",
+      "type": "equipable",
+      "slot": "head",
+      "rarity": "epic",
+      "stackable": true,
+      "requiredFeature": "generators:tier4",
+      "effect": { "type": "categoryMultiplier", "category": "digital", "multiplier": 1.15 }
     },
     {
       "codeName": "leafCrown",
       "displayName": "Leaf Crown",
       "description": "Tribal headwear.",
-      "icon": "\ud83c\udf3f",
+      "icon": "🌿",
       "type": "equipable",
       "slot": "head",
       "rarity": "common",
       "stackable": true,
-      "effect": {
-        "type": "clickMultiplier",
-        "multiplier": 1.08
-      }
+      "effect": { "type": "clickMultiplier", "multiplier": 1.08 }
     },
     {
       "codeName": "boneCharm",
       "displayName": "Bone Charm",
       "description": "Ancestral charm.",
-      "icon": "\ud83e\uddb4",
+      "icon": "🦴",
       "type": "equipable",
       "slot": "charm",
       "rarity": "uncommon",
       "stackable": true,
-      "effect": {
-        "type": "costReduction",
-        "multiplier": 0.95
-      }
+      "effect": { "type": "costReduction", "multiplier": 0.95 }
     }
   ]
 }

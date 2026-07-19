@@ -10,8 +10,14 @@
       "stone": 1,
       "wood": 0.4,
       "food": 0.3,
+      "game": 0.25,
+      "plants": 0.25,
+      "copperOre": 0.45,
+      "tinOre": 0.45,
       "copper": 0.5,
+      "tin": 0.5,
       "bronze": 0.6,
+      "ironOre": 0.55,
       "iron": 0.7,
       "gold": 0.8,
       "coal": 0.9,
@@ -44,30 +50,10 @@
     ]
   },
   "prestigeMinimumTierResources": {
-    "1": [
-      {
-        "resource": "copper",
-        "amount": 50
-      }
-    ],
-    "2": [
-      {
-        "resource": "iron",
-        "amount": 200
-      }
-    ],
-    "3": [
-      {
-        "resource": "coal",
-        "amount": 150
-      }
-    ],
-    "4": [
-      {
-        "resource": "data",
-        "amount": 100
-      }
-    ]
+    "1": [{ "resource": "copper", "amount": 50 }],
+    "2": [{ "resource": "iron", "amount": 200 }],
+    "3": [{ "resource": "electricity", "amount": 150 }],
+    "4": [{ "resource": "data", "amount": 100 }]
   },
   "prestigeMinimumScalePerPrestige": 0.2,
   "featureUnlocks": [
@@ -200,7 +186,7 @@
         "category": "medieval",
         "multiplierPerLevel": 0.06
       },
-      "requiredFeature": "prestigeShop:tier1"
+      "requiredFeature": "prestigeShop:tier2"
     },
     {
       "codeName": "writtenWord",
@@ -213,7 +199,7 @@
         "type": "globalMultiplier",
         "multiplierPerLevel": 0.04
       },
-      "requiredFeature": "prestigeShop:tier1"
+      "requiredFeature": "prestigeShop:tier2"
     },
     {
       "codeName": "assemblyLine",
@@ -226,7 +212,7 @@
         "type": "costReduction",
         "multiplierPerLevel": 0.02
       },
-      "requiredFeature": "prestigeShop:tier2"
+      "requiredFeature": "prestigeShop:tier3"
     },
     {
       "codeName": "steelWorks",

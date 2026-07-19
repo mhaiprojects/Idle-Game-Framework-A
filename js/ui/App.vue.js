@@ -102,6 +102,9 @@ export default {
     ascensionData() {
       return this.game.getAscensionDisplay();
     },
+    ascensionTierIcon() {
+      return this.game.getAscensionTierIcon();
+    },
     statsData() {
       return this.game.getStatsDisplay();
     },
@@ -214,7 +217,7 @@ export default {
   template: `
     <div class="app-container" :class="sidebarClass">
       <ResourceBar :resources="resourceBarItems" :primary-currency-rate="primaryCurrencyRate"
-        :primary-icon="primaryIcon" :deltas="resourceDeltas"
+        :primary-icon="primaryIcon" :ascension-icon="ascensionTierIcon" :deltas="resourceDeltas"
         :get-resource-label="game.getResourceLabel.bind(game)" :format-number="formatNumber" />
       <EventBanner :events="eventBannerItems" />
       <div class="main-layout">

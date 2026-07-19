@@ -82,25 +82,27 @@ export function validateGeneratorChain(cfg) {
   const errors = [];
   const gens = cfg.generators.generators;
   const primaryCode = cfg.resources.resources.find(r => r.isPrimary)?.codeName;
+  const producedSoFar = new Set(primaryCode ? [primaryCode] : []);
 
-  for (let i = 0; i < gens.length - 1; i++) {
-    const current = gens[i];
-    const next = gens[i + 1];
-    const produces = (current.produces || []).map(p => p.resource);
-    const nextCosts = (next.costResources || []).map(c => c.resource);
-    const nextHeld = flattenConditions(next.unlockConditions)
+  for (const gen of gens) {
+    const nextCosts = (gen.costResources || []).map(c => c.resource);
+    const nextHeld = flattenConditions(gen.unlockConditions)
       .filter(c => c.type === 'resourceHeld').map(c => c.resource);
     const needed = [...new Set([...nextCosts, ...nextHeld])];
 
     for (const res of needed) {
       if (res === primaryCode) continue;
-      if (!produces.includes(res)) {
+      if (!producedSoFar.has(res)) {
         errors.push({
-          generator: current.codeName,
+          generator: gens[gens.indexOf(gen) - 1]?.codeName || '(start)',
           missing: res,
-          forGenerator: next.codeName
+          forGenerator: gen.codeName
         });
       }
+    }
+
+    for (const prod of gen.produces || []) {
+      producedSoFar.add(prod.resource);
     }
   }
   return { valid: errors.length === 0, errors };

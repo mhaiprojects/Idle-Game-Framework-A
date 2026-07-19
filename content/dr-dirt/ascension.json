@@ -5,6 +5,7 @@
       "tier": 0,
       "codeName": "stoneAge",
       "displayName": "Stone Age",
+      "icon": "🪨",
       "isStartingTier": true,
       "difficultyProfile": "tier0",
       "unlockedFeatures": [
@@ -15,13 +16,21 @@
         "tab:settings",
         "tab:ascension",
         "generators:tier0",
-        "prestigeShop:tier0"
+        "prestigeShop:tier0",
+        "resources:stone",
+        "resources:wood",
+        "resources:game",
+        "resources:plants",
+        "resources:food",
+        "resources:brick",
+        "resources:charcoal"
       ]
     },
     {
       "tier": 1,
       "codeName": "bronzeAge",
       "displayName": "Bronze Age",
+      "icon": "🥉",
       "difficultyProfile": "tier1",
       "ascensionRequirements": {
         "operator": "AND",
@@ -36,6 +45,16 @@
             "min": 100000
           },
           {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "copperOre",
+            "min": 100
+          },
+          {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "tinOre",
+            "min": 100
+          },
+          {
             "type": "lifetimeGeneratorPurchases",
             "min": 50
           }
@@ -47,7 +66,11 @@
         "keepGeneratorUnlocks": true,
         "clearUpgrades": false,
         "clearInventory": false,
-        "clearArtifacts": false
+        "clearArtifacts": false,
+        "grantResources": {
+          "copperOre": 1000,
+          "tinOre": 1000
+        }
       },
       "unlockedFeatures": [
         "systems:drops",
@@ -55,7 +78,10 @@
         "tab:inventory",
         "generators:tier1",
         "prestigeShop:tier1",
+        "resources:copperOre",
+        "resources:tinOre",
         "resources:copper",
+        "resources:tin",
         "resources:bronze"
       ]
     },
@@ -63,6 +89,7 @@
       "tier": 2,
       "codeName": "medieval",
       "displayName": "Medieval Era",
+      "icon": "🏰",
       "difficultyProfile": "tier2",
       "ascensionRequirements": {
         "operator": "AND",
@@ -73,8 +100,13 @@
           },
           {
             "type": "lifetimeResourcesGenerated",
-            "resource": "stone",
-            "min": 10000000
+            "resource": "bronze",
+            "min": 50000
+          },
+          {
+            "type": "lifetimeResourcesGenerated",
+            "resource": "ironOre",
+            "min": 1000
           },
           {
             "type": "lifetimeGeneratorPurchases",
@@ -94,6 +126,7 @@
         "tab:artifacts",
         "generators:tier2",
         "prestigeShop:tier2",
+        "resources:ironOre",
         "resources:iron",
         "resources:gold"
       ]
@@ -102,6 +135,7 @@
       "tier": 3,
       "codeName": "industrial",
       "displayName": "Industrial Age",
+      "icon": "🏭",
       "difficultyProfile": "tier3",
       "ascensionRequirements": {
         "operator": "AND",
@@ -112,8 +146,8 @@
           },
           {
             "type": "lifetimeResourcesGenerated",
-            "resource": "stone",
-            "min": 1000000000
+            "resource": "steel",
+            "min": 100000
           },
           {
             "type": "lifetimeGeneratorPurchases",
@@ -142,6 +176,7 @@
       "tier": 4,
       "codeName": "aiAge",
       "displayName": "AI Age",
+      "icon": "🧠",
       "difficultyProfile": "tier4",
       "ascensionRequirements": {
         "operator": "AND",
@@ -152,8 +187,8 @@
           },
           {
             "type": "lifetimeResourcesGenerated",
-            "resource": "stone",
-            "min": 1000000000000
+            "resource": "intelligence",
+            "min": 10000
           },
           {
             "type": "lifetimeGeneratorPurchases",

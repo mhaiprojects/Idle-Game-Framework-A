@@ -520,6 +520,7 @@ AFK_UI.ResourceBar = {
     resources: Array,
     primaryCurrencyRate: String,
     primaryIcon: String,
+    ascensionIcon: String,
     deltas: Array,
     getResourceLabel: Function,
     formatNumber: Function
@@ -534,6 +535,9 @@ AFK_UI.ResourceBar = {
   },
   template: `
     <div class="resource-bar">
+      <div v-if="ascensionIcon" class="resource-item ascension-tier-badge" :title="'Current age'">
+        <span>{{ ascensionIcon }}</span>
+      </div>
       <div v-for="r in resources" :key="r.codeName"
         class="resource-item" :class="{ primary: r.isPrimary }" style="position:relative">
         <span>{{ r.icon }}</span>
@@ -1393,6 +1397,9 @@ AFK_UI.App = {
     ascensionData() {
       return this.game.getAscensionDisplay();
     },
+    ascensionTierIcon() {
+      return this.game.getAscensionTierIcon();
+    },
     statsData() {
       return this.game.getStatsDisplay();
     },
@@ -1505,7 +1512,7 @@ AFK_UI.App = {
   template: `
     <div class="app-container" :class="sidebarClass">
       <ResourceBar :resources="resourceBarItems" :primary-currency-rate="primaryCurrencyRate"
-        :primary-icon="primaryIcon" :deltas="resourceDeltas"
+        :primary-icon="primaryIcon" :ascension-icon="ascensionTierIcon" :deltas="resourceDeltas"
         :get-resource-label="game.getResourceLabel.bind(game)" :format-number="formatNumber" />
       <EventBanner :events="eventBannerItems" />
       <div class="main-layout">

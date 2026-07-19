@@ -4,6 +4,7 @@ export default {
     resources: Array,
     primaryCurrencyRate: String,
     primaryIcon: String,
+    ascensionIcon: String,
     deltas: Array,
     getResourceLabel: Function,
     formatNumber: Function
@@ -18,6 +19,9 @@ export default {
   },
   template: `
     <div class="resource-bar">
+      <div v-if="ascensionIcon" class="resource-item ascension-tier-badge" :title="'Current age'">
+        <span>{{ ascensionIcon }}</span>
+      </div>
       <div v-for="r in resources" :key="r.codeName"
         class="resource-item" :class="{ primary: r.isPrimary }" style="position:relative">
         <span>{{ r.icon }}</span>

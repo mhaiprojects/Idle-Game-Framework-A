@@ -99,6 +99,14 @@
           }
         },
         {
+          "artifact": "gutenbergPress",
+          "weight": 22,
+          "dropRequirements": {
+            "generator": "tradeCaravan",
+            "minAscensionTier": 2
+          }
+        },
+        {
           "artifact": "ironCrown",
           "weight": 20,
           "dropRequirements": {

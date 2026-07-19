@@ -363,10 +363,26 @@ export class GameState {
   tickProduction(deltaSeconds) {
     const mods = this.getMods();
 
-    for (const res of this.config.resources.resources) {
-      const rate = FormulaEngine.calculateResourceRate(this.data, this.config, mods, res.codeName);
-      const gain = rate * deltaSeconds;
-      if (gain > 0) this.addResource(res.codeName, gain, 'production');
+    for (const gen of this.config.generators.generators) {
+      const gs = this.data.generators[gen.codeName];
+      if (!gs || gs.quantityPurchased <= 0) continue;
+      if (gen.requiredFeature && !FormulaEngine._isFeatureUnlocked(gen.requiredFeature, this.data, this.config)) continue;
+
+      const consumeScale = FormulaEngine.getGeneratorConsumeScale(gen, gs.quantityPurchased, this.data, deltaSeconds);
+      if (gen.consumes?.length && consumeScale > 0) {
+        for (const c of gen.consumes) {
+          const drain = c.amount * gs.quantityPurchased * deltaSeconds * consumeScale;
+          if (drain > 0) this.addResource(c.resource, -drain, 'production');
+        }
+      }
+
+      for (const prod of gen.produces || []) {
+        const rate = FormulaEngine.calculateGeneratorProductRate(
+          gen, prod, gs.quantityPurchased, mods, this.config, this.data, consumeScale
+        );
+        const gain = rate * deltaSeconds;
+        if (gain > 0) this.addResource(prod.resource, gain, 'production');
+      }
     }
 
     const primaryRate = FormulaEngine.calculatePrimaryCurrencyRate(this.data, this.config, mods);

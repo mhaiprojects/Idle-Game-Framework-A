@@ -37,6 +37,12 @@ export const AscensionSystem = {
       }
     }
 
+    if (profile.grantResources) {
+      for (const [resource, amount] of Object.entries(profile.grantResources)) {
+        if (amount > 0) gameState.addResource(resource, amount, 'ascension');
+      }
+    }
+
     const newTier = next.tier;
     state.meta.ascension.currentTier = newTier;
     state.meta.ascension.tiers[newTier].prestigeCount = 0;

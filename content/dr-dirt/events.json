@@ -3,28 +3,72 @@
     {
       "codeName": "bountifulHarvest",
       "displayName": "Bountiful Harvest",
-      "icon": "\ud83c\udf3e",
+      "icon": "🌾",
       "description": "Double food production.",
       "duration": 30,
       "minInterval": 120,
       "maxInterval": 300,
-      "effect": {
-        "type": "globalMultiplier",
-        "multiplier": 2
-      }
+      "effect": { "type": "resourceMultiplier", "resource": "food", "multiplier": 2 }
+    },
+    {
+      "codeName": "huntSeason",
+      "displayName": "Hunt Season",
+      "icon": "🏹",
+      "description": "Double raw game from hunting.",
+      "duration": 25,
+      "minInterval": 150,
+      "maxInterval": 350,
+      "effect": { "type": "resourceMultiplier", "resource": "game", "multiplier": 2 }
+    },
+    {
+      "codeName": "meteorShower",
+      "displayName": "Meteor Shower",
+      "icon": "☄️",
+      "description": "Bonus copper ore from the skies.",
+      "duration": 20,
+      "minInterval": 200,
+      "maxInterval": 450,
+      "effect": { "type": "resourceMultiplier", "resource": "copperOre", "multiplier": 2 }
+    },
+    {
+      "codeName": "royalFeast",
+      "displayName": "Royal Feast",
+      "icon": "👑",
+      "description": "Trade and tribute boost gold.",
+      "duration": 30,
+      "minInterval": 180,
+      "maxInterval": 400,
+      "effect": { "type": "resourceMultiplier", "resource": "gold", "multiplier": 2 }
+    },
+    {
+      "codeName": "factoryShift",
+      "displayName": "Factory Shift",
+      "icon": "🏭",
+      "description": "Industrial surge — double steel output.",
+      "duration": 25,
+      "minInterval": 160,
+      "maxInterval": 380,
+      "effect": { "type": "resourceMultiplier", "resource": "steel", "multiplier": 2 }
+    },
+    {
+      "codeName": "modelBreakthrough",
+      "displayName": "Model Breakthrough",
+      "icon": "🧠",
+      "description": "Double compute from training runs.",
+      "duration": 20,
+      "minInterval": 200,
+      "maxInterval": 500,
+      "effect": { "type": "resourceMultiplier", "resource": "compute", "multiplier": 2 }
     },
     {
       "codeName": "inspiration",
       "displayName": "Flash of Inspiration",
-      "icon": "\ud83d\udca1",
+      "icon": "💡",
       "description": "Triple tap power.",
       "duration": 20,
       "minInterval": 180,
       "maxInterval": 400,
-      "effect": {
-        "type": "clickMultiplier",
-        "multiplier": 3
-      }
+      "effect": { "type": "clickMultiplier", "multiplier": 3 }
     }
   ]
 }

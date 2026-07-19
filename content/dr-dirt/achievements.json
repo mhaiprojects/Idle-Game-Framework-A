@@ -4,121 +4,89 @@
       "codeName": "firstTap",
       "displayName": "First Labor",
       "description": "Perform your first tap.",
-      "icon": "\ud83d\udc46",
-      "requirement": {
-        "type": "totalTaps",
-        "amount": 1
-      },
-      "reward": {
-        "type": "modifierUnlock",
-        "effect": {
-          "type": "clickMultiplier",
-          "multiplier": 1.05
-        }
-      }
+      "icon": "👆",
+      "requirement": { "type": "totalTaps", "amount": 1 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "clickMultiplier", "multiplier": 1.05 } }
     },
     {
       "codeName": "firstGenerator",
       "displayName": "Tool User",
       "description": "Own a Rock Gatherer.",
-      "icon": "\ud83e\udea8",
-      "requirement": {
-        "type": "generatorOwned",
-        "generator": "rockGatherer",
-        "amount": 1
-      },
-      "reward": {
-        "type": "modifierUnlock",
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 1.05
-        }
-      }
+      "icon": "🪨",
+      "requirement": { "type": "generatorOwned", "generator": "rockGatherer", "amount": 1 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "globalMultiplier", "multiplier": 1.05 } }
+    },
+    {
+      "codeName": "firstHunter",
+      "displayName": "First Hunt",
+      "description": "Own a Hunter.",
+      "icon": "🏹",
+      "requirement": { "type": "generatorOwned", "generator": "hunter", "amount": 1 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "resourceMultiplier", "resource": "game", "multiplier": 1.05 } }
+    },
+    {
+      "codeName": "firstBronze",
+      "displayName": "First Bronze Ingot",
+      "description": "Generate 1,000 bronze lifetime.",
+      "icon": "🔶",
+      "requirement": { "type": "resourceEarned", "resource": "bronze", "amount": 1000 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "categoryMultiplier", "category": "bronze", "multiplier": 1.05 } }
+    },
+    {
+      "codeName": "firstKilowatt",
+      "displayName": "First Kilowatt",
+      "description": "Generate 1,000 electricity lifetime.",
+      "icon": "⚡",
+      "requirement": { "type": "resourceEarned", "resource": "electricity", "amount": 1000 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "resourceMultiplier", "resource": "electricity", "multiplier": 1.08 } }
+    },
+    {
+      "codeName": "firstModel",
+      "displayName": "First Model Trained",
+      "description": "Generate 500 compute lifetime.",
+      "icon": "🖥️",
+      "requirement": { "type": "resourceEarned", "resource": "compute", "amount": 500 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "resourceMultiplier", "resource": "compute", "multiplier": 1.1 } }
     },
     {
       "codeName": "firstPrestige",
       "displayName": "New Beginning",
       "description": "Perform your first prestige.",
-      "icon": "\ud83d\udd04",
-      "requirement": {
-        "type": "prestigeCount",
-        "amount": 1
-      },
-      "reward": {
-        "type": "modifierUnlock",
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 1.03
-        }
-      }
+      "icon": "🔄",
+      "requirement": { "type": "prestigeCount", "amount": 1 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "globalMultiplier", "multiplier": 1.03 } }
     },
     {
       "codeName": "bronzeAge",
       "displayName": "Bronze Dawn",
       "description": "Ascend to the Bronze Age.",
-      "icon": "\ud83d\udd36",
-      "requirement": {
-        "type": "ascensionTier",
-        "minTier": 1
-      },
-      "reward": {
-        "type": "modifierUnlock",
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 1.06
-        }
-      }
+      "icon": "🥉",
+      "requirement": { "type": "ascensionTier", "minTier": 1 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "globalMultiplier", "multiplier": 1.06 } }
     },
     {
       "codeName": "medievalEra",
       "displayName": "Age of Empires",
       "description": "Ascend to the Medieval Era.",
-      "icon": "\ud83c\udff0",
-      "requirement": {
-        "type": "ascensionTier",
-        "minTier": 2
-      },
-      "reward": {
-        "type": "modifierUnlock",
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 1.08
-        }
-      }
+      "icon": "🏰",
+      "requirement": { "type": "ascensionTier", "minTier": 2 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "globalMultiplier", "multiplier": 1.08 } }
     },
     {
       "codeName": "industrialRev",
       "displayName": "Industrial Revolution",
       "description": "Ascend to the Industrial Age.",
-      "icon": "\ud83c\udfed",
-      "requirement": {
-        "type": "ascensionTier",
-        "minTier": 3
-      },
-      "reward": {
-        "type": "modifierUnlock",
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 1.1
-        }
-      }
+      "icon": "🏭",
+      "requirement": { "type": "ascensionTier", "minTier": 3 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "globalMultiplier", "multiplier": 1.1 } }
     },
     {
       "codeName": "aiAge",
       "displayName": "Singularity",
       "description": "Ascend to the AI Age.",
-      "icon": "\ud83e\udde0",
-      "requirement": {
-        "type": "ascensionTier",
-        "minTier": 4
-      },
-      "reward": {
-        "type": "modifierUnlock",
-        "effect": {
-          "type": "globalMultiplier",
-          "multiplier": 1.15
-        }
-      }
+      "icon": "🧠",
+      "requirement": { "type": "ascensionTier", "minTier": 4 },
+      "reward": { "type": "modifierUnlock", "effect": { "type": "globalMultiplier", "multiplier": 1.15 } }
     }
   ]
 }

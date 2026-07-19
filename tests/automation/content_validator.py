@@ -40,12 +40,11 @@ def validate_generator_chain(cfg: dict) -> list[str]:
         (r["codeName"] for r in cfg["resources"]["resources"] if r.get("isPrimary")),
         None,
     )
-    for i in range(len(gens) - 1):
-        current = gens[i]
-        nxt = gens[i + 1]
-        produces = [p["resource"] for p in current.get("produces", [])]
-        next_costs = [c["resource"] for c in nxt.get("costResources", [])]
-        conds = nxt.get("unlockConditions") or {}
+    produced_so_far = {primary} if primary else set()
+
+    for gen in gens:
+        next_costs = [c["resource"] for c in gen.get("costResources", [])]
+        conds = gen.get("unlockConditions") or {}
         next_held = [
             c["resource"]
             for c in (conds.get("conditions") or [])
@@ -55,10 +54,14 @@ def validate_generator_chain(cfg: dict) -> list[str]:
         for res in needed:
             if res == primary:
                 continue
-            if res not in produces:
+            if res not in produced_so_far:
+                idx = gens.index(gen)
+                prev = gens[idx - 1]["codeName"] if idx > 0 else "(start)"
                 errors.append(
-                    f"{current['codeName']} does not produce {res} for {nxt['codeName']}"
+                    f"{prev} does not produce {res} for {gen['codeName']}"
                 )
+        for prod in gen.get("produces", []):
+            produced_so_far.add(prod["resource"])
     return errors
 
 

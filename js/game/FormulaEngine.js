@@ -119,8 +119,56 @@ export const FormulaEngine = {
     return qty;
   },
 
+  isProduceActive(prod, state, config) {
+    if (!prod.requiresUnlock) return true;
+    return this._evaluateProduceUnlock(prod.requiresUnlock, state, config);
+  },
+
+  _evaluateProduceUnlock(cond, state, config) {
+    switch (cond.type) {
+      case 'characterUnlocked':
+        return !!state.characters[cond.character]?.unlocked;
+      case 'generatorUnlocked':
+        return !!state.generators[cond.generator]?.isUnlocked;
+      case 'generatorOwned':
+        return (state.generators[cond.generator]?.quantityPurchased || 0)
+          >= (cond.min ?? cond.quantity ?? 1);
+      default:
+        return false;
+    }
+  },
+
+  getGeneratorConsumeScale(gen, quantityPurchased, state, deltaSeconds = 1) {
+    if (!gen.consumes?.length || quantityPurchased <= 0) return 1;
+    let scale = 1;
+    for (const c of gen.consumes) {
+      const needed = c.amount * quantityPurchased * deltaSeconds;
+      if (needed <= 0) continue;
+      const available = state.resources[c.resource]?.quantity || 0;
+      scale = Math.min(scale, available / needed);
+    }
+    return Math.max(0, Math.min(1, scale));
+  },
+
+  calculateGeneratorProductRate(gen, prod, quantityPurchased, mods, config, state, consumeScale = 1) {
+    if (!this.isProduceActive(prod, state, config)) return 0;
+    let base = prod.amount * quantityPurchased * consumeScale;
+    const genMods = mods.filter(m =>
+      m.target === 'global' ||
+      (m.target === 'generator' && m.targetId === gen.codeName) ||
+      (m.target === 'category' && m.targetId === gen.category) ||
+      (m.target === 'resource' && m.targetId === prod.resource)
+    );
+    const result = this.applyModifierStack(base, genMods);
+    let rate = result.value;
+    const primary = config.resources.resources.find(r => r.isPrimary);
+    if (prod.resource === primary?.codeName) {
+      rate *= this.getEffectiveDifficulty(state, config).primaryCurrencyMultiplier;
+    }
+    return rate;
+  },
+
   calculateResourceRate(state, config, mods, resourceCode) {
-    const difficulty = this.getEffectiveDifficulty(state, config);
     let total = 0;
 
     for (const gen of config.generators.generators) {
@@ -128,22 +176,14 @@ export const FormulaEngine = {
       if (!gs || gs.quantityPurchased <= 0) continue;
       if (gen.requiredFeature && !this._isFeatureUnlocked(gen.requiredFeature, state, config)) continue;
 
+      const consumeScale = this.getGeneratorConsumeScale(gen, gs.quantityPurchased, state);
+
       for (const prod of gen.produces || []) {
         if (prod.resource !== resourceCode) continue;
-        let base = prod.amount * gs.quantityPurchased;
-        const genMods = mods.filter(m =>
-          m.target === 'global' ||
-          (m.target === 'generator' && m.targetId === gen.codeName) ||
-          (m.target === 'category' && m.targetId === gen.category)
+        total += this.calculateGeneratorProductRate(
+          gen, prod, gs.quantityPurchased, mods, config, state, consumeScale
         );
-        const result = this.applyModifierStack(base, genMods);
-        total += result.value;
       }
-    }
-
-    const primary = config.resources.resources.find(r => r.isPrimary);
-    if (resourceCode === primary.codeName) {
-      total *= difficulty.primaryCurrencyMultiplier;
     }
 
     return total;
@@ -156,7 +196,6 @@ export const FormulaEngine = {
 
   calculatePrimaryCurrencyBreakdown(state, config, mods) {
     const primary = config.resources.resources.find(r => r.isPrimary);
-    const difficulty = this.getEffectiveDifficulty(state, config);
     const breakdown = [];
     let total = 0;
 
@@ -165,16 +204,13 @@ export const FormulaEngine = {
       if (!gs || gs.quantityPurchased <= 0) continue;
       if (gen.requiredFeature && !this._isFeatureUnlocked(gen.requiredFeature, state, config)) continue;
 
+      const consumeScale = this.getGeneratorConsumeScale(gen, gs.quantityPurchased, state);
+
       for (const prod of gen.produces || []) {
         if (prod.resource !== primary.codeName) continue;
-        let base = prod.amount * gs.quantityPurchased;
-        const genMods = mods.filter(m =>
-          m.target === 'global' ||
-          (m.target === 'generator' && m.targetId === gen.codeName) ||
-          (m.target === 'category' && m.targetId === gen.category)
+        const rate = this.calculateGeneratorProductRate(
+          gen, prod, gs.quantityPurchased, mods, config, state, consumeScale
         );
-        const result = this.applyModifierStack(base, genMods);
-        const rate = result.value * difficulty.primaryCurrencyMultiplier;
         total += rate;
         breakdown.push({ generator: gen.codeName, amount: rate, percent: 0 });
       }
@@ -196,25 +232,19 @@ export const FormulaEngine = {
     const difficulty = this.getEffectiveDifficulty(state, config);
     const primary = config.resources.resources.find(r => r.isPrimary);
 
+    const consumeScale = owned > 0 ? this.getGeneratorConsumeScale(gen, owned, state) : 1;
+
     return (gen.produces || []).map(prod => {
       const calcRateForProd = (units) => {
         if (units <= 0) return 0;
-        let base = prod.amount * units;
-        const genMods = mods.filter(m =>
-          m.target === 'global' ||
-          (m.target === 'generator' && m.targetId === gen.codeName) ||
-          (m.target === 'category' && m.targetId === gen.category)
+        return this.calculateGeneratorProductRate(
+          gen, prod, units, mods, config, state, consumeScale
         );
-        const result = this.applyModifierStack(base, genMods);
-        let rate = result.value;
-        if (prod.resource === primary.codeName) {
-          rate *= difficulty.primaryCurrencyMultiplier;
-        }
-        return rate;
       };
 
-      const unitRate = calcRateForProd(1);
-      const totalRate = owned > 0 ? calcRateForProd(owned) : 0;
+      const active = this.isProduceActive(prod, state, config);
+      const unitRate = active ? calcRateForProd(1) : 0;
+      const totalRate = owned > 0 && active ? calcRateForProd(owned) : 0;
       const totalForResource = this.calculateResourceRate(state, config, mods, prod.resource);
       const percent = totalForResource > 0 && totalRate > 0 ? (totalRate / totalForResource) * 100 : 0;
 
@@ -223,7 +253,8 @@ export const FormulaEngine = {
         unitRate,
         totalRate,
         percent,
-        role: prod.role
+        role: prod.role,
+        locked: prod.requiresUnlock && !active
       };
     });
   },
