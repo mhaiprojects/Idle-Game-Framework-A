@@ -49,3 +49,13 @@ def test_game_selector_switch(page, clean_game):
         timeout=15000,
     )
     assert page.evaluate("() => window.__AFK_TEST__.getPrimaryCode()") == "stone"
+
+
+def test_reset_game_clears_progress(game_page):
+    game_page.evaluate("() => window.__AFK_TEST__.addPrimary(50000)")
+    assert game_page.evaluate("() => window.__AFK_TEST__.getPrimary()") >= 50000
+    game_page.once("dialog", lambda dialog: dialog.accept())
+    with game_page.expect_navigation():
+        game_page.evaluate("() => window.__AFK_GAME__.resetGame()")
+    game_page.wait_for_function("() => window.__AFK_TEST__?.ready === true", timeout=15000)
+    assert game_page.evaluate("() => window.__AFK_TEST__.getPrimary()") < 1000

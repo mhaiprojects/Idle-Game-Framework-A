@@ -35,7 +35,7 @@ with open('js/config-bundle.js', 'w') as out:
     out.write('window.AFK_CONTENT = ')
     json.dump(content, out, indent=2)
     out.write(';\n')
-    out.write('window.AFK_CONFIG = window.AFK_CONTENT["cosmic-time-factory"];\n')
+    out.write('window.AFK_CONFIG = window.AFK_CONTENT["dr-dirt"];\n')
 
 ENGINE_FILES = [
   'js/core/EventBus.js', 'js/game/FormulaEngine.js', 'js/core/ConfigManager.js',

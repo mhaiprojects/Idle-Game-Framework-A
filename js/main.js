@@ -291,15 +291,19 @@
       if (!effect?.type) return '';
       const mult = effect.multiplier || 1;
       const pct = Math.round(Math.abs(mult - 1) * 100);
+      const stackLabel = (effect.stackKind || (effect.durationSeconds ? 'increased' : 'more')) === 'increased'
+        ? 'Increased' : 'More';
       const signed = mult >= 1 ? '+' : '-';
       const dur = effect.durationSeconds ? ` · ${effect.durationSeconds}s` : '';
       switch (effect.type) {
         case 'globalMultiplier':
-          return `${signed}${pct}% production${dur}`;
+          return `${signed}${pct}% ${stackLabel} production${dur}`;
         case 'clickMultiplier':
-          return `${signed}${pct}% tap${dur}`;
+          return `${signed}${pct}% ${stackLabel} tap${dur}`;
         case 'costReduction':
           return `${pct}% cheaper purchases`;
+        case 'resourceMultiplier':
+          return `${signed}${pct}% ${stackLabel} ${AFK.ConfigManager.getResourceDisplayName(effect.resource)}${dur}`;
         default:
           return this.describeEffect(effect).replace(/\.$/, '');
       }
@@ -309,23 +313,25 @@
       if (!effect?.type) return 'No gameplay effect.';
       const mult = effect.multiplier || 1;
       const pct = Math.round(Math.abs(mult - 1) * 100);
+      const stackLabel = (effect.stackKind || (effect.durationSeconds ? 'increased' : 'more')) === 'increased'
+        ? 'Increased' : 'More';
       const signed = mult >= 1 ? '+' : '-';
       const dur = effect.durationSeconds
         ? ` for ${effect.durationSeconds} seconds when activated`
         : ' while equipped or active';
       switch (effect.type) {
         case 'globalMultiplier':
-          return `${signed}${pct}% to all resource production${dur}.`;
+          return `${signed}${pct}% ${stackLabel} to all resource production${dur}.`;
         case 'clickMultiplier':
-          return `${signed}${pct}% to tap / click gain${dur}.`;
+          return `${signed}${pct}% ${stackLabel} to tap / click gain${dur}.`;
         case 'generatorMultiplier':
-          return `${signed}${pct}% to a specific generator${dur}.`;
+          return `${signed}${pct}% ${stackLabel} to a specific generator${dur}.`;
         case 'categoryMultiplier':
-          return `${signed}${pct}% to ${effect.category || 'category'} generators${dur}.`;
+          return `${signed}${pct}% ${stackLabel} to ${effect.category || 'category'} generators${dur}.`;
         case 'costReduction':
           return `${pct}% reduction on purchase costs${dur}.`;
         case 'resourceMultiplier':
-          return `${signed}${pct}% to ${AFK.ConfigManager.getResourceDisplayName(effect.resource)} production${dur}.`;
+          return `${signed}${pct}% ${stackLabel} to ${AFK.ConfigManager.getResourceDisplayName(effect.resource)} production${dur}.`;
         default:
           return `${effect.type} modifier (${mult}×)${dur}.`;
       }
@@ -697,10 +703,23 @@
     getStatsDisplay() {
       void this._reactiveTick;
       const run = this.state.meta.prestige.run;
+      const mods = this.gameState.getMods();
+      const rates = AFK.FormulaEngine.calculateAllResourceRates(this.state, this.config, mods);
+      const resourceTotals = this.config.resources.resources.map(res => ({
+        codeName: res.codeName,
+        icon: res.icon,
+        name: res.displayName,
+        lifetimeGenerated: this.state.meta.milestones.lifetimeResourcesGenerated[res.codeName] || 0,
+        currentRate: rates[res.codeName]?.total || 0,
+        generatorCount: (rates[res.codeName]?.breakdown || []).length
+      })).filter(r => r.lifetimeGenerated > 0 || r.currentRate > 0);
+
       return {
         totalTaps: this.state.stats.totalTaps,
         playTimeSeconds: this.state.stats.playTimeSeconds,
-        peakPrimaryCurrencyRate: run.peakPrimaryCurrencyRateThisRun ?? run.peakPPSThisRun ?? 0
+        peakPrimaryCurrencyRate: run.peakPrimaryCurrencyRateThisRun ?? run.peakPPSThisRun ?? 0,
+        resourceTotals,
+        resourceRates: rates
       };
     }
 
@@ -979,12 +998,14 @@
 
     deleteCurrentSave() {
       if (!confirm('Delete the current save? The game will restart from scratch. Rolling backups are kept.')) return;
+      this.gameLoop.stop();
       AFK.SaveManager.clear();
       location.reload();
     }
 
     resetGame() {
       if (!confirm('Reset all progress? This deletes your save and cannot be undone.')) return;
+      this.gameLoop.stop();
       AFK.EventBus.emit(AFK.EVENTS.GAME_RESET, {});
       AFK.SaveManager.clearAll();
       location.reload();
@@ -1081,7 +1102,11 @@
       if (offline?.showModal) game.offlineModal = offline;
     }
 
-    const flushSave = () => { AFK.SaveManager.save(gameState); };
+    const flushSave = () => {
+      if (AFK.SaveManager.isPersistEnabled()) {
+        AFK.SaveManager.save(gameState);
+      }
+    };
     window.addEventListener('beforeunload', flushSave);
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') flushSave();

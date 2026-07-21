@@ -49,14 +49,36 @@ export const ModifierSystem = {
       const cs = state.characters[char.codeName];
       if (!cs?.activated) continue;
       if (char.baseStats?.globalMultiplier) {
-        mods.push({ codeName: `char:${char.codeName}`, target: 'global', type: 'multiplicative', value: char.baseStats.globalMultiplier, priority: 20 });
+        mods.push({
+          codeName: `char:${char.codeName}`,
+          target: 'global',
+          type: 'multiplicative',
+          stackKind: 'more',
+          value: char.baseStats.globalMultiplier,
+          priority: 20
+        });
       }
       if (char.baseStats?.clickMultiplier) {
-        mods.push({ codeName: `char:${char.codeName}:click`, target: 'click', type: 'multiplicative', value: char.baseStats.clickMultiplier, priority: 20 });
+        mods.push({
+          codeName: `char:${char.codeName}:click`,
+          target: 'click',
+          type: 'multiplicative',
+          stackKind: 'more',
+          value: char.baseStats.clickMultiplier,
+          priority: 20
+        });
       }
       if (char.baseStats?.categoryMultiplier) {
         const cm = char.baseStats.categoryMultiplier;
-        mods.push({ codeName: `char:${char.codeName}:cat`, target: 'category', targetId: cm.category, type: 'multiplicative', value: cm.multiplier, priority: 20 });
+        mods.push({
+          codeName: `char:${char.codeName}:cat`,
+          target: 'category',
+          targetId: cm.category,
+          type: 'multiplicative',
+          stackKind: 'more',
+          value: cm.multiplier,
+          priority: 20
+        });
       }
     }
 
@@ -75,7 +97,10 @@ export const ModifierSystem = {
 
     for (const buff of state.activeBuffs || []) {
       if (buff.expiresAt && buff.expiresAt <= now) continue;
-      this._addEffectMods(mods, buff.effect, `buff:${buff.codeName}`, buff.effect.category, null, 1);
+      this._addEffectMods(
+        mods, buff.effect, `buff:${buff.codeName}`, buff.effect.category, null, 1,
+        { defaultStackKind: 'increased' }
+      );
     }
 
     for (const evt of state.activeEvents || []) {
@@ -88,29 +113,49 @@ export const ModifierSystem = {
     return mods;
   },
 
-  _addEffectMods(mods, effect, codeName, category, targetId, count) {
+  _addEffectMods(mods, effect, codeName, category, targetId, count, options = {}) {
     if (!effect) return;
     const mult = effect.multiplier ?? ConfigManager.getDefaultCalc('effectMultiplierDefault');
     const val = effect.type === 'costReduction' ? mult : mult;
+    const stackKind = effect.stackKind || options.defaultStackKind || 'more';
+
+    const pushMod = (target, targetIdValue, modType = 'multiplicative') => {
+      mods.push({
+        codeName,
+        target,
+        targetId: targetIdValue,
+        type: modType,
+        stackKind,
+        value: val,
+        priority: options.priority ?? 30
+      });
+    };
 
     switch (effect.type) {
       case 'globalMultiplier':
-        mods.push({ codeName, target: 'global', type: 'multiplicative', value: val, priority: 30 });
+        pushMod('global', null);
         break;
       case 'clickMultiplier':
-        mods.push({ codeName, target: 'click', type: 'multiplicative', value: val, priority: 10 });
+        pushMod('click', null, 'multiplicative');
         break;
       case 'generatorMultiplier':
-        mods.push({ codeName, target: 'generator', targetId: targetId || effect.generator, type: 'multiplicative', value: val, priority: 15 });
+        pushMod('generator', targetId || effect.generator);
         break;
       case 'categoryMultiplier':
-        mods.push({ codeName, target: 'category', targetId: effect.category || category, type: 'multiplicative', value: val, priority: 20 });
+        pushMod('category', effect.category || category);
         break;
       case 'costReduction':
-        mods.push({ codeName, target: 'cost', type: 'multiplicative', value: val, priority: 5 });
+        mods.push({
+          codeName,
+          target: 'cost',
+          type: 'multiplicative',
+          stackKind: 'more',
+          value: val,
+          priority: 5
+        });
         break;
       case 'resourceMultiplier':
-        mods.push({ codeName, target: 'resource', targetId: effect.resource, type: 'multiplicative', value: val, priority: 25 });
+        pushMod('resource', effect.resource);
         break;
     }
   },

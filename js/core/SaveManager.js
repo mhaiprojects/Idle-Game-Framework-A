@@ -4,6 +4,8 @@ import { ConfigManager } from './ConfigManager.js';
 const SAVE_VERSION = '1.3.0';
 const LEGACY_STORAGE_KEY = 'afk_ai_save';
 
+let persistEnabled = true;
+
 const EQUIPMENT_SLOT_MIGRATION = {
   accessory: 'amulet',
   weapon: 'mainHand'
@@ -56,6 +58,18 @@ function buildPayload(state) {
 }
 
 export const SaveManager = {
+  isPersistEnabled() {
+    return persistEnabled;
+  },
+
+  disablePersist() {
+    persistEnabled = false;
+  },
+
+  enablePersist() {
+    persistEnabled = true;
+  },
+
   getSaveVersion() {
     return SAVE_VERSION;
   },
@@ -95,6 +109,7 @@ export const SaveManager = {
   },
 
   save(state, { rotateBackup = false } = {}) {
+    if (!persistEnabled) return null;
     const key = storageKey();
     const fw = ConfigManager.getFramework();
     const payload = buildPayload(state);
@@ -289,11 +304,13 @@ export const SaveManager = {
   },
 
   clear() {
+    persistEnabled = false;
     localStorage.removeItem(storageKey());
   },
 
   clearAll() {
-    this.clear();
+    persistEnabled = false;
+    localStorage.removeItem(storageKey());
     this.deleteAllBackups();
   }
 };

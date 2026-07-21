@@ -19,12 +19,12 @@
       "produces": [
         {
           "resource": "stone",
-          "amount": 1,
+          "amount": 0.8,
           "role": "primary"
         },
         {
           "resource": "wood",
-          "amount": 0.3,
+          "amount": 0.2,
           "role": "unlockGate",
           "forGenerator": "woodcutter"
         }
@@ -58,21 +58,17 @@
         {
           "resource": "stone",
           "multiplier": 1
-        },
-        {
-          "resource": "wood",
-          "multiplier": 1
         }
       ],
       "produces": [
         {
           "resource": "wood",
-          "amount": 1,
+          "amount": 0.6,
           "role": "primary"
         },
         {
           "resource": "game",
-          "amount": 0.4,
+          "amount": 0.15,
           "role": "unlockGate",
           "forGenerator": "hunter"
         }
@@ -120,12 +116,12 @@
       "produces": [
         {
           "resource": "game",
-          "amount": 1,
+          "amount": 0.25,
           "role": "primary"
         },
         {
           "resource": "plants",
-          "amount": 0.2,
+          "amount": 0.12,
           "role": "unlockGate",
           "forGenerator": "farmer"
         }
@@ -163,21 +159,17 @@
         {
           "resource": "wood",
           "multiplier": 1
-        },
-        {
-          "resource": "game",
-          "multiplier": 1
         }
       ],
       "produces": [
         {
           "resource": "plants",
-          "amount": 1,
+          "amount": 0.4,
           "role": "primary"
         },
         {
           "resource": "food",
-          "amount": 0.15,
+          "amount": 0.08,
           "role": "unlockGate",
           "forGenerator": "campfire"
         }
@@ -210,7 +202,7 @@
       "costResources": [
         {
           "resource": "stone",
-          "multiplier": 1
+          "multiplier": 2
         },
         {
           "resource": "wood",
@@ -220,20 +212,14 @@
       "consumes": [
         {
           "resource": "wood",
-          "amount": 0.5
+          "amount": 0.6
         }
       ],
       "produces": [
         {
           "resource": "charcoal",
-          "amount": 0.8,
+          "amount": 0.15,
           "role": "primary"
-        },
-        {
-          "resource": "charcoal",
-          "amount": 0.05,
-          "role": "bonus",
-          "forGenerator": "copperSmelter"
         }
       ]
     },
@@ -264,36 +250,32 @@
       "costResources": [
         {
           "resource": "stone",
-          "multiplier": 1
+          "multiplier": 2
         },
         {
           "resource": "wood",
           "multiplier": 2
-        },
-        {
-          "resource": "game",
-          "multiplier": 1
         }
       ],
       "consumes": [
         {
           "resource": "wood",
-          "amount": 0.3
+          "amount": 0.15
         },
         {
           "resource": "game",
-          "amount": 0.4
+          "amount": 0.25
         }
       ],
       "produces": [
         {
           "resource": "food",
-          "amount": 1.5,
+          "amount": 0.35,
           "role": "primary"
         },
         {
           "resource": "copperOre",
-          "amount": 0.02,
+          "amount": 0.015,
           "role": "unlockGate",
           "forGenerator": "prospector"
         }
@@ -336,20 +318,14 @@
       "consumes": [
         {
           "resource": "stone",
-          "amount": 0.5
+          "amount": 1.0
         }
       ],
       "produces": [
         {
           "resource": "brick",
-          "amount": 0.6,
+          "amount": 0.2,
           "role": "primary"
-        },
-        {
-          "resource": "brick",
-          "amount": 0.1,
-          "role": "unlockGate",
-          "forGenerator": "prospector"
         }
       ]
     },
@@ -385,33 +361,29 @@
         {
           "resource": "brick",
           "multiplier": 1
-        },
-        {
-          "resource": "wood",
-          "multiplier": 1
         }
       ],
       "produces": [
         {
           "resource": "stone",
-          "amount": 0.5,
+          "amount": 0.3,
           "role": "bonus"
         },
         {
           "resource": "copperOre",
-          "amount": 0.08,
-          "role": "unlockGate",
-          "forGenerator": "copperMine"
-        },
-        {
-          "resource": "tinOre",
           "amount": 0.06,
           "role": "unlockGate",
           "forGenerator": "copperMine"
         },
         {
+          "resource": "tinOre",
+          "amount": 0.045,
+          "role": "unlockGate",
+          "forGenerator": "copperMine"
+        },
+        {
           "resource": "ironOre",
-          "amount": 0.02,
+          "amount": 0.015,
           "role": "bonus",
           "requiresUnlock": {
             "type": "characterUnlocked",
@@ -454,21 +426,15 @@
           "multiplier": 2
         },
         {
-          "resource": "copperOre",
+          "resource": "brick",
           "multiplier": 1
         }
       ],
       "produces": [
         {
           "resource": "copperOre",
-          "amount": 1,
+          "amount": 0.35,
           "role": "primary"
-        },
-        {
-          "resource": "copperOre",
-          "amount": 0.2,
-          "role": "unlockGate",
-          "forGenerator": "copperSmelter"
         }
       ]
     },
@@ -502,8 +468,8 @@
           "multiplier": 1
         },
         {
-          "resource": "copperOre",
-          "multiplier": 3
+          "resource": "brick",
+          "multiplier": 2
         },
         {
           "resource": "charcoal",
@@ -513,24 +479,18 @@
       "consumes": [
         {
           "resource": "copperOre",
-          "amount": 0.8
+          "amount": 0.35
         },
         {
           "resource": "charcoal",
-          "amount": 0.3
+          "amount": 0.12
         }
       ],
       "produces": [
         {
           "resource": "copper",
-          "amount": 0.7,
+          "amount": 0.28,
           "role": "primary"
-        },
-        {
-          "resource": "copper",
-          "amount": 0.1,
-          "role": "bonus",
-          "forGenerator": "bronzeForge"
         }
       ]
     },
@@ -564,8 +524,8 @@
           "multiplier": 1
         },
         {
-          "resource": "tinOre",
-          "multiplier": 3
+          "resource": "brick",
+          "multiplier": 2
         },
         {
           "resource": "charcoal",
@@ -575,24 +535,18 @@
       "consumes": [
         {
           "resource": "tinOre",
-          "amount": 0.8
+          "amount": 0.28
         },
         {
           "resource": "charcoal",
-          "amount": 0.3
+          "amount": 0.12
         }
       ],
       "produces": [
         {
           "resource": "tin",
-          "amount": 0.7,
+          "amount": 0.22,
           "role": "primary"
-        },
-        {
-          "resource": "tin",
-          "amount": 0.1,
-          "role": "unlockGate",
-          "forGenerator": "bronzeForge"
         }
       ]
     },
@@ -631,36 +585,28 @@
           "multiplier": 1
         },
         {
-          "resource": "copper",
+          "resource": "brick",
           "multiplier": 3
-        },
-        {
-          "resource": "tin",
-          "multiplier": 2
-        },
-        {
-          "resource": "charcoal",
-          "multiplier": 1
         }
       ],
       "consumes": [
         {
           "resource": "copper",
-          "amount": 0.5
+          "amount": 0.25
         },
         {
           "resource": "tin",
-          "amount": 0.3
+          "amount": 0.08
         },
         {
           "resource": "charcoal",
-          "amount": 0.2
+          "amount": 0.1
         }
       ],
       "produces": [
         {
           "resource": "bronze",
-          "amount": 0.8,
+          "amount": 0.32,
           "role": "primary"
         }
       ]
@@ -695,24 +641,18 @@
         },
         {
           "resource": "bronze",
-          "multiplier": 3
+          "multiplier": 2
         },
         {
-          "resource": "ironOre",
-          "multiplier": 1
+          "resource": "food",
+          "multiplier": 2
         }
       ],
       "produces": [
         {
           "resource": "ironOre",
-          "amount": 1,
+          "amount": 0.4,
           "role": "primary"
-        },
-        {
-          "resource": "iron",
-          "amount": 0.05,
-          "role": "unlockGate",
-          "forGenerator": "ironSmelter"
         }
       ]
     },
@@ -746,33 +686,29 @@
           "multiplier": 1
         },
         {
-          "resource": "ironOre",
-          "multiplier": 4
-        },
-        {
-          "resource": "charcoal",
-          "multiplier": 2
+          "resource": "brick",
+          "multiplier": 3
         }
       ],
       "consumes": [
         {
           "resource": "ironOre",
-          "amount": 0.9
+          "amount": 0.45
         },
         {
           "resource": "charcoal",
-          "amount": 0.4
+          "amount": 0.15
         }
       ],
       "produces": [
         {
           "resource": "iron",
-          "amount": 0.8,
+          "amount": 0.32,
           "role": "primary"
         },
         {
           "resource": "gold",
-          "amount": 0.05,
+          "amount": 0.02,
           "role": "unlockGate",
           "forGenerator": "blacksmith"
         }
@@ -808,35 +744,29 @@
           "multiplier": 1
         },
         {
-          "resource": "iron",
-          "multiplier": 5
+          "resource": "brick",
+          "multiplier": 2
         },
         {
-          "resource": "charcoal",
-          "multiplier": 2
+          "resource": "iron",
+          "multiplier": 1
         }
       ],
       "consumes": [
         {
           "resource": "iron",
-          "amount": 0.6
+          "amount": 0.4
         },
         {
           "resource": "charcoal",
-          "amount": 0.3
+          "amount": 0.12
         }
       ],
       "produces": [
         {
           "resource": "gold",
-          "amount": 0.4,
+          "amount": 0.06,
           "role": "primary"
-        },
-        {
-          "resource": "gold",
-          "amount": 0.1,
-          "role": "unlockGate",
-          "forGenerator": "tradeCaravan"
         }
       ]
     },
@@ -866,11 +796,11 @@
       "requiredFeature": "generators:tier2",
       "costResources": [
         {
-          "resource": "food",
-          "multiplier": 3
+          "resource": "stone",
+          "multiplier": 1
         },
         {
-          "resource": "wood",
+          "resource": "food",
           "multiplier": 2
         },
         {
@@ -881,24 +811,24 @@
       "produces": [
         {
           "resource": "gold",
-          "amount": 1.2,
+          "amount": 0.5,
           "role": "primary"
         },
         {
+          "resource": "coal",
+          "amount": 0.05,
+          "role": "unlockGate",
+          "forGenerator": "coalMine"
+        }
+      ],
+      "consumes": [
+        {
           "resource": "food",
-          "amount": 0.5,
-          "role": "bonus"
+          "amount": 0.15
         },
         {
           "resource": "wood",
-          "amount": 0.3,
-          "role": "bonus"
-        },
-        {
-          "resource": "coal",
-          "amount": 0.08,
-          "role": "unlockGate",
-          "forGenerator": "coalMine"
+          "amount": 0.1
         }
       ]
     },
@@ -927,24 +857,18 @@
         },
         {
           "resource": "iron",
-          "multiplier": 5
+          "multiplier": 3
         },
         {
           "resource": "gold",
-          "multiplier": 2
+          "multiplier": 1
         }
       ],
       "produces": [
         {
           "resource": "coal",
-          "amount": 1.5,
+          "amount": 1.0,
           "role": "primary"
-        },
-        {
-          "resource": "steel",
-          "amount": 0.08,
-          "role": "unlockGate",
-          "forGenerator": "steelForge"
         }
       ]
     },
@@ -974,37 +898,37 @@
       "requiredFeature": "generators:tier3",
       "costResources": [
         {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
           "resource": "iron",
-          "multiplier": 5
+          "multiplier": 2
         },
         {
           "resource": "coal",
-          "multiplier": 5
-        },
-        {
-          "resource": "steel",
-          "multiplier": 1
+          "multiplier": 2
         }
       ],
       "consumes": [
         {
           "resource": "iron",
-          "amount": 0.7
+          "amount": 0.4
         },
         {
           "resource": "coal",
-          "amount": 0.5
+          "amount": 0.25
         }
       ],
       "produces": [
         {
           "resource": "steel",
-          "amount": 0.9,
+          "amount": 0.35,
           "role": "primary"
         },
         {
           "resource": "food",
-          "amount": 0.2,
+          "amount": 0.1,
           "role": "unlockGate",
           "forGenerator": "foodPackagingFactory"
         }
@@ -1036,41 +960,37 @@
       "requiredFeature": "generators:tier3",
       "costResources": [
         {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
           "resource": "steel",
           "multiplier": 3
-        },
-        {
-          "resource": "game",
-          "multiplier": 2
-        },
-        {
-          "resource": "plants",
-          "multiplier": 2
         }
       ],
       "consumes": [
         {
           "resource": "steel",
-          "amount": 0.2
+          "amount": 0.05
         },
         {
           "resource": "game",
-          "amount": 0.4
+          "amount": 0.2
         },
         {
           "resource": "plants",
-          "amount": 0.4
+          "amount": 0.2
         }
       ],
       "produces": [
         {
           "resource": "food",
-          "amount": 5,
+          "amount": 2.5,
           "role": "primary"
         },
         {
           "resource": "electricity",
-          "amount": 0.03,
+          "amount": 0.02,
           "role": "unlockGate",
           "forGenerator": "powerPlant"
         }
@@ -1102,33 +1022,37 @@
       "requiredFeature": "generators:tier3",
       "costResources": [
         {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
           "resource": "coal",
-          "multiplier": 10
+          "multiplier": 5
         },
         {
           "resource": "steel",
-          "multiplier": 10
+          "multiplier": 5
         }
       ],
       "consumes": [
         {
           "resource": "coal",
-          "amount": 0.8
+          "amount": 0.5
         },
         {
           "resource": "steel",
-          "amount": 0.1
+          "amount": 0.02
         }
       ],
       "produces": [
         {
           "resource": "electricity",
-          "amount": 2,
+          "amount": 1.8,
           "role": "primary"
         },
         {
           "resource": "data",
-          "amount": 0.02,
+          "amount": 0.01,
           "role": "unlockGate",
           "forGenerator": "broadcastTower"
         }
@@ -1160,31 +1084,29 @@
       "requiredFeature": "generators:tier3",
       "costResources": [
         {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
           "resource": "steel",
           "multiplier": 5
         },
         {
           "resource": "electricity",
-          "multiplier": 3
+          "multiplier": 2
         }
       ],
       "consumes": [
         {
           "resource": "electricity",
-          "amount": 0.5
+          "amount": 0.6
         }
       ],
       "produces": [
         {
           "resource": "data",
-          "amount": 0.3,
+          "amount": 0.15,
           "role": "primary"
-        },
-        {
-          "resource": "data",
-          "amount": 0.1,
-          "role": "unlockGate",
-          "forGenerator": "internetHub"
         }
       ]
     },
@@ -1214,39 +1136,33 @@
       "requiredFeature": "generators:tier3",
       "costResources": [
         {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
           "resource": "steel",
           "multiplier": 3
         },
         {
           "resource": "electricity",
-          "multiplier": 5
-        },
-        {
-          "resource": "data",
-          "multiplier": 1
+          "multiplier": 3
         }
       ],
       "consumes": [
         {
           "resource": "electricity",
-          "amount": 0.4
+          "amount": 0.35
         },
         {
           "resource": "data",
-          "amount": 0.1
+          "amount": 0.08
         }
       ],
       "produces": [
         {
           "resource": "data",
-          "amount": 0.8,
+          "amount": 0.45,
           "role": "primary"
-        },
-        {
-          "resource": "data",
-          "amount": 0.2,
-          "role": "unlockGate",
-          "forGenerator": "dataCenter"
         }
       ]
     },
@@ -1275,29 +1191,39 @@
       "requiredFeature": "generators:tier4",
       "costResources": [
         {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
           "resource": "steel",
           "multiplier": 5
         },
         {
           "resource": "electricity",
           "multiplier": 5
-        },
-        {
-          "resource": "data",
-          "multiplier": 1
         }
       ],
       "produces": [
         {
           "resource": "data",
-          "amount": 1.5,
+          "amount": 1.2,
           "role": "primary"
         },
         {
           "resource": "compute",
-          "amount": 0.1,
+          "amount": 0.08,
           "role": "unlockGate",
           "forGenerator": "mlLaboratory"
+        }
+      ],
+      "consumes": [
+        {
+          "resource": "electricity",
+          "amount": 0.5
+        },
+        {
+          "resource": "data",
+          "amount": 0.12
         }
       ]
     },
@@ -1327,29 +1253,39 @@
       "requiredFeature": "generators:tier4",
       "costResources": [
         {
+          "resource": "stone",
+          "multiplier": 1
+        },
+        {
           "resource": "steel",
           "multiplier": 3
         },
         {
           "resource": "data",
-          "multiplier": 5
-        },
-        {
-          "resource": "compute",
-          "multiplier": 1
+          "multiplier": 3
         }
       ],
       "produces": [
         {
           "resource": "compute",
-          "amount": 1.5,
+          "amount": 0.8,
           "role": "primary"
         },
         {
           "resource": "intelligence",
-          "amount": 0.05,
+          "amount": 0.03,
           "role": "unlockGate",
           "forGenerator": "agiCore"
+        }
+      ],
+      "consumes": [
+        {
+          "resource": "data",
+          "amount": 0.35
+        },
+        {
+          "resource": "electricity",
+          "amount": 0.2
         }
       ]
     },
@@ -1358,7 +1294,7 @@
       "displayName": "AGI Core",
       "icon": "\ud83e\udde0",
       "category": "digital",
-      "description": "Artificial general intelligence — humanity's next chapter.",
+      "description": "Artificial general intelligence \u2014 humanity's next chapter.",
       "unlockConditions": {
         "operator": "AND",
         "conditions": [
@@ -1379,28 +1315,33 @@
       "requiredFeature": "generators:tier4",
       "costResources": [
         {
-          "resource": "compute",
-          "multiplier": 20
+          "resource": "stone",
+          "multiplier": 1
         },
         {
-          "resource": "data",
+          "resource": "compute",
           "multiplier": 10
         },
         {
-          "resource": "intelligence",
-          "multiplier": 1
+          "resource": "data",
+          "multiplier": 5
         }
       ],
       "produces": [
         {
           "resource": "intelligence",
-          "amount": 5,
+          "amount": 0.15,
           "role": "primary"
-        },
+        }
+      ],
+      "consumes": [
         {
           "resource": "compute",
-          "amount": 0.5,
-          "role": "bonus"
+          "amount": 0.5
+        },
+        {
+          "resource": "data",
+          "amount": 0.25
         }
       ]
     }

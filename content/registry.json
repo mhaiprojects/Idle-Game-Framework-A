@@ -1,16 +1,6 @@
 {
-  "defaultContentId": "cosmic-time-factory",
+  "defaultContentId": "dr-dirt",
   "games": [
-    {
-      "id": "cosmic-time-factory",
-      "displayName": "Cosmic Time Factory",
-      "description": "Harvest time shards and ascend through cosmic realms — from mortal realm to cosmic infinity.",
-      "icon": "⏱️",
-      "tagline": "Temporal idle incremental",
-      "storageKey": "afk_cosmic_time_factory_save",
-      "exportPrefix": "cosmic-time-factory",
-      "themeColor": "#6366f1"
-    },
     {
       "id": "dr-dirt",
       "displayName": "Dr Dirt",
@@ -20,6 +10,16 @@
       "storageKey": "afk_dr_dirt_save",
       "exportPrefix": "dr-dirt",
       "themeColor": "#84cc16"
+    },
+    {
+      "id": "cosmic-time-factory",
+      "displayName": "Cosmic Time Factory",
+      "description": "Harvest time shards and ascend through cosmic realms — from mortal realm to cosmic infinity.",
+      "icon": "⏱️",
+      "tagline": "Temporal idle incremental",
+      "storageKey": "afk_cosmic_time_factory_save",
+      "exportPrefix": "cosmic-time-factory",
+      "themeColor": "#6366f1"
     }
   ]
 }

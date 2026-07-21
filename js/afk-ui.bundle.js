@@ -1230,6 +1230,19 @@ AFK_UI.StatsPanel = {
           <div class="stat-box">Current {{ primaryCurrencyLabel }}: {{ formatNumber(primaryBreakdown.total) }}/s</div>
         </div>
       </CardSection>
+      <CardSection section-key="resourceGeneration" title="Resource Generation" level="panel">
+        <p class="hint-text">Lifetime totals and current net production rate per resource.</p>
+        <div v-for="row in stats.resourceTotals" :key="row.codeName" class="card nested-card">
+          <div style="display:flex;justify-content:space-between;font-size:0.8rem;gap:0.5rem">
+            <span>{{ row.icon }} {{ row.name }}</span>
+            <span>{{ formatNumber(row.currentRate) }}/s</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-muted)">
+            <span>Lifetime generated</span>
+            <span>{{ formatNumber(row.lifetimeGenerated) }}</span>
+          </div>
+        </div>
+      </CardSection>
       <CardSection section-key="primaryByGenerator" :title="primaryCurrencyLabel + ' by Generator'" level="panel">
         <div v-for="item in primaryBreakdown.breakdown" :key="item.generator" class="card nested-card">
           <div style="display:flex;justify-content:space-between;font-size:0.8rem">

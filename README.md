@@ -7,7 +7,7 @@ Browser-based idle/incremental game engine with swappable **content packs**. The
 ### Play the game
 
 1. Open `index.html` in a browser (works via `file://` — no build step required).
-2. Use the **game selector** in Settings to switch to **Dr Dirt** (default pack is Cosmic Time Factory).
+2. **Dr Dirt** loads by default (switch to Cosmic Time Factory in Settings if needed).
 3. Tap to earn **Stone** (primary currency), buy generators, prestige, and ascend through historical eras.
 
 Optional local server (same as automated tests):
@@ -115,11 +115,21 @@ Resources unlock per ascension tier in `framework.json` → `resourceUnlockByTie
 4. **Prospector** finds bonus stone; after **Bronze Smith** character unlock, may produce trace `ironOre` (`requiresUnlock` on produce).
 5. Ascend to Bronze Age → start ore smelting chain with granted starter ore.
 
+### Production modifiers
+
+Net production uses: **Flat × (1 + Σ Increased) × Π More**
+
+- **Increased** — consumable boosts of the same type add together (e.g. two +50% Increased = +100%).
+- **More** — equipment, upgrades, and permanent bonuses multiply together.
+- **Purchase vs operation** — `costResources` is the one-time build price; `consumes[]` is ongoing fuel/input per second.
+
+See [`content/dr-dirt/GENERATOR_CHANGES.md`](content/dr-dirt/GENERATOR_CHANGES.md) for the full generator rebalance log (before/after rates, purchase costs, and real-world logic).
+
 ---
 
 ## Content authoring rules (Dr Dirt)
 
-Canonical JSON lives in `content/dr-dirt/`. Do **not** rely on `scripts/generate-dr-dirt-content.py` to overwrite hand-edited content.
+Canonical JSON lives in `content/dr-dirt/` — edit those files directly; run the bundle script after changes.
 
 ### Naming (#0)
 
@@ -179,7 +189,7 @@ First run installs `.venv-test/` and Playwright Chromium automatically.
 | ID | Name | Primary currency |
 |----|------|------------------|
 | `cosmic-time-factory` | Cosmic Time Factory | Time shards |
-| `dr-dirt` | Dr Dirt | Stone |
+| `dr-dirt` | **Dr Dirt (default)** | Stone |
 
 Register new themes in `content/registry.json` and add a folder under `content/<id>/` with the standard JSON files (`framework.json`, `generators.json`, `resources.json`, etc.).
 

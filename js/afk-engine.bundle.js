@@ -110,29 +110,37 @@ const FormulaEngine = {
   },
 
   applyModifierStack(base, modifiers) {
-    let additive = 0;
-    const multiplicative = [];
+    let flat = 0;
+    let increasedSum = 0;
+    let moreProduct = 1;
     const breakdown = [];
 
     for (const mod of modifiers) {
-      if (mod.type === 'additive') {
-        additive += mod.value;
-      } else if (mod.type === 'multiplicative') {
-        multiplicative.push(mod);
+      if (mod.type === 'additive' || mod.stackKind === 'flat') {
+        flat += mod.value;
+        breakdown.push({ codeName: mod.codeName, kind: 'flat', value: mod.value });
+      } else if (mod.stackKind === 'increased') {
+        increasedSum += (mod.value - 1);
+        breakdown.push({ codeName: mod.codeName, kind: 'increased', value: mod.value });
+      } else {
+        moreProduct *= mod.value;
+        breakdown.push({ codeName: mod.codeName, kind: 'more', value: mod.value });
       }
     }
 
-    multiplicative.sort((a, b) => (a.priority ?? this._calc(null, 'modifierPriorityDefault'))
-      - (b.priority ?? this._calc(null, 'modifierPriorityDefault')));
+    const afterFlat = base + flat;
+    const afterIncreased = afterFlat * (1 + increasedSum);
+    const value = Math.max(0, afterIncreased * moreProduct);
 
-    let value = base + additive;
-    for (const mod of multiplicative) {
-      const before = value;
-      value *= mod.value;
-      breakdown.push({ codeName: mod.codeName, before, after: value, multiplier: mod.value });
-    }
-
-    return { value: Math.max(0, value), breakdown };
+    return {
+      value,
+      breakdown,
+      flat,
+      increasedSum,
+      moreProduct,
+      afterFlat,
+      afterIncreased
+    };
   },
 
   calculateGeneratorCost(gen, owned, mods, config, state) {
@@ -230,6 +238,11 @@ const FormulaEngine = {
   },
 
   calculateResourceRate(state, config, mods, resourceCode) {
+    return this.calculateResourceRateBreakdown(state, config, mods, resourceCode).total;
+  },
+
+  calculateResourceRateBreakdown(state, config, mods, resourceCode) {
+    const breakdown = [];
     let total = 0;
 
     for (const gen of config.generators.generators) {
@@ -241,13 +254,33 @@ const FormulaEngine = {
 
       for (const prod of gen.produces || []) {
         if (prod.resource !== resourceCode) continue;
-        total += this.calculateGeneratorProductRate(
+        const rate = this.calculateGeneratorProductRate(
           gen, prod, gs.quantityPurchased, mods, config, state, consumeScale
         );
+        if (rate <= 0) continue;
+        total += rate;
+        breakdown.push({
+          generator: gen.codeName,
+          amount: rate,
+          percent: 0,
+          role: prod.role || 'primary'
+        });
       }
     }
 
-    return total;
+    for (const item of breakdown) {
+      item.percent = total > 0 ? (item.amount / total) * 100 : 0;
+    }
+
+    return { total, breakdown };
+  },
+
+  calculateAllResourceRates(state, config, mods) {
+    const rates = {};
+    for (const res of config.resources.resources) {
+      rates[res.codeName] = this.calculateResourceRateBreakdown(state, config, mods, res.codeName);
+    }
+    return rates;
   },
 
   calculatePrimaryCurrencyRate(state, config, mods) {
@@ -631,7 +664,7 @@ function getSelectedContentId() {
     const stored = localStorage.getItem(CONTENT_SELECTION_KEY);
     if (stored) return stored;
   }
-  return contentRegistry?.defaultContentId || 'cosmic-time-factory';
+  return contentRegistry?.defaultContentId || 'dr-dirt';
 }
 
 function setSelectedContentId(contentId) {
@@ -1543,6 +1576,8 @@ const ConfigManager = {
 const SAVE_VERSION = '1.3.0';
 const LEGACY_STORAGE_KEY = 'afk_ai_save';
 
+let persistEnabled = true;
+
 const EQUIPMENT_SLOT_MIGRATION = {
   accessory: 'amulet',
   weapon: 'mainHand'
@@ -1595,6 +1630,18 @@ function buildPayload(state) {
 }
 
 const SaveManager = {
+  isPersistEnabled() {
+    return persistEnabled;
+  },
+
+  disablePersist() {
+    persistEnabled = false;
+  },
+
+  enablePersist() {
+    persistEnabled = true;
+  },
+
   getSaveVersion() {
     return SAVE_VERSION;
   },
@@ -1634,6 +1681,7 @@ const SaveManager = {
   },
 
   save(state, { rotateBackup = false } = {}) {
+    if (!persistEnabled) return null;
     const key = storageKey();
     const fw = ConfigManager.getFramework();
     const payload = buildPayload(state);
@@ -1828,11 +1876,13 @@ const SaveManager = {
   },
 
   clear() {
+    persistEnabled = false;
     localStorage.removeItem(storageKey());
   },
 
   clearAll() {
-    this.clear();
+    persistEnabled = false;
+    localStorage.removeItem(storageKey());
     this.deleteAllBackups();
   }
 };
@@ -2022,14 +2072,36 @@ const ModifierSystem = {
       const cs = state.characters[char.codeName];
       if (!cs?.activated) continue;
       if (char.baseStats?.globalMultiplier) {
-        mods.push({ codeName: `char:${char.codeName}`, target: 'global', type: 'multiplicative', value: char.baseStats.globalMultiplier, priority: 20 });
+        mods.push({
+          codeName: `char:${char.codeName}`,
+          target: 'global',
+          type: 'multiplicative',
+          stackKind: 'more',
+          value: char.baseStats.globalMultiplier,
+          priority: 20
+        });
       }
       if (char.baseStats?.clickMultiplier) {
-        mods.push({ codeName: `char:${char.codeName}:click`, target: 'click', type: 'multiplicative', value: char.baseStats.clickMultiplier, priority: 20 });
+        mods.push({
+          codeName: `char:${char.codeName}:click`,
+          target: 'click',
+          type: 'multiplicative',
+          stackKind: 'more',
+          value: char.baseStats.clickMultiplier,
+          priority: 20
+        });
       }
       if (char.baseStats?.categoryMultiplier) {
         const cm = char.baseStats.categoryMultiplier;
-        mods.push({ codeName: `char:${char.codeName}:cat`, target: 'category', targetId: cm.category, type: 'multiplicative', value: cm.multiplier, priority: 20 });
+        mods.push({
+          codeName: `char:${char.codeName}:cat`,
+          target: 'category',
+          targetId: cm.category,
+          type: 'multiplicative',
+          stackKind: 'more',
+          value: cm.multiplier,
+          priority: 20
+        });
       }
     }
 
@@ -2048,7 +2120,10 @@ const ModifierSystem = {
 
     for (const buff of state.activeBuffs || []) {
       if (buff.expiresAt && buff.expiresAt <= now) continue;
-      this._addEffectMods(mods, buff.effect, `buff:${buff.codeName}`, buff.effect.category, null, 1);
+      this._addEffectMods(
+        mods, buff.effect, `buff:${buff.codeName}`, buff.effect.category, null, 1,
+        { defaultStackKind: 'increased' }
+      );
     }
 
     for (const evt of state.activeEvents || []) {
@@ -2061,29 +2136,49 @@ const ModifierSystem = {
     return mods;
   },
 
-  _addEffectMods(mods, effect, codeName, category, targetId, count) {
+  _addEffectMods(mods, effect, codeName, category, targetId, count, options = {}) {
     if (!effect) return;
     const mult = effect.multiplier ?? ConfigManager.getDefaultCalc('effectMultiplierDefault');
     const val = effect.type === 'costReduction' ? mult : mult;
+    const stackKind = effect.stackKind || options.defaultStackKind || 'more';
+
+    const pushMod = (target, targetIdValue, modType = 'multiplicative') => {
+      mods.push({
+        codeName,
+        target,
+        targetId: targetIdValue,
+        type: modType,
+        stackKind,
+        value: val,
+        priority: options.priority ?? 30
+      });
+    };
 
     switch (effect.type) {
       case 'globalMultiplier':
-        mods.push({ codeName, target: 'global', type: 'multiplicative', value: val, priority: 30 });
+        pushMod('global', null);
         break;
       case 'clickMultiplier':
-        mods.push({ codeName, target: 'click', type: 'multiplicative', value: val, priority: 10 });
+        pushMod('click', null, 'multiplicative');
         break;
       case 'generatorMultiplier':
-        mods.push({ codeName, target: 'generator', targetId: targetId || effect.generator, type: 'multiplicative', value: val, priority: 15 });
+        pushMod('generator', targetId || effect.generator);
         break;
       case 'categoryMultiplier':
-        mods.push({ codeName, target: 'category', targetId: effect.category || category, type: 'multiplicative', value: val, priority: 20 });
+        pushMod('category', effect.category || category);
         break;
       case 'costReduction':
-        mods.push({ codeName, target: 'cost', type: 'multiplicative', value: val, priority: 5 });
+        mods.push({
+          codeName,
+          target: 'cost',
+          type: 'multiplicative',
+          stackKind: 'more',
+          value: val,
+          priority: 5
+        });
         break;
       case 'resourceMultiplier':
-        mods.push({ codeName, target: 'resource', targetId: effect.resource, type: 'multiplicative', value: val, priority: 25 });
+        pushMod('resource', effect.resource);
         break;
     }
   },

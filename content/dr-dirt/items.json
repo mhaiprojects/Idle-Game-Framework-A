@@ -3,11 +3,11 @@
     {
       "codeName": "rationPack",
       "displayName": "Travel Rations",
-      "description": "Boosts production briefly.",
+      "description": "Boosts production briefly. Same-type consumables stack as Increased.",
       "icon": "🍱",
       "type": "consumable",
       "actionBarEligible": true,
-      "effect": { "type": "globalMultiplier", "multiplier": 1.5, "durationSeconds": 30 }
+      "effect": { "type": "globalMultiplier", "multiplier": 1.5, "stackKind": "increased", "durationSeconds": 30 }
     },
     {
       "codeName": "driedMeat",
@@ -17,7 +17,7 @@
       "type": "consumable",
       "actionBarEligible": true,
       "requiredFeature": "generators:tier0",
-      "effect": { "type": "resourceMultiplier", "resource": "game", "multiplier": 1.5, "durationSeconds": 25 }
+      "effect": { "type": "resourceMultiplier", "resource": "game", "multiplier": 1.5, "stackKind": "increased", "durationSeconds": 25 }
     },
     {
       "codeName": "herbalTea",
@@ -37,7 +37,7 @@
       "type": "consumable",
       "actionBarEligible": true,
       "requiredFeature": "generators:tier3",
-      "effect": { "type": "clickMultiplier", "multiplier": 2.5, "durationSeconds": 20 }
+      "effect": { "type": "clickMultiplier", "multiplier": 2.5, "stackKind": "increased", "durationSeconds": 20 }
     },
     {
       "codeName": "stonePick",
@@ -48,7 +48,7 @@
       "slot": "tool",
       "rarity": "common",
       "stackable": true,
-      "effect": { "type": "globalMultiplier", "multiplier": 1.05 }
+      "effect": { "type": "globalMultiplier", "multiplier": 1.05, "stackKind": "more" }
     },
     {
       "codeName": "bronzeAxe",
@@ -60,7 +60,7 @@
       "rarity": "uncommon",
       "stackable": true,
       "requiredFeature": "generators:tier1",
-      "effect": { "type": "categoryMultiplier", "category": "primitive", "multiplier": 1.08 }
+      "effect": { "type": "categoryMultiplier", "category": "primitive", "multiplier": 1.08, "stackKind": "more" }
     },
     {
       "codeName": "ironSword",
@@ -72,7 +72,7 @@
       "rarity": "rare",
       "stackable": true,
       "requiredFeature": "generators:tier2",
-      "effect": { "type": "categoryMultiplier", "category": "medieval", "multiplier": 1.1 }
+      "effect": { "type": "categoryMultiplier", "category": "medieval", "multiplier": 1.1, "stackKind": "more" }
     },
     {
       "codeName": "steamWrench",
@@ -84,7 +84,7 @@
       "rarity": "rare",
       "stackable": true,
       "requiredFeature": "generators:tier3",
-      "effect": { "type": "categoryMultiplier", "category": "industrial", "multiplier": 1.12 }
+      "effect": { "type": "categoryMultiplier", "category": "industrial", "multiplier": 1.12, "stackKind": "more" }
     },
     {
       "codeName": "neuralHeadset",
@@ -96,7 +96,7 @@
       "rarity": "epic",
       "stackable": true,
       "requiredFeature": "generators:tier4",
-      "effect": { "type": "categoryMultiplier", "category": "digital", "multiplier": 1.15 }
+      "effect": { "type": "categoryMultiplier", "category": "digital", "multiplier": 1.15, "stackKind": "more" }
     },
     {
       "codeName": "leafCrown",
@@ -107,7 +107,7 @@
       "slot": "head",
       "rarity": "common",
       "stackable": true,
-      "effect": { "type": "clickMultiplier", "multiplier": 1.08 }
+      "effect": { "type": "clickMultiplier", "multiplier": 1.08, "stackKind": "more" }
     },
     {
       "codeName": "boneCharm",

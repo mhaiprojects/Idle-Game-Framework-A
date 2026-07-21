@@ -28,7 +28,7 @@ export function getSelectedContentId() {
     const stored = localStorage.getItem(CONTENT_SELECTION_KEY);
     if (stored) return stored;
   }
-  return contentRegistry?.defaultContentId || 'cosmic-time-factory';
+  return contentRegistry?.defaultContentId || 'dr-dirt';
 }
 
 export function setSelectedContentId(contentId) {

@@ -49,29 +49,37 @@ export const FormulaEngine = {
   },
 
   applyModifierStack(base, modifiers) {
-    let additive = 0;
-    const multiplicative = [];
+    let flat = 0;
+    let increasedSum = 0;
+    let moreProduct = 1;
     const breakdown = [];
 
     for (const mod of modifiers) {
-      if (mod.type === 'additive') {
-        additive += mod.value;
-      } else if (mod.type === 'multiplicative') {
-        multiplicative.push(mod);
+      if (mod.type === 'additive' || mod.stackKind === 'flat') {
+        flat += mod.value;
+        breakdown.push({ codeName: mod.codeName, kind: 'flat', value: mod.value });
+      } else if (mod.stackKind === 'increased') {
+        increasedSum += (mod.value - 1);
+        breakdown.push({ codeName: mod.codeName, kind: 'increased', value: mod.value });
+      } else {
+        moreProduct *= mod.value;
+        breakdown.push({ codeName: mod.codeName, kind: 'more', value: mod.value });
       }
     }
 
-    multiplicative.sort((a, b) => (a.priority ?? this._calc(null, 'modifierPriorityDefault'))
-      - (b.priority ?? this._calc(null, 'modifierPriorityDefault')));
+    const afterFlat = base + flat;
+    const afterIncreased = afterFlat * (1 + increasedSum);
+    const value = Math.max(0, afterIncreased * moreProduct);
 
-    let value = base + additive;
-    for (const mod of multiplicative) {
-      const before = value;
-      value *= mod.value;
-      breakdown.push({ codeName: mod.codeName, before, after: value, multiplier: mod.value });
-    }
-
-    return { value: Math.max(0, value), breakdown };
+    return {
+      value,
+      breakdown,
+      flat,
+      increasedSum,
+      moreProduct,
+      afterFlat,
+      afterIncreased
+    };
   },
 
   calculateGeneratorCost(gen, owned, mods, config, state) {
@@ -169,6 +177,11 @@ export const FormulaEngine = {
   },
 
   calculateResourceRate(state, config, mods, resourceCode) {
+    return this.calculateResourceRateBreakdown(state, config, mods, resourceCode).total;
+  },
+
+  calculateResourceRateBreakdown(state, config, mods, resourceCode) {
+    const breakdown = [];
     let total = 0;
 
     for (const gen of config.generators.generators) {
@@ -180,13 +193,33 @@ export const FormulaEngine = {
 
       for (const prod of gen.produces || []) {
         if (prod.resource !== resourceCode) continue;
-        total += this.calculateGeneratorProductRate(
+        const rate = this.calculateGeneratorProductRate(
           gen, prod, gs.quantityPurchased, mods, config, state, consumeScale
         );
+        if (rate <= 0) continue;
+        total += rate;
+        breakdown.push({
+          generator: gen.codeName,
+          amount: rate,
+          percent: 0,
+          role: prod.role || 'primary'
+        });
       }
     }
 
-    return total;
+    for (const item of breakdown) {
+      item.percent = total > 0 ? (item.amount / total) * 100 : 0;
+    }
+
+    return { total, breakdown };
+  },
+
+  calculateAllResourceRates(state, config, mods) {
+    const rates = {};
+    for (const res of config.resources.resources) {
+      rates[res.codeName] = this.calculateResourceRateBreakdown(state, config, mods, res.codeName);
+    }
+    return rates;
   },
 
   calculatePrimaryCurrencyRate(state, config, mods) {
