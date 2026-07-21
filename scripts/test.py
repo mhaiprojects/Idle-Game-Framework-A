@@ -3,10 +3,10 @@
 Run full test automation for AFK game engine.
 
 Usage:
-  python3 scripts/run-test-automation.py          # bundle + all tests
-  python3 scripts/run-test-automation.py --quick  # skip bundle regen
-  python3 scripts/run-test-automation.py --e2e   # browser tests only
-  python3 scripts/run-test-automation.py --full-playthrough  # exhaustive 100x sim (slow)
+  python3 scripts/test.py          # validate + all tests
+  python3 scripts/test.py --quick  # skip bundle regen
+  python3 scripts/test.py --e2e   # browser tests only
+  python3 scripts/test.py --full-playthrough  # exhaustive 100x sim (slow)
 
 Agents: run this after config or engine changes to verify a working game.
 """
@@ -55,7 +55,7 @@ def main() -> int:
     ensure_venv()
 
     if not args.e2e and not args.content and not args.quick:
-        code = run([sys.executable, str(ROOT / "scripts" / "bundle-for-file-protocol.py")])
+        code = run([sys.executable, str(ROOT / "scripts" / "bundle.py")])
         if code != 0:
             return code
 
@@ -65,7 +65,7 @@ def main() -> int:
     if args.full_playthrough:
         bundle = not args.quick
         if bundle:
-            code = run([sys.executable, str(ROOT / "scripts" / "bundle-for-file-protocol.py")])
+            code = run([sys.executable, str(ROOT / "scripts" / "bundle.py")])
             if code != 0:
                 return code
         return run([

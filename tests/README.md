@@ -5,7 +5,7 @@ Automated checks to validate content packs, bundles, and full browser gameplay.
 ## Quick start
 
 ```bash
-python3 scripts/run-test-automation.py
+python3 scripts/test.py
 ```
 
 This will:
@@ -18,10 +18,10 @@ This will:
 
 | Command | Purpose |
 |---------|---------|
-| `python3 scripts/run-test-automation.py --quick` | Skip bundle regen |
-| `python3 scripts/run-test-automation.py --content` | Content/bundle validation only (no browser) |
-| `python3 scripts/run-test-automation.py --e2e` | Browser tests only |
-| `python3 scripts/run-test-automation.py --full-playthrough` | Exhaustive 100× playthrough (on request) |
+| `python3 scripts/test.py --quick` | Skip bundle regen |
+| `python3 scripts/test.py --content` | Content/bundle validation only (no browser) |
+| `python3 scripts/test.py --e2e` | Browser tests only |
+| `python3 scripts/test.py --full-playthrough` | Exhaustive 100× playthrough (on request) |
 
 Default pytest runs **exclude** `full_playthrough` tests. Run them explicitly with `--full-playthrough` or:
 
@@ -66,7 +66,7 @@ Self-test only: open `index.html?selftest=1` — results in `window.__AFK_SELFTE
 
 After editing content or engine code:
 
-1. `python3 scripts/run-test-automation.py`
+1. `python3 scripts/test.py`
 2. If E2E fails, read pytest output; use `?automation=1` in browser or Cursor browser MCP
 3. Fix issues, re-run until green
 

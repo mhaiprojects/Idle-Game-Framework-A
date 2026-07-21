@@ -54,8 +54,8 @@ js/
   game/                 Engine source (edit these, then rebundle)
   ui/                   UI source
 scripts/
-  bundle-for-file-protocol.py   Regenerate bundles after edits
-  run-test-automation.py        Validate + E2E tests
+  bundle.py                      Validate content / optional bundle (legacy)
+  test.py                        Validate + E2E tests
 tests/                  Content validation + Playwright smoke tests
 ```
 
@@ -123,7 +123,7 @@ Net production uses: **Flat × (1 + Σ Increased) × Π More**
 - **More** — equipment, upgrades, and permanent bonuses multiply together.
 - **Purchase vs operation** — `costResources` is the one-time build price; `consumes[]` is ongoing fuel/input per second.
 
-See [`content/dr-dirt/GENERATOR_CHANGES.md`](content/dr-dirt/GENERATOR_CHANGES.md) for the full generator rebalance log (before/after rates, purchase costs, and real-world logic).
+See [`docs/GENERATOR_CHANGES.md`](docs/GENERATOR_CHANGES.md) for the full generator rebalance log (before/after rates, purchase costs, and real-world logic).
 
 ---
 
@@ -163,14 +163,13 @@ Do **not** use Foundry/Mill suffixes. Mines output ore only, never ingots.
 After editing `content/` or `js/game/` / `js/ui/` source:
 
 ```bash
-python3 scripts/bundle-for-file-protocol.py
-python3 scripts/run-test-automation.py
+python3 scripts/test.py
 ```
 
 Or one command (bundles + all tests):
 
 ```bash
-python3 scripts/run-test-automation.py
+python3 scripts/test.py
 ```
 
 | Flag | Purpose |
