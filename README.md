@@ -6,16 +6,14 @@ Browser-based idle/incremental game engine with swappable **content packs**. The
 
 ### Play the game
 
-1. Open `index.html` in a browser (works via `file://` — no build step required).
-2. **Dr Dirt** loads by default (switch to Cosmic Time Factory in Settings if needed).
-3. Tap to earn **Stone** (primary currency), buy generators, prestige, and ascend through historical eras.
-
-Optional local server (same as automated tests):
+Requires a local HTTP server (ES modules + content fetch):
 
 ```bash
-python3 -m http.server 8765
-# open http://localhost:8765/index.html
+python3 scripts/serve.py
+# open http://127.0.0.1:8765/index.html
 ```
+
+**Dr Dirt** loads by default. Tap to earn **Stone**, buy generators, prestige, and ascend through historical eras.
 
 ### Debug / playtesting URLs
 
@@ -23,8 +21,9 @@ python3 -m http.server 8765
 |-----------|--------|
 | `?debug=1` | Enables dev tools panel (speed multipliers, resource grants, formula inspector) |
 | `?selftest=1` | Runs built-in assertions on load; results in `window.__AFK_SELFTEST_RESULTS__` |
+| `?automation=1` | Exposes `window.__AFK_TEST__` API (used by E2E tests) |
 
-Browser console API (always available after load):
+Browser console API (with `?automation=1` or after load):
 
 ```js
 window.__AFK_TEST__.switchContent('dr-dirt')
@@ -41,25 +40,28 @@ See [`tests/README.md`](tests/README.md) for the full automation API.
 ## Project layout
 
 ```
-index.html              Entry point (Vue + bundled JS)
+index.html              Entry point (Vue CDN + ES module bootstrap)
 content/
-  registry.json         Game list + defaultContentId
-  dr-dirt/              Dr Dirt JSON content (canonical source)
-  cosmic-time-factory/  Original demo theme
+  registry.json         Registered games + defaultContentId
+  dr-dirt/              Dr Dirt JSON content (canonical, in registry)
+  cosmic-time-factory/  Legacy demo pack (on disk, not in registry)
+docs/
+  GENERATOR_CHANGES.md  Generator rebalance changelog
 js/
   main.js               App bootstrap + GameFacade
-  config-bundle.js      Generated: all content packs inlined
-  afk-engine.bundle.js  Generated: game engine
-  afk-ui.bundle.js      Generated: Vue UI components
-  game/                 Engine source (edit these, then rebundle)
-  ui/                   UI source
+  afk.js                Engine module barrel export
+  game/                 Engine source
+  ui/                   Vue UI components (ES modules)
+  test/                 Playthrough automation (loaded on demand)
 scripts/
-  bundle.py                      Validate content / optional bundle (legacy)
-  test.py                        Validate + E2E tests
+  serve.py              Local HTTP server for play + tests
+  bundle.py             Content validation (Python source of truth)
+  test.py               Validate + E2E tests
 tests/                  Content validation + Playwright smoke tests
+prompts/                Design/spec prompts (reference only)
 ```
 
-**Important:** Edit JSON under `content/dr-dirt/`, not the generated `js/config-bundle.js`. After content or engine changes, rebundle and run tests (see below).
+Edit JSON under `content/<pack-id>/`. After changes, run `python3 scripts/test.py`.
 
 ---
 
@@ -75,125 +77,51 @@ tests/                  Content validation + Playwright smoke tests
 | 3 | Industrial | 🏭 | Coal, steel forge, food packaging, power, broadcast tower, random events |
 | 4 | AI Age | 🧠 | Internet hub, data center, ML lab, AGI core |
 
-Ascension gates and per-tier feature flags live in `content/dr-dirt/ascension.json`. **Bronze Age ascension** grants **1000 `copperOre` + 1000 `tinOre`** on ascend (`onAscend.grantResources`).
-
-The resource bar shows the current era icon badge (ascension tier).
-
-### Generators by tier
-
-Story order — each generator’s **primary output** matches its name:
-
-| Tier | Generators |
-|------|------------|
-| 0 | `rockGatherer` → `woodcutter` → `hunter` → `farmer` → `charcoalKiln` → `campfire` → `mason` → `prospector` |
-| 1 | `copperMine` → `copperSmelter` → `tinSmelter` → `bronzeForge` |
-| 2 | `ironMine` → `ironSmelter` → `blacksmith` → `tradeCaravan` |
-| 3 | `coalMine` → `steelForge` → `foodPackagingFactory` → `powerPlant` → `broadcastTower` |
-| 4 | `internetHub` → `dataCenter` → `mlLaboratory` → `agiCore` |
-
-Tier membership is also defined in `content/dr-dirt/framework.json` → `generatorTiers`.
-
-### Resource chain (high level)
-
-```
-stone, wood ──► brick, charcoal
-game + wood (campfire) ──► food
-plants (farmer) ──► bulk food (foodPackagingFactory: steel + game + plants)
-*Ore (mines) ──► ingots (smelters) ──► alloys (forges)
-iron + charcoal (blacksmith) ──► gold
-coal + iron (steelForge) ──► steel
-broadcastTower / internetHub ──► data ──► compute ──► intelligence
-```
-
-Resources unlock per ascension tier in `framework.json` → `resourceUnlockByTier`.
-
-### Key early-game flow
-
-1. **Rock Gatherer** produces stone; unlock-gate output helps reach **Woodcutter**.
-2. **Hunter** → raw `game`; **Campfire** cooks `game` + **wood fuel only** → `food`.
-3. **Farmer** produces `plants` (not food directly).
-4. **Prospector** finds bonus stone; after **Bronze Smith** character unlock, may produce trace `ironOre` (`requiresUnlock` on produce).
-5. Ascend to Bronze Age → start ore smelting chain with granted starter ore.
+Ascension gates live in `content/dr-dirt/ascension.json`. **Bronze Age ascension** grants **1000 `copperOre` + 1000 `tinOre`**.
 
 ### Production modifiers
 
-Net production uses: **Flat × (1 + Σ Increased) × Π More**
+**Flat × (1 + Σ Increased) × Π More**
 
-- **Increased** — consumable boosts of the same type add together (e.g. two +50% Increased = +100%).
+- **Increased** — consumable boosts of the same type add together.
 - **More** — equipment, upgrades, and permanent bonuses multiply together.
-- **Purchase vs operation** — `costResources` is the one-time build price; `consumes[]` is ongoing fuel/input per second.
+- **Purchase vs operation** — `costResources` = build price; `consumes[]` = ongoing fuel per second.
 
-See [`docs/GENERATOR_CHANGES.md`](docs/GENERATOR_CHANGES.md) for the full generator rebalance log (before/after rates, purchase costs, and real-world logic).
-
----
-
-## Content authoring rules (Dr Dirt)
-
-Canonical JSON lives in `content/dr-dirt/` — edit those files directly; run the bundle script after changes.
-
-### Naming (#0)
-
-| Kind | Pattern | Examples |
-|------|---------|----------|
-| Raw ore | `{metal}Ore` | `copperOre`, `tinOre`, `ironOre` |
-| Ingot | bare metal name | `copper`, `tin`, `iron` |
-| Smelter | one ore → one ingot | `copperSmelter`, `ironSmelter` |
-| Forge | 2+ ingots/inputs → alloy | `bronzeForge`, `steelForge` |
-| Factory | multi-input packaging | `foodPackagingFactory` |
-
-Do **not** use Foundry/Mill suffixes. Mines output ore only, never ingots.
-
-### Generator fields (engine)
-
-- **`requiredFeature`**: e.g. `generators:tier2` — gated by ascension tier.
-- **`consumes[]`**: resources deducted per tick before production (scaled with generator count).
-- **`produces[].requiresUnlock`**: cross-unlock gates (`characterUnlocked`, `generatorUnlocked`, `generatorOwned`).
-- **Events**: use `resourceMultiplier` for scoped boosts (not global food multipliers).
-
-### Saves & theme switching
-
-- Dr Dirt save key: `afk_dr_dirt_save` (see `manifest.json` / `framework.json`).
-- Selected game stored in `localStorage` key `afk_selected_content`.
-- Switching themes in Settings loads a separate save per content pack.
+See [`docs/GENERATOR_CHANGES.md`](docs/GENERATOR_CHANGES.md) for generator rebalance details.
 
 ---
 
-## Rebundle & validate
-
-After editing `content/` or `js/game/` / `js/ui/` source:
+## Validate & test
 
 ```bash
-python3 scripts/test.py
-```
-
-Or one command (bundles + all tests):
-
-```bash
-python3 scripts/test.py
+python3 scripts/test.py          # content validation + E2E smoke tests
+python3 scripts/test.py --content # JSON validation only
+python3 scripts/test.py --e2e     # browser tests only
+python3 scripts/bundle.py         # content validation only
 ```
 
 | Flag | Purpose |
 |------|---------|
-| `--quick` | Skip bundle regen |
+| `--quick` | Skip content validation step |
 | `--content` | JSON validation only |
 | `--e2e` | Browser smoke tests only |
 | `--full-playthrough` | Exhaustive 100× sim (slow, opt-in) |
 
-First run installs `.venv-test/` and Playwright Chromium automatically.
+---
+
+## Adding content packs
+
+1. Create `content/<id>/` with standard JSON files + `manifest.json`
+2. Register in `content/registry.json` under `games[]`
+3. Run `python3 scripts/test.py`
+
+Unregistered packs (e.g. `cosmic-time-factory/`) remain on disk for reference and are still validated by `scripts/bundle.py`.
 
 ---
 
 ## Content packs
 
-| ID | Name | Primary currency |
-|----|------|------------------|
-| `cosmic-time-factory` | Cosmic Time Factory | Time shards |
-| `dr-dirt` | **Dr Dirt (default)** | Stone |
-
-Register new themes in `content/registry.json` and add a folder under `content/<id>/` with the standard JSON files (`framework.json`, `generators.json`, `resources.json`, etc.).
-
----
-
-## Branch note
-
-Dr Dirt content and engine extensions are developed on **`THEME-DR-DIRT`**. Merge/rebase from main before large content edits if working across branches.
+| ID | In registry | Primary currency |
+|----|-------------|------------------|
+| `dr-dirt` | Yes (default) | Stone |
+| `cosmic-time-factory` | No (legacy folder) | Time shards |

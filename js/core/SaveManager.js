@@ -1,7 +1,7 @@
 import { EventBus, EVENTS } from './EventBus.js';
 import { ConfigManager } from './ConfigManager.js';
 
-const SAVE_VERSION = '1.3.0';
+const SAVE_VERSION = '1.4.0';
 const LEGACY_STORAGE_KEY = 'afk_ai_save';
 
 let persistEnabled = true;
@@ -99,7 +99,7 @@ export const SaveManager = {
       if (!data) return null;
       const currentId = ConfigManager.getCurrentContentId();
       if (data.contentId && data.contentId !== currentId) return null;
-      if (!data.contentId && currentId !== 'cosmic-time-factory') return null;
+      if (!data.contentId) data.contentId = currentId;
       data._integrity = this.verifyPayload(data);
       return data;
     } catch (e) {
@@ -245,9 +245,18 @@ export const SaveManager = {
 
     if (migrated.version === '1.2.0') {
       if (!migrated.contentId) {
-        migrated.contentId = 'cosmic-time-factory';
+        migrated.contentId = 'dr-dirt';
       }
       migrated.version = '1.3.0';
+    }
+
+    if (migrated.version === '1.3.0') {
+      const run = migrated.state?.meta?.prestige?.run;
+      if (run?.peakPPSThisRun != null && run.peakPrimaryCurrencyRateThisRun == null) {
+        run.peakPrimaryCurrencyRateThisRun = run.peakPPSThisRun;
+      }
+      delete run?.peakPPSThisRun;
+      migrated.version = '1.4.0';
     }
 
     if (migrated.version === SAVE_VERSION) return migrated;

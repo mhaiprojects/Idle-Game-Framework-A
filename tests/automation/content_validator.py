@@ -1,4 +1,4 @@
-"""Shared validation logic for content packs and bundles."""
+"""Shared validation logic for content packs."""
 from __future__ import annotations
 
 import json
@@ -19,6 +19,14 @@ def load_registry() -> dict:
     return json.loads(REGISTRY_PATH.read_text())
 
 
+def list_content_pack_ids() -> list[str]:
+    ids = []
+    for path in sorted(CONTENT_DIR.iterdir()):
+        if path.is_dir() and (path / "manifest.json").exists():
+            ids.append(path.name)
+    return ids
+
+
 def load_content_pack(content_id: str) -> dict:
     base = CONTENT_DIR / content_id
     pack = {}
@@ -34,6 +42,7 @@ def load_content_pack(content_id: str) -> dict:
 
 
 def validate_generator_chain(cfg: dict) -> list[str]:
+    """Source-of-truth generator chain validation (also mirrored at runtime in ConfigManager.js)."""
     errors = []
     gens = cfg["generators"]["generators"]
     primary = next(
@@ -98,7 +107,7 @@ def validate_content_pack(content_id: str) -> list[str]:
     return errors
 
 
-def validate_all_content() -> dict[str, list[str]]:
+def validate_registered_content() -> dict[str, list[str]]:
     registry = load_registry()
     results = {}
     for game in registry["games"]:
@@ -106,24 +115,22 @@ def validate_all_content() -> dict[str, list[str]]:
     return results
 
 
-def validate_bundles() -> list[str]:
+def validate_all_content() -> dict[str, list[str]]:
+    results = {}
+    for content_id in list_content_pack_ids():
+        results[content_id] = validate_content_pack(content_id)
+    return results
+
+
+def validate_runtime_assets() -> list[str]:
     errors = []
-    bundle_path = ROOT / "js" / "config-bundle.js"
-    if not bundle_path.exists():
-        return ["js/config-bundle.js missing — run scripts/bundle-for-file-protocol.py"]
-
-    text = bundle_path.read_text()
-    if "window.AFK_CONTENT" not in text:
-        errors.append("config-bundle.js missing window.AFK_CONTENT")
-
-    registry = load_registry()
-    for game in registry["games"]:
-        gid = game["id"]
-        if f'"{gid}"' not in text and f"'{gid}'" not in text:
-            errors.append(f"config-bundle.js missing content pack {gid}")
-
-    for name in ("afk-engine.bundle.js", "afk-ui.bundle.js"):
-        if not (ROOT / "js" / name).exists():
-            errors.append(f"js/{name} missing")
-
+    required = [
+        ROOT / "index.html",
+        ROOT / "js" / "main.js",
+        ROOT / "js" / "afk.js",
+        ROOT / "content" / "registry.json",
+    ]
+    for path in required:
+        if not path.exists():
+            errors.append(f"{path.relative_to(ROOT)} missing")
     return errors

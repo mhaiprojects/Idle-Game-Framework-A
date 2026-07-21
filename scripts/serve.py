@@ -33,7 +33,7 @@ class GameHTTPRequestHandler(SimpleHTTPRequestHandler):
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run a local HTTP server for Cosmic Time Factory."
+        description="Run a local HTTP server for the AFK idle game engine."
     )
     parser.add_argument(
         "--host",

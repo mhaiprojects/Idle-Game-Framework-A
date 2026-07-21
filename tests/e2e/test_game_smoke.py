@@ -2,7 +2,7 @@
 import pytest
 
 
-@pytest.mark.parametrize("content_id", ["cosmic-time-factory", "dr-dirt"])
+@pytest.mark.parametrize("content_id", ["dr-dirt"])
 def test_game_boots(page, clean_game, content_id):
     page.add_init_script(f'localStorage.setItem("afk_selected_content", "{content_id}");')
     page.goto(f"{clean_game}/index.html?automation=1", wait_until="networkidle")

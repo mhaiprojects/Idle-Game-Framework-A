@@ -3,10 +3,10 @@ import { ConfigManager, validateGeneratorChain } from './ConfigManager.js';
 function makeChecks() {
   return {
     scaffold: [
-      { id: 'index_html', label: 'index.html bootstrap (<80 lines)', check: () => true },
-      { id: 'bundle_script', label: 'bundle-for-file-protocol.py exists', check: () => true },
-      { id: 'afk_config', label: 'window.AFK_CONFIG populated', check: () => !!window.AFK_CONFIG },
-      { id: 'no_fetch', label: 'No runtime fetch for config', check: () => !!window.AFK_CONFIG }
+      { id: 'index_html', label: 'index.html ES module bootstrap', check: () => true },
+      { id: 'content_validator', label: 'scripts/bundle.py content validation', check: () => true },
+      { id: 'afk_namespace', label: 'window.AFK engine namespace', check: () => !!window.AFK?.GameLoop },
+      { id: 'content_fetch', label: 'Config loaded via fetch from content/', check: () => !!ConfigManager.getAll() }
     ],
     config: ['framework', 'difficulty', 'resources', 'generators', 'upgrades',
       'items', 'artifacts', 'characters', 'achievements', 'events',
@@ -69,9 +69,9 @@ function makeChecks() {
     save: [
       { id: 'save_load', label: 'SaveManager load/save', check: () => typeof window.AFK?.SaveManager?.save === 'function' },
       { id: 'offline', label: 'Offline progress config', check: () => ConfigManager.getFramework()?.save?.offlineCapSeconds > 0 },
-      { id: 'migration', label: 'Save migration v1.1.0', check: () => {
-        const m = window.AFK?.SaveManager?.migrate({ version: '1.0.0', state: { meta: { prestige: { run: { peakPPSThisRun: 5 } } } } });
-        return m?.version === '1.1.0' && m.state.meta.prestige.run.peakPrimaryCurrencyRateThisRun === 5;
+      { id: 'migration', label: 'Save migration v1.4.0', check: () => {
+        const m = window.AFK?.SaveManager?.migrate({ version: '1.3.0', state: { meta: { prestige: { run: { peakPPSThisRun: 5, peakPrimaryCurrencyRateThisRun: 5 } } } } });
+        return m?.version === '1.4.0' && m.state.meta.prestige.run.peakPPSThisRun === undefined;
       }}
     ],
     characters: [
@@ -93,15 +93,15 @@ function makeChecks() {
       { id: 'events', label: 'Random events config', check: () => (ConfigManager.getEvents()?.length || 0) > 0 }
     ],
     polish: [
-      { id: 'actionbar', label: 'ActionBar dual taps', check: () => !!window.AFK_UI?.ActionBar },
-      { id: 'settings', label: 'Settings panel', check: () => !!window.AFK_UI?.SettingsPanel },
+      { id: 'actionbar', label: 'ActionBar in App shell', check: () => !!document.querySelector('.action-bar') || !!ConfigManager.getFramework()?.ui?.actionBar },
+      { id: 'settings', label: 'Settings panel tab', check: () => (ConfigManager.getAll()?.defaults?.tabs || []).some(t => t.id === 'settings') },
       { id: 'sidebar', label: 'Sidebar position in settings', check: () => !!ConfigManager.getFramework()?.ui?.sidebarDefaultPosition },
       { id: 'devtools', label: 'Dev tools speed multipliers', check: () => !!ConfigManager.getFramework()?.devTools?.speedMultipliers },
       { id: 'display_helpers', label: 'ConfigManager display name helpers', check: () =>
         typeof ConfigManager.getResourceDisplayName === 'function'
         && typeof ConfigManager.formatUnlockCondition === 'function'
       },
-      { id: 'file_protocol', label: 'Playable via file:// (bundles loaded)', check: () => !!window.AFK && !!window.AFK_UI }
+      { id: 'http_runtime', label: 'ES module runtime (HTTP server required)', check: () => !!window.AFK && typeof window.__AFK_GAME__ !== 'undefined' }
     ]
   };
 }

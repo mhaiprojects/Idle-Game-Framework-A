@@ -386,9 +386,7 @@ export class GameState {
     }
 
     const primaryRate = FormulaEngine.calculatePrimaryCurrencyRate(this.data, this.config, mods);
-    const peak = this.data.meta.prestige.run.peakPrimaryCurrencyRateThisRun
-      ?? this.data.meta.prestige.run.peakPPSThisRun
-      ?? this.config.defaults.calculations.peakPrimaryCurrencyRateFallback;
+    const peak = this.data.meta.prestige.run.peakPrimaryCurrencyRateThisRun ?? 0;
     if (primaryRate > peak) {
       this.data.meta.prestige.run.peakPrimaryCurrencyRateThisRun = primaryRate;
     }

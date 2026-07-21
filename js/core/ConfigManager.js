@@ -13,10 +13,7 @@ const CONFIG_FILES = [
 ];
 
 export async function loadContentRegistry() {
-  if (window.AFK_CONTENT_REGISTRY) {
-    contentRegistry = window.AFK_CONTENT_REGISTRY;
-    return contentRegistry;
-  }
+  if (contentRegistry) return contentRegistry;
   const res = await fetch('content/registry.json');
   if (!res.ok) throw new Error('Failed to load content/registry.json');
   contentRegistry = await res.json();
@@ -64,21 +61,14 @@ async function loadContentFromFetch(contentId) {
 export async function loadAllConfigs(contentId) {
   await loadContentRegistry();
   const id = contentId || getSelectedContentId();
-
-  if (window.AFK_CONTENT?.[id]) {
-    config = window.AFK_CONTENT[id];
-  } else if (window.AFK_CONFIG && !window.AFK_CONTENT && id === 'cosmic-time-factory') {
-    config = window.AFK_CONFIG;
-  } else {
-    config = await loadContentFromFetch(id);
-  }
-
+  config = await loadContentFromFetch(id);
   currentContentId = id;
   validateConfig(config);
   return config;
 }
 
 export function validateGeneratorChain(cfg) {
+  // Mirror of tests/automation/content_validator.validate_generator_chain (Python is CI source of truth).
   const errors = [];
   const gens = cfg.generators.generators;
   const primaryCode = cfg.resources.resources.find(r => r.isPrimary)?.codeName;

@@ -331,14 +331,7 @@ export const FormulaEngine = {
       if (primary && !codes.includes(primary)) codes.unshift(primary);
       if (codes.length) return [...new Set(codes)];
     }
-    const all = config.resources.resources.map(r => r.codeName);
-    const byTier = {
-      0: ['timeShards', 'cosmicEnergy', 'stardust'],
-      1: ['timeShards', 'cosmicEnergy', 'stardust', 'nebulaEssence', 'quantumFlux'],
-      2: ['timeShards', 'cosmicEnergy', 'stardust', 'nebulaEssence', 'quantumFlux', 'voidMatter', 'chronoCrystals'],
-      3: all
-    };
-    return byTier[Math.min(Math.max(tier, 0), config.ascension?.maxTier ?? 3)] || byTier[0];
+    return config.resources.resources.map(r => r.codeName);
   },
 
   getScaledPrestigeMinimum(state, config) {

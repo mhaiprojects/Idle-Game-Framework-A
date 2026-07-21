@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Run full test automation for AFK game engine.
+Run full test automation for the AFK game engine.
 
 Usage:
-  python3 scripts/test.py          # validate + all tests
-  python3 scripts/test.py --quick  # skip bundle regen
-  python3 scripts/test.py --e2e   # browser tests only
+  python3 scripts/test.py          # validate content + E2E tests
+  python3 scripts/test.py --quick  # skip content validation
+  python3 scripts/test.py --e2e    # browser tests only
   python3 scripts/test.py --full-playthrough  # exhaustive 100x sim (slow)
 
 Agents: run this after config or engine changes to verify a working game.
@@ -42,7 +42,7 @@ def ensure_venv() -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="AFK game test automation")
-    parser.add_argument("--quick", action="store_true", help="Skip bundle regeneration")
+    parser.add_argument("--quick", action="store_true", help="Skip content validation")
     parser.add_argument("--e2e", action="store_true", help="Run browser E2E tests only")
     parser.add_argument("--content", action="store_true", help="Run content validation only")
     parser.add_argument(

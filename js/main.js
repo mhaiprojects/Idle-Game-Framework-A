@@ -1,9 +1,12 @@
+import * as AFK from './afk.js';
+import App from './ui/App.vue.js';
+
+window.AFK = AFK;
+
 (function () {
   'use strict';
 
   const { createApp, reactive } = Vue;
-  const AFK = window.AFK;
-  const App = window.AFK_UI.App;
 
   class GameFacade {
     constructor(config, gameState, gameLoop, contentId) {
@@ -717,7 +720,7 @@
       return {
         totalTaps: this.state.stats.totalTaps,
         playTimeSeconds: this.state.stats.playTimeSeconds,
-        peakPrimaryCurrencyRate: run.peakPrimaryCurrencyRateThisRun ?? run.peakPPSThisRun ?? 0,
+        peakPrimaryCurrencyRate: run.peakPrimaryCurrencyRateThisRun ?? 0,
         resourceTotals,
         resourceRates: rates
       };
@@ -1079,8 +1082,10 @@
   }
 
   async function bootstrap() {
-    if (!window.AFK || !window.AFK_UI) {
-      throw new Error('Game bundles not loaded. Ensure config-bundle.js, afk-engine.bundle.js, and afk-ui.bundle.js are included before main.js.');
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('automation') === '1' || params.get('playthrough') === '1') {
+      const playthrough = await import('./test/FullPlaythrough.js');
+      window.AFK_FULL_PLAYTHROUGH = playthrough;
     }
 
     const contentId = AFK.getSelectedContentId();
@@ -1157,7 +1162,7 @@
       clearAllSaves: () => AFK.SaveManager.clearAll(),
       activeTab: () => game.state.ui.activeTab,
       setSpeed: (mult) => game.setSpeed(mult),
-      runFullPlaythrough: (options) => window.AFK_FULL_PLAYTHROUGH.run(game, options),
+      runFullPlaythrough: (options) => window.AFK_FULL_PLAYTHROUGH?.runFullPlaythrough(game, options),
       runSelfTest: async () => {
         const results = [];
         const assert = (name, fn) => {
@@ -1171,7 +1176,7 @@
         assert('AFK engine loaded', () => { if (!window.AFK?.GameLoop) throw new Error('missing AFK'); });
         assert('content registry', () => {
           const games = AFK.ConfigManager.getAvailableGames();
-          if (games.length < 2) throw new Error('expected 2+ games');
+          if (!games.some(g => g.id === 'dr-dirt')) throw new Error('dr-dirt not registered');
         });
         assert('tap increases primary', () => {
           const before = window.__AFK_TEST__.getPrimary();

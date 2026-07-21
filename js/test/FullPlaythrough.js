@@ -1,8 +1,6 @@
-(function () {
-  'use strict';
+import * as AFK from '../afk.js';
 
-  const AFK = window.AFK;
-  const LOG_PREFIX = '[AFK-PLAYTHROUGH]';
+const LOG_PREFIX = '[AFK-PLAYTHROUGH]';
 
   function createLogger(options = {}) {
     const logs = [];
@@ -830,9 +828,4 @@
     });
   }
 
-  window.AFK_FULL_PLAYTHROUGH = {
-    simulateGameTime,
-    run: runFullPlaythrough,
-    LOG_PREFIX
-  };
-})();
+export { simulateGameTime, runFullPlaythrough, LOG_PREFIX };

@@ -1,4 +1,4 @@
-import UnlockRequirementsList from './components/UnlockRequirementsList.vue.js';
+import UnlockRequirementsList from './UnlockRequirementsList.vue.js';
 
 export default {
   name: 'UnlockModal',

@@ -10,15 +10,14 @@ python3 scripts/test.py
 
 This will:
 
-1. Regenerate JS bundles from content packs
-2. Validate all `content/*` JSON (generator chains, primary resource, tiers)
-3. Launch a local HTTP server and run Playwright E2E tests in headless Chromium
+1. Validate all `content/*` JSON (generator chains, primary resource, tiers)
+2. Launch a local HTTP server and run Playwright E2E tests in headless Chromium
 
 ## Options
 
 | Command | Purpose |
 |---------|---------|
-| `python3 scripts/test.py --quick` | Skip bundle regen |
+| `python3 scripts/test.py --quick` | Skip content validation |
 | `python3 scripts/test.py --content` | Content/bundle validation only (no browser) |
 | `python3 scripts/test.py --e2e` | Browser tests only |
 | `python3 scripts/test.py --full-playthrough` | Exhaustive 100× playthrough (on request) |
