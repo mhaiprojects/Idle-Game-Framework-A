@@ -94,6 +94,8 @@
     "tab:artifacts": "Artifacts",
     "tab:achievements": "Achievements",
     "tab:ascension": "Ascension",
+    "tab:transcendence": "Transcendence",
+    "tab:paragon": "Paragon",
     "tab:stats": "Stats",
     "tab:settings": "Settings",
     "systems:drops": "Drops",
@@ -164,6 +166,46 @@
     "prestigeShop": {
       "icon": "\ud83d\uded2",
       "title": "Prestige Shop"
+    },
+    "transcendenceReset": {
+      "icon": "\ud83c\udf0c",
+      "title": "Transcendence (Deep Reset)"
+    },
+    "transcendenceShop": {
+      "icon": "\u2728",
+      "title": "Cosmic Upgrades"
+    },
+    "transcendenceProgress": {
+      "icon": "\ud83d\udcca",
+      "title": "Insight Progress"
+    },
+    "endGameBanner": {
+      "icon": "\ud83e\udde0",
+      "title": "End Game"
+    },
+    "directives": {
+      "icon": "\ud83d\udccb",
+      "title": "Daily Directives"
+    },
+    "synergies": {
+      "icon": "\ud83d\udd17",
+      "title": "Generator Synergies"
+    },
+    "paragon": {
+      "icon": "\ud83d\udc8e",
+      "title": "Paragon"
+    },
+    "paragonShop": {
+      "icon": "\u2728",
+      "title": "Paragon Ascension"
+    },
+    "shareSave": {
+      "icon": "\ud83d\udce4",
+      "title": "Share Save"
+    },
+    "automation": {
+      "icon": "\ud83e\udd16",
+      "title": "Smart Automation"
     },
     "ascension": {
       "icon": "\ud83d\udd04",
@@ -331,6 +373,14 @@
       "icon": "\ud83d\udd04",
       "title": "Ascension"
     },
+    "transcendence": {
+      "icon": "\ud83c\udf0c",
+      "title": "Transcendence"
+    },
+    "paragon": {
+      "icon": "\ud83d\udc8e",
+      "title": "Paragon"
+    },
     "stats": {
       "icon": "\ud83d\udcca",
       "title": "Stats"
@@ -396,6 +446,18 @@
       "feature": "tab:ascension"
     },
     {
+      "id": "transcendence",
+      "icon": "\ud83c\udf0c",
+      "label": "Transcendence",
+      "feature": "tab:transcendence"
+    },
+    {
+      "id": "paragon",
+      "icon": "\ud83d\udc8e",
+      "label": "Paragon",
+      "feature": "tab:paragon"
+    },
+    {
       "id": "stats",
       "icon": "\ud83d\udcca",
       "label": "Stats",
@@ -414,6 +476,57 @@
       "devOnly": true
     }
   ],
+  "tutorial": {
+    "steps": [
+      {
+        "id": "tap",
+        "icon": "👆",
+        "title": "Start Gathering",
+        "message": "Tap the stone button at the bottom to gather resources manually. Every tap counts!",
+        "targetTab": null,
+        "waitEvent": "tap"
+      },
+      {
+        "id": "generator",
+        "icon": "⚙️",
+        "title": "Automate Production",
+        "message": "Open the Generators tab and buy a Rock Gatherer to produce stone automatically.",
+        "targetTab": "generators",
+        "waitEvent": "generatorPurchase"
+      },
+      {
+        "id": "upgrade",
+        "icon": "⬆️",
+        "title": "Power Up",
+        "message": "Visit Upgrades and purchase Sharper Tools to boost your output.",
+        "targetTab": "upgrades",
+        "waitEvent": "upgradePurchase"
+      },
+      {
+        "id": "prestige",
+        "icon": "♻️",
+        "title": "Prestige for Power",
+        "message": "When progress stalls, use Prestige in the Ascension tab. You reset resources but earn Legacy Points for permanent bonuses.",
+        "targetTab": "ascension",
+        "waitEvent": null
+      },
+      {
+        "id": "ascension",
+        "icon": "🌅",
+        "title": "Advance Through History",
+        "message": "Ascend to unlock new ages — Bronze, Medieval, Industrial, and AI. Each age brings new generators and systems!",
+        "targetTab": "ascension",
+        "waitEvent": null
+      }
+    ]
+  },
+  "automationLabels": {
+    "sectionTitle": "Smart Automation",
+    "autoBuyGenerator": "Auto-buy cheapest generator",
+    "autoBuyUpgrade": "Auto-buy best upgrade",
+    "autoPrestige": "Auto-prestige when ready",
+    "prestigeThreshold": "Minimum shards to auto-prestige"
+  },
   "modals": {
     "unlockPrefix": "\ud83d\udd12",
     "welcomeBack": "Welcome Back!",

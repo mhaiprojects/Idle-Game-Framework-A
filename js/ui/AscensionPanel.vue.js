@@ -15,15 +15,25 @@ export default {
     shardProgress: Object,
     ascendLost: Array, ascendKept: Array, featurePreview: Array,
     prestigeCurrency: Number, formatNumber: Function, maxTierReached: Boolean,
+    showEndGameBanner: Boolean,
     difficulty: Object, primaryCurrencyLabel: String, prestigeBonuses: Array
   },
-  emits: ['prestige', 'ascend', 'buy-bonus', 'more-info'],
+  emits: ['prestige', 'ascend', 'buy-bonus', 'more-info', 'go-transcendence'],
   data() { return { showPrestigeModal: false, showAscendModal: false }; },
   template: `
     <div class="panel">
       <PanelHeader panel-key="ascension" />
 
-      <CardSection section-key="overview" level="panel" :first="true">
+      <div v-if="showEndGameBanner && maxTierReached" class="end-game-banner animate__animated animate__fadeIn">
+        <span class="end-game-icon">🧠</span>
+        <div class="end-game-text">
+          <strong>AI Age reached!</strong>
+          <span>Prestige for Legacy Points, then unlock Transcendence for infinite growth.</span>
+        </div>
+        <button class="btn btn-sm btn-transcend" @click="$emit('go-transcendence')">🌌 Transcendence</button>
+      </div>
+
+      <CardSection section-key="overview" level="panel" :first="!showEndGameBanner || !maxTierReached">
         <div class="stats-grid">
           <div class="stat-box">{{ tierName }}</div>
           <div class="stat-box">Prestiges: {{ prestigeCount }}</div>

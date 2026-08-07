@@ -69,6 +69,99 @@
       "minInterval": 180,
       "maxInterval": 400,
       "effect": { "type": "clickMultiplier", "multiplier": 3 }
+    },
+    {
+      "codeName": "intelligenceSurge",
+      "displayName": "Intelligence Surge",
+      "icon": "🌟",
+      "description": "Triple intelligence output — the singularity stirs.",
+      "duration": 25,
+      "minInterval": 200,
+      "maxInterval": 500,
+      "requiredFeature": "generators:tier4",
+      "effect": { "type": "resourceMultiplier", "resource": "intelligence", "multiplier": 3 }
+    },
+    {
+      "codeName": "dataStorm",
+      "displayName": "Data Storm",
+      "icon": "🌊",
+      "description": "Double data throughput across the network.",
+      "duration": 30,
+      "minInterval": 180,
+      "maxInterval": 450,
+      "requiredFeature": "generators:tier4",
+      "effect": { "type": "resourceMultiplier", "resource": "data", "multiplier": 2 }
+    },
+    {
+      "codeName": "singularityPulse",
+      "displayName": "Singularity Pulse",
+      "icon": "💫",
+      "description": "All production surges — reality bends briefly.",
+      "duration": 15,
+      "minInterval": 300,
+      "maxInterval": 600,
+      "requiredFeature": "generators:tier4",
+      "effect": { "type": "globalMultiplier", "multiplier": 2 }
+    },
+    {
+      "codeName": "springBloom",
+      "displayName": "Spring Bloom",
+      "icon": "🌸",
+      "description": "Seasonal abundance — double plants and food.",
+      "duration": 45,
+      "minInterval": 600,
+      "maxInterval": 1200,
+      "startDate": "03-20",
+      "endDate": "04-20",
+      "effect": { "type": "resourceMultiplier", "resource": "plants", "multiplier": 2 }
+    },
+    {
+      "codeName": "summerSolstice",
+      "displayName": "Summer Solstice",
+      "icon": "☀️",
+      "description": "Longest day — all production doubled.",
+      "duration": 30,
+      "minInterval": 500,
+      "maxInterval": 900,
+      "startDate": "06-15",
+      "endDate": "07-15",
+      "effect": { "type": "globalMultiplier", "multiplier": 2 }
+    },
+    {
+      "codeName": "harvestMoon",
+      "displayName": "Harvest Moon",
+      "icon": "🌕",
+      "description": "Autumn bounty — double food and game.",
+      "duration": 35,
+      "minInterval": 400,
+      "maxInterval": 800,
+      "startDate": "09-15",
+      "endDate": "10-31",
+      "effect": { "type": "resourceMultiplier", "resource": "food", "multiplier": 2 }
+    },
+    {
+      "codeName": "winterFestival",
+      "displayName": "Winter Festival",
+      "icon": "❄️",
+      "description": "Holiday cheer — double gold and tap power.",
+      "duration": 40,
+      "minInterval": 500,
+      "maxInterval": 1000,
+      "startDate": "12-15",
+      "endDate": "01-05",
+      "effect": { "type": "clickMultiplier", "multiplier": 2.5 }
+    },
+    {
+      "codeName": "newYearSpark",
+      "displayName": "New Year Spark",
+      "icon": "🎆",
+      "description": "Fresh beginnings — triple global production briefly.",
+      "duration": 20,
+      "minInterval": 800,
+      "maxInterval": 1500,
+      "startDate": "01-01",
+      "endDate": "01-07",
+      "effect": { "type": "globalMultiplier", "multiplier": 3 }
     }
   ]
 }

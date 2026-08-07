@@ -209,7 +209,9 @@
         "prestigeShop:tier4",
         "resources:data",
         "resources:compute",
-        "resources:intelligence"
+        "resources:intelligence",
+        "resources:quantumFlops",
+        "resources:meshNodes"
       ]
     }
   ]

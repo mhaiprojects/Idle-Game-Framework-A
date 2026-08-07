@@ -10,7 +10,8 @@ export default {
     primaryCurrencyLabel: String,
     formatNumber: Function,
     activeEvents: Array,
-    getGeneratorLabel: Function
+    getGeneratorLabel: Function,
+    synergies: Array
   },
   template: `
     <div class="panel">
@@ -21,6 +22,18 @@ export default {
           <div class="stat-box">Play Time: {{ Math.floor(stats.playTimeSeconds) }}s</div>
           <div class="stat-box">Peak {{ primaryCurrencyLabel }}: {{ formatNumber(stats.peakPrimaryCurrencyRate) }}/s</div>
           <div class="stat-box">Current {{ primaryCurrencyLabel }}: {{ formatNumber(primaryBreakdown.total) }}/s</div>
+        </div>
+      </CardSection>
+      <CardSection v-if="synergies?.length" section-key="synergies" level="panel">
+        <p class="hint-text">Generator combo bonuses activate when you own all listed generators.</p>
+        <div v-for="s in synergies" :key="s.codeName" class="card nested-card synergy-stat-card"
+          :class="{ 'synergy-active': s.active }">
+          <div class="card-header">
+            <span class="card-icon">{{ s.icon }}</span>
+            <span class="card-name">{{ s.displayName }}</span>
+            <span class="card-owned">{{ s.active ? '✓ Active' : 'Inactive' }}</span>
+          </div>
+          <p class="card-description">{{ s.description }}</p>
         </div>
       </CardSection>
       <CardSection section-key="resourceGeneration" title="Resource Generation" level="panel">

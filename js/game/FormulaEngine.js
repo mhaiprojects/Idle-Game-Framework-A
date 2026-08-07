@@ -442,6 +442,45 @@ export const FormulaEngine = {
     };
   },
 
+  calculateTranscendenceGain(state, config) {
+    const tc = config.transcendence?.transcendenceCurrency;
+    if (!tc) return 0;
+    const earned = state.meta.transcendence?.run?.intelligenceEarnedThisRun || 0;
+    const minimum = tc.minimumResourceValue;
+    if (earned < minimum) return 0;
+    const logBase = tc.logBase || 10;
+    let gain = Math.floor(Math.log(Math.max(earned / minimum, 1)) / Math.log(logBase));
+    const bonus = config.transcendence?.directives?.bonusMultiplier || 1;
+    if (state.meta.transcendence?.directives?.bonusReady && bonus > 1) {
+      gain = Math.floor(gain * bonus);
+    }
+    return gain;
+  },
+
+  getTranscendenceProgress(state, config, formatNumber) {
+    const fmt = formatNumber || (n => n);
+    const tc = config.transcendence?.transcendenceCurrency;
+    if (!tc) return null;
+    const earned = state.meta.transcendence?.run?.intelligenceEarnedThisRun || 0;
+    const minimum = tc.minimumResourceValue;
+    const projectedGain = this.calculateTranscendenceGain(state, config);
+    const nextThreshold = minimum * Math.pow(tc.logBase || 10, projectedGain + 1);
+    const resMeta = config.resources.resources.find(r => r.codeName === tc.resource);
+
+    return {
+      rulesExplanation: tc.rulesExplanation || '',
+      projectedGain,
+      currentRunValue: earned,
+      nextMilestone: nextThreshold,
+      overallProgress: nextThreshold > 0 ? Math.min(1, earned / nextThreshold) : 0,
+      overallMet: earned >= nextThreshold,
+      resourceIcon: resMeta?.icon || '✨',
+      resourceName: resMeta?.displayName || tc.resource,
+      formattedCurrent: fmt(earned),
+      formattedRequired: fmt(minimum)
+    };
+  },
+
   calculateUpgradeCost(upgrade, purchaseCount, config) {
     const scale = upgrade.costScale ?? this._calc(config, 'upgradeCostScale');
     return Math.floor(upgrade.cost * Math.pow(scale, purchaseCount));

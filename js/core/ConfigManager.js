@@ -12,6 +12,14 @@ const CONFIG_FILES = [
   'drops', 'ascension', 'prestige', 'defaults'
 ];
 
+const OPTIONAL_CONFIG_FILES = ['transcendence', 'synergies', 'paragon'];
+
+const OPTIONAL_DEFAULTS = {
+  transcendence: { enabled: false, transcendenceUpgrades: [] },
+  synergies: { synergies: [] },
+  paragon: { enabled: false }
+};
+
 export async function loadContentRegistry() {
   if (contentRegistry) return contentRegistry;
   const res = await fetch('content/registry.json');
@@ -55,7 +63,14 @@ async function loadContentFromFetch(contentId) {
       return [name, await res.json()];
     })
   );
-  return Object.fromEntries(entries);
+  const optionalEntries = await Promise.all(
+    OPTIONAL_CONFIG_FILES.map(async name => {
+      const res = await fetch(`content/${contentId}/${name}.json`);
+      if (!res.ok) return [name, OPTIONAL_DEFAULTS[name] || {}];
+      return [name, await res.json()];
+    })
+  );
+  return Object.fromEntries([...entries, ...optionalEntries]);
 }
 
 export async function loadAllConfigs(contentId) {
@@ -228,6 +243,20 @@ export const ConfigManager = {
 
     const prestigeUnlocks = config.prestige.featureUnlocks || [];
     for (const entry of prestigeUnlocks) {
+      if (entry.feature !== featureCode) continue;
+      const result = FormulaEngine.evaluateUnlockConditions(entry.unlockConditions, state, config);
+      if (result.met) return true;
+    }
+
+    const transcendenceUnlocks = config.transcendence?.featureUnlocks || [];
+    for (const entry of transcendenceUnlocks) {
+      if (entry.feature !== featureCode) continue;
+      const result = FormulaEngine.evaluateUnlockConditions(entry.unlockConditions, state, config);
+      if (result.met) return true;
+    }
+
+    const paragonUnlocks = config.paragon?.featureUnlocks || [];
+    for (const entry of paragonUnlocks) {
       if (entry.feature !== featureCode) continue;
       const result = FormulaEngine.evaluateUnlockConditions(entry.unlockConditions, state, config);
       if (result.met) return true;
@@ -792,6 +821,26 @@ export const ConfigManager = {
 
     const prestigeUnlocks = config.prestige.featureUnlocks || [];
     for (const entry of prestigeUnlocks) {
+      if (entry.feature !== featureCode) continue;
+      return {
+        title: this.getFeatureDisplayName(featureCode),
+        met: false,
+        requirements: this.buildUnlockRequirements(entry.unlockConditions, state, formatNumber)
+      };
+    }
+
+    const transcendenceUnlocks = config.transcendence?.featureUnlocks || [];
+    for (const entry of transcendenceUnlocks) {
+      if (entry.feature !== featureCode) continue;
+      return {
+        title: this.getFeatureDisplayName(featureCode),
+        met: false,
+        requirements: this.buildUnlockRequirements(entry.unlockConditions, state, formatNumber)
+      };
+    }
+
+    const paragonUnlocks = config.paragon?.featureUnlocks || [];
+    for (const entry of paragonUnlocks) {
       if (entry.feature !== featureCode) continue;
       return {
         title: this.getFeatureDisplayName(featureCode),

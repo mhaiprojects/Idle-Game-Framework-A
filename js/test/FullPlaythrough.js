@@ -598,6 +598,78 @@ const LOG_PREFIX = '[AFK-PLAYTHROUGH]';
     }
   }
 
+  function exerciseEndGameMeta(game, coverage, log) {
+    const config = game.config;
+    if (!AFK.TranscendenceSystem.isEnabled(config)) return;
+
+    game.state.meta.ascension.currentTier = Math.max(
+      game.state.meta.ascension.currentTier,
+      config.ascension.maxTier
+    );
+    game.state.meta.milestones.lifetimePrestiges = Math.max(
+      game.state.meta.milestones.lifetimePrestiges || 0,
+      5
+    );
+    game.state.meta.transcendence = game.state.meta.transcendence || {
+      currency: 0,
+      purchasedUpgrades: {},
+      totalTranscendences: 0,
+      run: { intelligenceEarnedThisRun: 0 }
+    };
+    game.state.meta.transcendence.run.intelligenceEarnedThisRun = Math.max(
+      game.state.meta.transcendence.run.intelligenceEarnedThisRun || 0,
+      config.transcendence.transcendenceCurrency.minimumResourceValue
+    );
+    game.state.meta.transcendence.currency = Math.max(
+      game.state.meta.transcendence.currency || 0,
+      1e9
+    );
+
+    const upgrades = config.transcendence.transcendenceUpgrades || [];
+    for (const upg of upgrades) {
+      const before = game.state.meta.transcendence.purchasedUpgrades[upg.codeName] || 0;
+      if (AFK.TranscendenceSystem.buyUpgrade(game.state, config, upg.codeName, game.gameState)) {
+        const after = game.state.meta.transcendence.purchasedUpgrades[upg.codeName] || 0;
+        if (after > before) {
+          coverage.systems.transcendenceUpgrade = true;
+          log.ok('transcendence', `Purchased upgrade ${upg.codeName}`, { level: after });
+          break;
+        }
+      }
+    }
+
+    if (AFK.TranscendenceSystem.canTranscend(game.state, config)) {
+      if (AFK.TranscendenceSystem.perform(game.state, config, game.gameState)) {
+        coverage.systems.transcendence = true;
+        log.ok('transcendence', 'Performed transcendence');
+      }
+    }
+
+    if (!AFK.ParagonSystem.isEnabled(config)) return;
+
+    game.state.meta.transcendence.totalTranscendences = Math.max(
+      game.state.meta.transcendence.totalTranscendences || 0,
+      10
+    );
+    game.state.meta.paragon = game.state.meta.paragon || {
+      level: 0,
+      currency: 0,
+      lifetimeCurrencyEarned: 0,
+      lifetimeLevels: 0
+    };
+    game.state.meta.paragon.currency = Math.max(game.state.meta.paragon.currency || 0, 1e9);
+
+    if (AFK.ParagonSystem.buyLevel(game.state, config, game.gameState)) {
+      coverage.systems.paragon = true;
+      log.ok('paragon', 'Purchased paragon level', { level: game.state.meta.paragon.level });
+    }
+
+    if (AFK.SynergySystem.getDisplay(game.state, config).length) {
+      coverage.systems.synergies = true;
+      log.ok('synergies', 'Synergy system active');
+    }
+  }
+
   function finalizeCoverage(game, coverage, log) {
     log.info('finalize', 'Final sweep for remaining unlocks');
     game.state.meta.prestige.currency = Math.max(game.state.meta.prestige.currency || 0, 1e12);
@@ -700,6 +772,8 @@ const LOG_PREFIX = '[AFK-PLAYTHROUGH]';
         log.ok('generator', `Post-ascension purchase ${gen.codeName}`, { after });
       }
     }
+
+    exerciseEndGameMeta(game, coverage, log);
   }
 
   function runFullPlaythrough(game, options = {}) {

@@ -12,6 +12,15 @@ export { AscensionSystem } from './game/systems/AscensionSystem.js';
 export { DropSystem } from './game/systems/DropSystem.js';
 export { AchievementSystem } from './game/systems/AchievementSystem.js';
 export { EventSystem } from './game/systems/EventSystem.js';
+export { TranscendenceSystem } from './game/systems/TranscendenceSystem.js';
+export { AutomationSystem } from './game/systems/AutomationSystem.js';
+export { DirectiveSystem } from './game/systems/DirectiveSystem.js';
+export { TutorialSystem } from './game/systems/TutorialSystem.js';
+export { RunTracker } from './game/systems/RunTracker.js';
+export { SynergySystem } from './game/systems/SynergySystem.js';
+export { ParagonSystem } from './game/systems/ParagonSystem.js';
+export { SoundSystem } from './core/SoundSystem.js';
+export { ShareSaveManager } from './core/ShareSaveManager.js';
 export {
   ConfigManager,
   loadContentRegistry,

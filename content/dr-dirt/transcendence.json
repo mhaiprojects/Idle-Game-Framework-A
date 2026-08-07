@@ -1,0 +1,171 @@
+{
+  "enabled": true,
+  "transcendenceCurrency": {
+    "codeName": "cosmicInsight",
+    "displayName": "Cosmic Insight",
+    "icon": "🌌",
+    "gainFormula": "logarithmic",
+    "logBase": 10,
+    "minimumResourceValue": 5000,
+    "resource": "intelligence",
+    "rulesExplanation": "Cosmic Insight from intelligence generated this run. Each point requires exponentially more intelligence."
+  },
+  "unlockConditions": {
+    "operator": "AND",
+    "conditions": [
+      { "type": "ascensionTier", "minTier": 4 },
+      { "type": "lifetimePrestiges", "min": 3 }
+    ]
+  },
+  "featureUnlocks": [
+    {
+      "feature": "tab:transcendence",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "ascensionTier", "minTier": 4 },
+          { "type": "lifetimePrestiges", "min": 3 }
+        ]
+      }
+    }
+  ],
+  "onTranscendence": {
+    "clearCurrency": true,
+    "clearGeneratorQuantities": true,
+    "keepGeneratorUnlocks": true,
+    "clearUpgrades": true,
+    "clearInventory": false,
+    "clearArtifacts": false,
+    "clearTemporaryBuffs": true,
+    "resetRunStats": true,
+    "resetPrestigeShopAllocation": false,
+    "resetPrestigeRun": true
+  },
+  "startingResourcesAfterTranscendence": {
+    "stone": 100,
+    "data": 50,
+    "compute": 25
+  },
+  "transcendenceUpgrades": [
+    {
+      "codeName": "cosmicAwareness",
+      "displayName": "Cosmic Awareness",
+      "description": "+8% global production per level",
+      "icon": "👁️",
+      "cost": 1,
+      "maxLevel": 30,
+      "effect": { "type": "globalMultiplier", "multiplierPerLevel": 0.08 }
+    },
+    {
+      "codeName": "mindExpansion",
+      "displayName": "Mind Expansion",
+      "description": "+10% tap power per level",
+      "icon": "🧠",
+      "cost": 2,
+      "maxLevel": 20,
+      "effect": { "type": "clickMultiplier", "multiplierPerLevel": 0.1 }
+    },
+    {
+      "codeName": "digitalAscension",
+      "displayName": "Digital Ascension",
+      "description": "+12% digital generators per level",
+      "icon": "💾",
+      "cost": 2,
+      "maxLevel": 15,
+      "effect": { "type": "categoryMultiplier", "category": "digital", "multiplierPerLevel": 0.12 }
+    },
+    {
+      "codeName": "temporalEfficiency",
+      "displayName": "Temporal Efficiency",
+      "description": "-4% all costs per level",
+      "icon": "⏳",
+      "cost": 3,
+      "maxLevel": 12,
+      "effect": { "type": "costReduction", "multiplierPerLevel": 0.04 }
+    },
+    {
+      "codeName": "eternalHarvest",
+      "displayName": "Eternal Harvest",
+      "description": "+5% offline efficiency per level",
+      "icon": "🌙",
+      "cost": 2,
+      "maxLevel": 15,
+      "effect": { "type": "globalMultiplier", "multiplierPerLevel": 0.05 }
+    },
+    {
+      "codeName": "intelligenceAmplifier",
+      "displayName": "Intelligence Amplifier",
+      "description": "+15% intelligence production per level",
+      "icon": "✨",
+      "cost": 3,
+      "maxLevel": 20,
+      "effect": { "type": "resourceMultiplier", "resource": "intelligence", "multiplierPerLevel": 0.15 }
+    },
+    {
+      "codeName": "legacyEcho",
+      "displayName": "Legacy Echo",
+      "description": "+6% global per level (stacks with prestige bonuses)",
+      "icon": "🔮",
+      "cost": 4,
+      "maxLevel": 25,
+      "effect": { "type": "globalMultiplier", "multiplierPerLevel": 0.06 }
+    },
+    {
+      "codeName": "singularityCore",
+      "displayName": "Singularity Core",
+      "description": "+20% AGI Core output per level",
+      "icon": "♾️",
+      "cost": 5,
+      "maxLevel": 10,
+      "effect": { "type": "generatorMultiplier", "generator": "agiCore", "multiplierPerLevel": 0.2 }
+    }
+  ],
+  "directives": {
+    "dailyCount": 3,
+    "bonusMultiplier": 1.25,
+    "pool": [
+      {
+        "codeName": "mindHarvest",
+        "displayName": "Mind Harvest",
+        "description": "Earn {amount} intelligence this run",
+        "icon": "🧠",
+        "requirement": { "type": "resourceRunEarned", "resource": "intelligence", "amount": 5000 }
+      },
+      {
+        "codeName": "swiftCycle",
+        "displayName": "Swift Cycle",
+        "description": "Prestige within {amount} minutes of run start",
+        "icon": "⚡",
+        "requirement": { "type": "prestigeWithinSeconds", "amount": 1800 }
+      },
+      {
+        "codeName": "industrious",
+        "displayName": "Industrious",
+        "description": "Perform {amount} taps this run",
+        "icon": "👆",
+        "requirement": { "type": "tapsThisRun", "amount": 100 }
+      },
+      {
+        "codeName": "builder",
+        "displayName": "Builder",
+        "description": "Purchase {amount} generators this run",
+        "icon": "⚙️",
+        "requirement": { "type": "generatorPurchasesRun", "amount": 10 }
+      },
+      {
+        "codeName": "productionSurge",
+        "displayName": "Production Surge",
+        "description": "Reach {amount} stone per second",
+        "icon": "📈",
+        "requirement": { "type": "primaryRateReached", "amount": 500 }
+      },
+      {
+        "codeName": "deepHarvest",
+        "displayName": "Deep Harvest",
+        "description": "Earn {amount} compute this run",
+        "icon": "🖥️",
+        "requirement": { "type": "resourceRunEarned", "resource": "compute", "amount": 2000 }
+      }
+    ]
+  }
+}

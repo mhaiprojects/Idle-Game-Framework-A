@@ -203,6 +203,28 @@ export const AchievementSystem = {
         label = `${current} / ${req.amount} prestige shop levels purchased`;
         break;
       }
+      case 'transcendenceCount': {
+        const current = state.meta.transcendence?.totalTranscendences || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🌌';
+        label = `${current} / ${req.amount} transcendences performed`;
+        break;
+      }
+      case 'paragonLevel': {
+        const current = state.meta.paragon?.level || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '💎';
+        label = `${current} / ${req.amount} paragon levels`;
+        break;
+      }
+      case 'transcendenceUpgradeLevels': {
+        let current = 0;
+        for (const lvl of Object.values(state.meta.transcendence?.purchasedUpgrades || {})) current += lvl || 0;
+        progress = req.amount > 0 ? Math.min(1, current / req.amount) : 1;
+        icon = '🛸';
+        label = `${current} / ${req.amount} transcendence upgrade levels`;
+        break;
+      }
       case 'generatorsOwnedTier': {
         const tiers = getGeneratorTiers(config);
         const codes = tiers[req.tier] || [];
@@ -274,6 +296,15 @@ export const AchievementSystem = {
       case 'prestigeShopLevels': {
         let total = 0;
         for (const lvl of Object.values(state.meta.prestige.purchasedBonuses || {})) total += lvl || 0;
+        return total >= req.amount;
+      }
+      case 'transcendenceCount':
+        return (state.meta.transcendence?.totalTranscendences || 0) >= req.amount;
+      case 'paragonLevel':
+        return (state.meta.paragon?.level || 0) >= req.amount;
+      case 'transcendenceUpgradeLevels': {
+        let total = 0;
+        for (const lvl of Object.values(state.meta.transcendence?.purchasedUpgrades || {})) total += lvl || 0;
         return total >= req.amount;
       }
       case 'generatorsOwnedTier': {

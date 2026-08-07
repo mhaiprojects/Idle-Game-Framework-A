@@ -69,18 +69,24 @@
     "resourceGrantAmount": 1000,
     "maxBulkPurchaseIterations": 10000
   },
+  "automation": {
+    "tickIntervalSeconds": 1,
+    "autoPrestigeThresholdMin": 1,
+    "autoPrestigeThresholdMax": 50,
+    "autoPrestigeThresholdDefault": 5
+  },
   "generatorTiers": {
     "0": ["rockGatherer", "woodcutter", "hunter", "farmer", "charcoalKiln", "campfire", "mason", "prospector"],
     "1": ["copperMine", "copperSmelter", "tinSmelter", "bronzeForge"],
     "2": ["ironMine", "ironSmelter", "blacksmith", "tradeCaravan"],
     "3": ["coalMine", "steelForge", "foodPackagingFactory", "powerPlant", "broadcastTower"],
-    "4": ["internetHub", "dataCenter", "mlLaboratory", "agiCore"]
+    "4": ["internetHub", "dataCenter", "mlLaboratory", "agiCore", "quantumProcessor", "neuralMesh"]
   },
   "resourceUnlockByTier": {
     "0": ["stone", "wood", "game", "plants", "food", "brick", "charcoal"],
     "1": ["copperOre", "tinOre", "copper", "tin", "bronze"],
     "2": ["ironOre", "iron", "gold"],
     "3": ["coal", "steel", "electricity"],
-    "4": ["data", "compute", "intelligence"]
+    "4": ["data", "compute", "intelligence", "quantumFlops", "meshNodes"]
   }
 }

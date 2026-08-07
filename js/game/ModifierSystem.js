@@ -45,6 +45,22 @@ export const ModifierSystem = {
       this._addEffectMods(mods, { ...bonus.effect, multiplier: mult }, `prestige:${bonus.codeName}`, null, null, 1);
     }
 
+    const transcendenceUpgrades = config.transcendence?.transcendenceUpgrades || [];
+    for (const upgrade of transcendenceUpgrades) {
+      const level = state.meta.transcendence?.purchasedUpgrades?.[upgrade.codeName] || 0;
+      if (level <= 0) continue;
+      const perLevel = upgrade.effect.multiplierPerLevel || 0;
+      const mult = 1 + perLevel * level;
+      this._addEffectMods(
+        mods,
+        { ...upgrade.effect, multiplier: mult },
+        `transcendence:${upgrade.codeName}`,
+        upgrade.effect.category,
+        upgrade.effect.generator,
+        1
+      );
+    }
+
     for (const char of config.characters.characters) {
       const cs = state.characters[char.codeName];
       if (!cs?.activated) continue;
@@ -106,6 +122,23 @@ export const ModifierSystem = {
     for (const evt of state.activeEvents || []) {
       if (evt.expiresAt && evt.expiresAt <= now) continue;
       this._addEffectMods(mods, evt.effect, `event:${evt.codeName}`, evt.effect.category, null, 1);
+    }
+
+    for (const synergy of config.synergies?.synergies || []) {
+      const minQty = synergy.minQuantity ?? 1;
+      const active = (synergy.generators || []).every(code =>
+        (state.generators[code]?.quantityPurchased || 0) >= minQty
+      );
+      if (active && synergy.effect) {
+        this._addEffectMods(mods, synergy.effect, `synergy:${synergy.codeName}`, synergy.effect.category, null, 1);
+      }
+    }
+
+    const paragonLevel = state.meta.paragon?.level || 0;
+    if (paragonLevel > 0 && config.paragon?.enabled) {
+      const perLevel = config.paragon.multiplierPerLevel || 0;
+      const mult = 1 + perLevel * paragonLevel;
+      this._addEffectMods(mods, { type: 'globalMultiplier', multiplier: mult }, 'paragon:global', null, null, 1);
     }
 
     cachedMods = mods;

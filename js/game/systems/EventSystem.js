@@ -27,7 +27,14 @@ export const EventSystem = {
     if (!this._nextEventTime) this._scheduleNext(state, config);
     if (Date.now() < this._nextEventTime) return;
 
-    const events = config.events.events;
+    const events = config.events.events.filter(evt => {
+      if (evt.requiredFeature && !ConfigManager.isFeatureUnlocked(evt.requiredFeature, state)) return false;
+      return this._isEventInSeason(evt);
+    });
+    if (!events.length) {
+      this._scheduleNext(state, config);
+      return;
+    }
     const evt = events[Math.floor(Math.random() * events.length)];
     const expiresAt = Date.now() + evt.duration * 1000;
     state.activeEvents.push({ codeName: evt.codeName, effect: evt.effect, expiresAt, displayName: evt.displayName, icon: evt.icon });
@@ -40,11 +47,28 @@ export const EventSystem = {
   },
 
   _scheduleNext(state, config) {
-    const events = config.events.events;
+    const events = config.events.events.filter(evt => this._isEventInSeason(evt));
     if (!events.length) return;
     const evt = events[0];
     const interval = (evt.minInterval + Math.random() * (evt.maxInterval - evt.minInterval)) * 1000;
     this._nextEventTime = Date.now() + interval;
+  },
+
+  _isEventInSeason(evt) {
+    if (!evt.startDate && !evt.endDate) return true;
+    const now = new Date();
+    const month = now.getUTCMonth() + 1;
+    const day = now.getUTCDate();
+    const today = `${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    if (evt.startDate && evt.endDate) {
+      if (evt.startDate <= evt.endDate) {
+        return today >= evt.startDate && today <= evt.endDate;
+      }
+      return today >= evt.startDate || today <= evt.endDate;
+    }
+    if (evt.startDate) return today >= evt.startDate;
+    if (evt.endDate) return today <= evt.endDate;
+    return true;
   },
 
   forceEvent(state, config, gameState, codeName) {

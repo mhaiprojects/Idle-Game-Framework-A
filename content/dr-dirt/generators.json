@@ -1344,6 +1344,65 @@
           "amount": 0.25
         }
       ]
+    },
+    {
+      "codeName": "quantumProcessor",
+      "displayName": "Quantum Processor",
+      "icon": "⚛️",
+      "category": "digital",
+      "description": "Harnesses quantum parallelism for post-classical compute.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "generatorOwned", "generator": "agiCore", "quantity": 1 },
+          { "type": "resourceHeld", "resource": "intelligence", "amount": 100 }
+        ]
+      },
+      "baseCost": 50000000000000,
+      "costMultiplier": 1.35,
+      "requiredFeature": "generators:tier4",
+      "costResources": [
+        { "resource": "compute", "multiplier": 50 },
+        { "resource": "data", "multiplier": 25 }
+      ],
+      "produces": [
+        { "resource": "quantumFlops", "amount": 0.08, "role": "primary" }
+      ],
+      "consumes": [
+        { "resource": "compute", "amount": 0.8 },
+        { "resource": "electricity", "amount": 0.3 }
+      ]
+    },
+    {
+      "codeName": "neuralMesh",
+      "displayName": "Neural Mesh",
+      "icon": "🕸️",
+      "category": "digital",
+      "description": "Global distributed mesh linking AGI nodes into a planetary mind.",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "generatorOwned", "generator": "quantumProcessor", "quantity": 1 },
+          { "type": "resourceHeld", "resource": "quantumFlops", "amount": 50 }
+        ]
+      },
+      "baseCost": 500000000000000,
+      "costMultiplier": 1.4,
+      "requiredFeature": "generators:tier4",
+      "costResources": [
+        { "resource": "quantumFlops", "multiplier": 100 },
+        { "resource": "data", "multiplier": 50 },
+        { "resource": "electricity", "multiplier": 30 }
+      ],
+      "produces": [
+        { "resource": "meshNodes", "amount": 0.05, "role": "primary" },
+        { "resource": "intelligence", "amount": 0.1, "role": "secondary" }
+      ],
+      "consumes": [
+        { "resource": "quantumFlops", "amount": 0.15 },
+        { "resource": "data", "amount": 0.4 },
+        { "resource": "electricity", "amount": 0.25 }
+      ]
     }
   ]
 }

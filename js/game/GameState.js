@@ -2,6 +2,7 @@ import { EventBus, EVENTS } from '../core/EventBus.js';
 import { ConfigManager } from '../core/ConfigManager.js';
 import { FormulaEngine } from './FormulaEngine.js';
 import { ModifierSystem } from './ModifierSystem.js';
+import { RunTracker, initPrestigeRun } from './systems/RunTracker.js';
 
 export function createInitialState(config) {
   const fw = config.framework;
@@ -43,7 +44,7 @@ export function createInitialState(config) {
   const urlParams = new URLSearchParams(window.location.search);
   const devMode = urlParams.get('debug') === '1';
 
-  return {
+  const state = {
     resources,
     generators,
     upgrades,
@@ -62,7 +63,17 @@ export function createInitialState(config) {
         lifetimeCurrencyEarned: 0,
         purchasedBonuses: {},
         run: { resourcesEarnedThisRun: {}, peakPrimaryCurrencyRateThisRun: 0 }
-      }
+      },
+      transcendence: {
+        currency: 0,
+        lifetimeCurrencyEarned: 0,
+        purchasedUpgrades: {},
+        totalTranscendences: 0,
+        run: { intelligenceEarnedThisRun: 0 },
+        directives: { dayKey: '', active: [], bonusReady: false, completedToday: false }
+      },
+      tutorial: { stepIndex: 0, completed: false },
+      paragon: { level: 0, currency: 0, lifetimeCurrencyEarned: 0, lifetimeLevels: 0 }
     },
     stats: { totalTaps: 0, totalClicks: 0, playTimeSeconds: 0, eventsSeen: 0, offlineSecondsClaimed: 0 },
     settings: {
@@ -70,6 +81,10 @@ export function createInitialState(config) {
       soundEnabled: true,
       notificationsEnabled: true,
       showTutorial: true,
+      autoBuyGenerator: false,
+      autoBuyUpgrade: false,
+      autoPrestige: false,
+      autoPrestigeThreshold: fw.automation?.autoPrestigeThresholdDefault ?? 5,
       devMode
     },
     ui: {
@@ -89,6 +104,9 @@ export function createInitialState(config) {
     _lastTapTime: 0,
     _tickAccumulator: 0
   };
+
+  initPrestigeRun(state, config);
+  return state;
 }
 
 export class GameState {
@@ -101,6 +119,29 @@ export class GameState {
   _mergeSave(saved) {
     const fresh = createInitialState(this.config);
     const merged = deepMerge(fresh, saved);
+    if (!merged.meta.transcendence) {
+      merged.meta.transcendence = fresh.meta.transcendence;
+    }
+    if (!merged.meta.transcendence.run) {
+      merged.meta.transcendence.run = { intelligenceEarnedThisRun: 0 };
+    }
+    if (!merged.meta.transcendence.directives) {
+      merged.meta.transcendence.directives = fresh.meta.transcendence.directives;
+    }
+    if (!merged.meta.paragon) {
+      merged.meta.paragon = fresh.meta.paragon;
+    }
+    if (!merged.meta.tutorial) {
+      merged.meta.tutorial = fresh.meta.tutorial;
+    }
+    const fw = this.config.framework;
+    if (merged.settings.autoBuyGenerator == null) merged.settings.autoBuyGenerator = false;
+    if (merged.settings.autoBuyUpgrade == null) merged.settings.autoBuyUpgrade = false;
+    if (merged.settings.autoPrestige == null) merged.settings.autoPrestige = false;
+    if (merged.settings.autoPrestigeThreshold == null) {
+      merged.settings.autoPrestigeThreshold = fw.automation?.autoPrestigeThresholdDefault ?? 5;
+    }
+    RunTracker.ensurePrestigeRun(merged, this.config);
     this._sanitizeEphemeralUI(merged);
     merged.settings.devMode = new URLSearchParams(window.location.search).get('debug') === '1';
     return merged;
@@ -142,6 +183,11 @@ export class GameState {
         (this.data.meta.milestones.lifetimeResourcesGenerated[codeName] || 0) + amount;
       this.data.meta.prestige.run.resourcesEarnedThisRun[codeName] =
         (this.data.meta.prestige.run.resourcesEarnedThisRun[codeName] || 0) + amount;
+      const tcResource = this.config.transcendence?.transcendenceCurrency?.resource;
+      if (tcResource && codeName === tcResource && this.data.meta.transcendence?.run) {
+        this.data.meta.transcendence.run.intelligenceEarnedThisRun =
+          (this.data.meta.transcendence.run.intelligenceEarnedThisRun || 0) + amount;
+      }
       EventBus.emit(EVENTS.RESOURCE_GAINED, { resource: codeName, amount, source });
     } else {
       res.quantity += amount;
@@ -172,6 +218,7 @@ export class GameState {
     this.addResource(primary.codeName, gain, 'tap');
     this.data.stats.totalTaps++;
     this.data.stats.totalClicks++;
+    RunTracker.onTap(this.data, this.config);
     this.data.lastTapGain = gain;
     this.data.ui.lastTapGain = gain;
     this.data._lastTapTime = now;
@@ -200,6 +247,7 @@ export class GameState {
     gs.quantityPurchased += qty;
     gs.totalSpent += Object.values(cost).reduce((a, b) => a + b, 0);
     this.data.meta.milestones.lifetimeGeneratorPurchases += qty;
+    RunTracker.onGeneratorPurchased(this.data, this.config, qty);
     this._bumpModCache();
     EventBus.emit(EVENTS.GENERATOR_PURCHASED, { generator: codeName, quantity: qty });
     return true;

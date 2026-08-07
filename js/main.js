@@ -15,6 +15,8 @@ window.AFK = AFK;
       this.gameLoop = gameLoop;
       this.contentId = contentId;
       this.offlineModal = null;
+      this.milestoneCelebration = null;
+      this.shareModal = null;
       this._reactiveTick = 0;
       this.getEquipSlotOptions = this.getEquipSlotOptions.bind(this);
       this.getItemDisplay = this.getItemDisplay.bind(this);
@@ -593,9 +595,48 @@ window.AFK = AFK;
             requirements: requirements?.length ? requirements : undefined
           };
         }
+        case 'transcendence':
+          return this._getTranscendenceInfo(codeName, fmt, section);
+        case 'transcendenceUpgrade':
+          return this._getTranscendenceInfo(codeName, fmt, section);
         default:
           return null;
       }
+    }
+
+    _getTranscendenceInfo(codeName, fmt, section) {
+      if (codeName === 'reset') {
+        const lostKept = AFK.TranscendenceSystem.getLostKept(this.config);
+        const gain = AFK.TranscendenceSystem.getProjectedGain(this.state, this.config);
+        const progress = AFK.FormulaEngine.getTranscendenceProgress(this.state, this.config, fmt);
+        return {
+          title: AFK.ConfigManager.getSection('transcendenceReset')?.title || 'Transcendence',
+          icon: '🌌',
+          sections: [
+            section('description', progress?.rulesExplanation || ''),
+            section('rewards', `Gain +${gain} Cosmic Insight`),
+            section('lost', lostKept.lost.join(' · ')),
+            section('kept', lostKept.kept.join(' · '))
+          ]
+        };
+      }
+      const upgrade = this.config.transcendence?.transcendenceUpgrades?.find(u => u.codeName === codeName);
+      if (!upgrade) return null;
+      const level = this.state.meta.transcendence?.purchasedUpgrades?.[codeName] || 0;
+      const cost = upgrade.cost * (level + 1);
+      return {
+        title: upgrade.displayName,
+        icon: upgrade.icon,
+        sections: [
+          section('description', upgrade.description),
+          section('effect', this.describeEffect({
+            ...upgrade.effect,
+            multiplier: 1 + (upgrade.effect.multiplierPerLevel || 0) * Math.max(level, 1)
+          })),
+          section('levelProgress', `Level ${level} / ${upgrade.maxLevel}`),
+          section('purchaseRequirements', `${fmt(cost)} Cosmic Insight per purchase`)
+        ]
+      };
     }
 
     getEventBannerItems() {
@@ -703,6 +744,131 @@ window.AFK = AFK;
       };
     }
 
+    getTranscendenceDisplay() {
+      void this._reactiveTick;
+      const fmt = (v) => this.formatNumber(v);
+      const tc = this.config.transcendence;
+      if (!tc?.enabled) {
+        return { enabled: false, unlocked: false, upgrades: [], directives: { enabled: false } };
+      }
+
+      const unlocked = AFK.TranscendenceSystem.isUnlocked(this.state, this.config);
+      const unlockRequirements = tc.unlockConditions
+        ? AFK.ConfigManager.buildRequirementRowsFromConditions(tc.unlockConditions, this.state, fmt)
+        : [];
+      const lostKept = AFK.TranscendenceSystem.getLostKept(this.config);
+
+      return {
+        enabled: true,
+        unlocked,
+        canTranscend: AFK.TranscendenceSystem.canTranscend(this.state, this.config),
+        projectedGain: AFK.TranscendenceSystem.getProjectedGain(this.state, this.config),
+        transcendenceCurrency: this.state.meta.transcendence?.currency || 0,
+        totalTranscendences: this.state.meta.transcendence?.totalTranscendences || 0,
+        insightProgress: AFK.FormulaEngine.getTranscendenceProgress(this.state, this.config, fmt),
+        unlockRequirements,
+        transcendLost: lostKept.lost,
+        transcendKept: lostKept.kept,
+        upgrades: this.getTranscendenceUpgradesDisplay(),
+        directives: AFK.DirectiveSystem.getDisplay(
+          this.state, this.config, fmt, this.gameState.getMods()
+        )
+      };
+    }
+
+    getTranscendenceUpgradesDisplay() {
+      void this._reactiveTick;
+      const fmt = (v) => this.formatNumber(v);
+      const currencyName = this.config.transcendence?.transcendenceCurrency?.displayName || 'Cosmic Insight';
+      return (this.config.transcendence?.transcendenceUpgrades || []).map(upgrade => {
+        const level = this.state.meta.transcendence?.purchasedUpgrades?.[upgrade.codeName] || 0;
+        const cost = upgrade.cost * (level + 1);
+        const maxed = level >= upgrade.maxLevel;
+        const canBuy = !maxed && (this.state.meta.transcendence?.currency || 0) >= cost;
+        return {
+          ...upgrade,
+          level,
+          maxed,
+          canBuy,
+          costProgress: [AFK.ConfigManager.buildProgressEntry({
+            current: this.state.meta.transcendence?.currency || 0,
+            required: cost,
+            icon: '🌌',
+            name: currencyName,
+            code: 'transcendenceCurrency',
+            formatNumber: fmt
+          })],
+          levelProgress: AFK.ConfigManager.buildProgressEntry({
+            current: level,
+            required: upgrade.maxLevel,
+            icon: upgrade.icon,
+            name: upgrade.displayName,
+            code: `${upgrade.codeName}-level`,
+            label: `Level ${level} / ${upgrade.maxLevel}`,
+            formatNumber: (n) => String(n)
+          })
+        };
+      });
+    }
+
+    getTabBadges() {
+      void this._reactiveTick;
+      const badges = {};
+      if (this.getUpgradeDisplay().some(u => u.canBuy)) badges.upgrades = true;
+      if (AFK.GeneratorSystem.getDisplayData(this.state, this.config, this.gameState.getMods()).some(g => g.canBuy)) {
+        badges.generators = true;
+      }
+      const asc = this.getAscensionDisplay();
+      if (asc.canPrestige) badges.ascension = true;
+      if (asc.canAscend) badges.ascension = true;
+      if (asc.prestigeBonuses?.some(b => b.canBuy)) badges.ascension = true;
+      const trans = this.getTranscendenceDisplay();
+      if (trans.canTranscend) badges.transcendence = true;
+      if (trans.upgrades?.some(u => u.canBuy)) badges.transcendence = true;
+      const paragon = this.getParagonDisplay();
+      if (paragon.canBuy) badges.paragon = true;
+      return badges;
+    }
+
+    showMilestone(icon, title, subtitle) {
+      this.milestoneCelebration = { icon, title, subtitle };
+    }
+
+    dismissMilestone() {
+      this.milestoneCelebration = null;
+    }
+
+    getAutomationSettings() {
+      const fw = this.config.framework?.automation || {};
+      const labels = this.config.defaults?.automationLabels || {};
+      return {
+        labels,
+        autoPrestigeThresholdMin: fw.autoPrestigeThresholdMin ?? 1,
+        autoPrestigeThresholdMax: fw.autoPrestigeThresholdMax ?? 50
+      };
+    }
+
+    getTutorialDisplay() {
+      void this._reactiveTick;
+      return AFK.TutorialSystem.getActiveStep(this.state, this.config);
+    }
+
+    advanceTutorial() {
+      AFK.TutorialSystem.advance(this.state, this.config, this);
+      this.bumpUI();
+    }
+
+    skipTutorial() {
+      AFK.TutorialSystem.skip(this.state);
+      this.bumpUI();
+    }
+
+    restartTutorial() {
+      AFK.TutorialSystem.restart(this.state, this.config, this);
+      this.state.settings.showTutorial = true;
+      this.bumpUI();
+    }
+
     getStatsDisplay() {
       void this._reactiveTick;
       const run = this.state.meta.prestige.run;
@@ -722,8 +888,69 @@ window.AFK = AFK;
         playTimeSeconds: this.state.stats.playTimeSeconds,
         peakPrimaryCurrencyRate: run.peakPrimaryCurrencyRateThisRun ?? 0,
         resourceTotals,
-        resourceRates: rates
+        resourceRates: rates,
+        synergies: AFK.SynergySystem.getDisplay(this.state, this.config)
       };
+    }
+
+    getParagonDisplay() {
+      void this._reactiveTick;
+      return AFK.ParagonSystem.getDisplay(this.state, this.config, (v) => this.formatNumber(v));
+    }
+
+    buyParagonLevel() {
+      if (AFK.ParagonSystem.buyLevel(this.state, this.config, this.gameState)) {
+        this.gameState.showToast('Paragon level increased!');
+        this.bumpUI();
+      }
+    }
+
+    openShareExport() {
+      const payload = {
+        version: AFK.SaveManager.getSaveVersion(),
+        contentId: this.contentId,
+        timestamp: Date.now(),
+        state: this.gameState.toJSON()
+      };
+      const shareCode = AFK.ShareSaveManager.encodePayload(payload);
+      this.shareModal = {
+        mode: 'export',
+        shareCode,
+        qrUrl: AFK.ShareSaveManager.getQrUrl(shareCode)
+      };
+    }
+
+    openShareImport() {
+      this.shareModal = { mode: 'import', shareCode: '', qrUrl: null };
+    }
+
+    closeShareModal() {
+      this.shareModal = null;
+    }
+
+    async copyShareCode() {
+      if (!this.shareModal?.shareCode) return;
+      const ok = await AFK.ShareSaveManager.copyToClipboard(this.shareModal.shareCode);
+      this.gameState.showToast(ok ? 'Share code copied!' : 'Copy failed');
+    }
+
+    importShareCode(code) {
+      try {
+        const payload = AFK.ShareSaveManager.decodeShareCode(code);
+        if (!payload?.state) throw new Error('Invalid save data');
+        if (payload.contentId && payload.contentId !== this.contentId) {
+          const target = AFK.ConfigManager.getAvailableGames().find(g => g.id === payload.contentId);
+          const name = target?.displayName || payload.contentId;
+          if (!confirm(`This save belongs to "${name}". Switch and import?`)) return;
+          this.switchContent(payload.contentId).then(() => this._applyImportedSave(payload));
+          return;
+        }
+        if (!confirm('Import this share code? Current progress will be overwritten.')) return;
+        this._applyImportedSave(payload);
+        this.closeShareModal();
+      } catch (e) {
+        this.gameState.showToast(`Import failed: ${e.message}`);
+      }
     }
 
     getProgress() {
@@ -802,6 +1029,7 @@ window.AFK = AFK;
       AFK.DropSystem.onClick(this.state, this.config, this.gameState);
       const primary = AFK.ConfigManager.getPrimaryResource();
       this.gameState.showResourceDelta(primary.codeName, gain);
+      AFK.TutorialSystem.onGameEvent(this.state, this.config, 'tap', this);
       if (this.state.settings.devMode) this._updateFormulaInspector();
       this.bumpUI();
     }
@@ -814,6 +1042,7 @@ window.AFK = AFK;
       if (this.gameState.buyGenerator(code, qty)) {
         const label = AFK.ConfigManager.getGeneratorDisplayName(code);
         this.gameState.showToast(`Purchased ${qty}× ${label}`);
+        AFK.TutorialSystem.onGameEvent(this.state, this.config, 'generatorPurchase', this);
         this.bumpUI();
       }
     }
@@ -821,6 +1050,7 @@ window.AFK = AFK;
     onBuyUpgrade(code) {
       if (this.gameState.buyUpgrade(code)) {
         this.gameState.showToast('Upgrade purchased!');
+        AFK.TutorialSystem.onGameEvent(this.state, this.config, 'upgradePurchase', this);
         this.bumpUI();
       }
     }
@@ -870,13 +1100,37 @@ window.AFK = AFK;
     performAscend() {
       if (AFK.AscensionSystem.perform(this.state, this.config, this.gameState)) {
         AFK.SaveManager.save(this.gameState);
+        const tier = this.state.meta.ascension.currentTier;
+        const tierDef = this.config.ascension.ascensionTiers.find(t => t.tier === tier);
+        this.showMilestone(tierDef?.icon || '🌅', `Welcome to the ${tierDef?.displayName || 'New Age'}!`, 'New systems and generators await your civilization.');
         this.gameState.showToast('Ascension complete!');
+        this.bumpUI();
+      }
+    }
+
+    buyTranscendenceUpgrade(code) {
+      if (AFK.TranscendenceSystem.buyUpgrade(this.state, this.config, code, this.gameState)) {
+        const upgrade = this.config.transcendence.transcendenceUpgrades.find(u => u.codeName === code);
+        this.gameState.showToast(`Purchased ${upgrade?.displayName || code}!`);
+        this.bumpUI();
+      }
+    }
+
+    performTranscendence() {
+      if (AFK.TranscendenceSystem.perform(this.state, this.config, this.gameState)) {
+        AFK.SaveManager.save(this.gameState);
+        this.showMilestone('🌌', 'Transcendence Complete!', 'Your cosmic wisdom grows. A new cycle begins with greater power.');
+        this.gameState.showToast('Transcendence complete!');
         this.bumpUI();
       }
     }
 
     updateSetting(key, val) {
       this.gameState.setSetting(key, val);
+      if (key === 'soundEnabled') AFK.SoundSystem.setEnabled(val);
+      if (key === 'showTutorial' && val === true && this.state.meta.tutorial?.completed) {
+        AFK.TutorialSystem.restart(this.state, this.config, this);
+      }
       this.bumpUI();
     }
 
@@ -1072,6 +1326,10 @@ window.AFK = AFK;
       if (typeof document !== 'undefined' && manifest?.displayName) {
         document.title = manifest.displayName;
       }
+      if (manifest?.themeColor && typeof document !== 'undefined') {
+        document.documentElement.style.setProperty('--color-theme', manifest.themeColor);
+        document.documentElement.style.setProperty('--color-primary', manifest.themeColor);
+      }
 
       this.offlineModal = null;
       this.gameState.state.ui.activeTab = 'generators';
@@ -1097,6 +1355,10 @@ window.AFK = AFK;
 
     const manifest = AFK.ConfigManager.getCurrentManifest();
     if (manifest?.displayName) document.title = manifest.displayName;
+    if (manifest?.themeColor && typeof document !== 'undefined') {
+      document.documentElement.style.setProperty('--color-theme', manifest.themeColor);
+      document.documentElement.style.setProperty('--color-primary', manifest.themeColor);
+    }
 
     if (saved?._integrity?.valid === false) {
       gameState.showToast('Save integrity warning — data may be corrupted');
@@ -1123,15 +1385,27 @@ window.AFK = AFK;
     });
     AFK.EventBus.on(AFK.EVENTS.RESOURCE_GAINED, () => game.bumpUI());
     AFK.EventBus.on(AFK.EVENTS.GENERATOR_PURCHASED, () => game.bumpUI());
-    AFK.EventBus.on(AFK.EVENTS.ACHIEVEMENT_UNLOCKED, () => game.bumpUI());
+    AFK.EventBus.on(AFK.EVENTS.ACHIEVEMENT_UNLOCKED, (payload) => {
+      game.bumpUI();
+      const ach = config.achievements.achievements.find(a => a.codeName === payload?.achievement);
+      if (ach && ['aiAge', 'firstTranscendence', 'intelligenceMaster', 'artifactCollector'].includes(ach.codeName)) {
+        game.showMilestone(ach.icon, ach.displayName, ach.description);
+      }
+    });
     AFK.EventBus.on(AFK.EVENTS.ITEM_ACQUIRED, () => game.bumpUI());
     AFK.EventBus.on(AFK.EVENTS.ITEM_DROPPED, () => game.bumpUI());
     AFK.EventBus.on(AFK.EVENTS.ITEM_EQUIPPED, () => game.bumpUI());
+    AFK.EventBus.on(AFK.EVENTS.ASCENSION_PERFORMED, () => game.bumpUI());
+    AFK.EventBus.on(AFK.EVENTS.TRANSCENDENCE_PERFORMED, () => game.bumpUI());
+
+    AFK.SoundSystem.init(gameState.state.settings);
+    AFK.SoundSystem.wireEventBus(AFK.EventBus, AFK.EVENTS);
 
     if (gameState.state.settings.devMode) game._updateFormulaInspector();
 
     gameLoop.start();
     AFK.EventBus.emit(AFK.EVENTS.GAME_LOADED, {});
+    AFK.TutorialSystem.initStepTab(gameState.state, config, game);
 
     window.__AFK_GAME__ = game;
     window.__AFK_TEST__ = {

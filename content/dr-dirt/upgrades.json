@@ -81,6 +81,72 @@
       "maxLevel": 10,
       "unlockConditions": { "type": "ascensionTier", "minTier": 4 },
       "effect": { "type": "categoryMultiplier", "category": "digital", "multiplier": 1.1 }
+    },
+    {
+      "codeName": "quantumProcessing",
+      "displayName": "Quantum Processing",
+      "description": "+12% compute production per level",
+      "icon": "⚛️",
+      "cost": 1000000,
+      "costResource": "compute",
+      "costScale": 1.3,
+      "maxLevel": 8,
+      "unlockConditions": { "type": "ascensionTier", "minTier": 4 },
+      "effect": { "type": "resourceMultiplier", "resource": "compute", "multiplier": 1.12 }
+    },
+    {
+      "codeName": "consciousnessUpload",
+      "displayName": "Consciousness Upload",
+      "description": "+15% intelligence production per level",
+      "icon": "🔮",
+      "cost": 5000000,
+      "costResource": "intelligence",
+      "costScale": 1.35,
+      "maxLevel": 6,
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "ascensionTier", "minTier": 4 },
+          { "type": "generatorOwned", "generator": "agiCore", "amount": 1 }
+        ]
+      },
+      "effect": { "type": "resourceMultiplier", "resource": "intelligence", "multiplier": 1.15 }
+    },
+    {
+      "codeName": "meshAmplifier",
+      "displayName": "Mesh Amplifier",
+      "description": "+12% mesh node production per level",
+      "icon": "🕸️",
+      "cost": 2500000,
+      "costResource": "meshNodes",
+      "costScale": 1.32,
+      "maxLevel": 8,
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "ascensionTier", "minTier": 4 },
+          { "type": "generatorOwned", "generator": "neuralMesh", "amount": 1 }
+        ]
+      },
+      "effect": { "type": "resourceMultiplier", "resource": "meshNodes", "multiplier": 1.12 }
+    },
+    {
+      "codeName": "quantumEntanglement",
+      "displayName": "Quantum Entanglement",
+      "description": "+15% quantum flop output per level",
+      "icon": "🔗",
+      "cost": 10000000,
+      "costResource": "quantumFlops",
+      "costScale": 1.38,
+      "maxLevel": 6,
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "ascensionTier", "minTier": 4 },
+          { "type": "generatorOwned", "generator": "quantumProcessor", "amount": 1 }
+        ]
+      },
+      "effect": { "type": "resourceMultiplier", "resource": "quantumFlops", "multiplier": 1.15 }
     }
   ]
 }

@@ -1,0 +1,34 @@
+{
+  "enabled": true,
+  "unlockConditions": {
+    "operator": "AND",
+    "conditions": [
+      { "type": "transcendenceCount", "min": 10 }
+    ]
+  },
+  "featureUnlocks": [
+    {
+      "feature": "tab:paragon",
+      "unlockConditions": {
+        "operator": "AND",
+        "conditions": [
+          { "type": "transcendenceCount", "min": 10 }
+        ]
+      }
+    }
+  ],
+  "paragonCurrency": {
+    "codeName": "paragonEssence",
+    "displayName": "Paragon Essence",
+    "icon": "💎",
+    "earnPerTranscendence": 1,
+    "rulesExplanation": "Earn 1 Paragon Essence each time you Transcend. Spend essence to buy permanent Paragon levels."
+  },
+  "levelCostBase": 5,
+  "levelCostScale": 1.12,
+  "multiplierPerLevel": 0.001,
+  "effect": {
+    "type": "globalMultiplier",
+    "description": "+0.1% global production per Paragon level"
+  }
+}

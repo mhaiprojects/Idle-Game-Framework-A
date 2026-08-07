@@ -6,13 +6,26 @@ export default {
   components: { PanelHeader, CardSection },
   props: {
     settings: Object,
-    saveManagement: Object
+    saveManagement: Object,
+    automationSettings: Object
   },
   emits: [
     'update-setting', 'export-save', 'import-save', 'reset-game',
     'save-now', 'restore-backup', 'delete-backup', 'delete-all-backups',
-    'delete-current-save', 'revert-latest-backup'
+    'delete-current-save', 'revert-latest-backup', 'restart-tutorial',
+    'export-share', 'import-share'
   ],
+  computed: {
+    automationLabels() {
+      return this.automationSettings?.labels || {};
+    },
+    thresholdMin() {
+      return this.automationSettings?.autoPrestigeThresholdMin ?? 1;
+    },
+    thresholdMax() {
+      return this.automationSettings?.autoPrestigeThresholdMax ?? 50;
+    }
+  },
   methods: {
     onImport(e) {
       const file = e.target.files[0];
@@ -22,6 +35,9 @@ export default {
     formatLabel(template, vars) {
       if (!template) return '';
       return template.replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? '');
+    },
+    onThresholdInput(e) {
+      this.$emit('update-setting', 'autoPrestigeThreshold', Number(e.target.value));
     }
   },
   template: `
@@ -47,7 +63,51 @@ export default {
           <span>Tutorial</span>
           <button class="btn btn-ghost" @click="$emit('update-setting', 'showTutorial', !settings.showTutorial)">{{ settings.showTutorial ? 'On' : 'Off' }}</button>
         </div>
+        <div class="settings-row">
+          <span>Replay Tutorial</span>
+          <button class="btn btn-ghost btn-sm" @click="$emit('restart-tutorial')">Restart</button>
+        </div>
       </CardSection>
+
+      <CardSection section-key="automation" level="panel">
+        <div class="settings-row">
+          <span>{{ automationLabels.autoBuyGenerator || 'Auto-buy cheapest generator' }}</span>
+          <button class="btn btn-ghost" :class="{ 'btn-primary': settings.autoBuyGenerator }"
+            @click="$emit('update-setting', 'autoBuyGenerator', !settings.autoBuyGenerator)">
+            {{ settings.autoBuyGenerator ? 'On' : 'Off' }}
+          </button>
+        </div>
+        <div class="settings-row">
+          <span>{{ automationLabels.autoBuyUpgrade || 'Auto-buy best upgrade' }}</span>
+          <button class="btn btn-ghost" :class="{ 'btn-primary': settings.autoBuyUpgrade }"
+            @click="$emit('update-setting', 'autoBuyUpgrade', !settings.autoBuyUpgrade)">
+            {{ settings.autoBuyUpgrade ? 'On' : 'Off' }}
+          </button>
+        </div>
+        <div class="settings-row">
+          <span>{{ automationLabels.autoPrestige || 'Auto-prestige when ready' }}</span>
+          <button class="btn btn-ghost" :class="{ 'btn-primary': settings.autoPrestige }"
+            @click="$emit('update-setting', 'autoPrestige', !settings.autoPrestige)">
+            {{ settings.autoPrestige ? 'On' : 'Off' }}
+          </button>
+        </div>
+        <div v-if="settings.autoPrestige" class="settings-row automation-threshold">
+          <span>{{ automationLabels.prestigeThreshold || 'Min shards' }}: {{ settings.autoPrestigeThreshold }}</span>
+          <input type="range" class="automation-slider"
+            :min="thresholdMin" :max="thresholdMax" :value="settings.autoPrestigeThreshold"
+            @input="onThresholdInput" />
+        </div>
+        <p class="hint-text">Automation runs every second and respects your bulk purchase multiplier.</p>
+      </CardSection>
+
+      <CardSection section-key="shareSave" level="panel">
+        <p class="hint-text">Transfer saves between devices with a share code and QR.</p>
+        <div class="section-actions section-actions-start save-actions">
+          <button class="btn btn-primary" @click="$emit('export-share')">Export Share Code</button>
+          <button class="btn btn-ghost" @click="$emit('import-share')">Import Share Code</button>
+        </div>
+      </CardSection>
+
       <CardSection section-key="saveData" level="panel">
         <div v-if="saveManagement?.current" class="save-meta">
           <div class="save-meta-row">{{ formatLabel(saveManagement.labels.lastSaved, { time: saveManagement.current.formattedTime }) }}</div>

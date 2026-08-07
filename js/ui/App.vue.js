@@ -7,6 +7,8 @@ import InventoryPanel from './InventoryPanel.vue.js';
 import ArtifactPanel from './ArtifactPanel.vue.js';
 import AchievementPanel from './AchievementPanel.vue.js';
 import AscensionPanel from './AscensionPanel.vue.js';
+import TranscendencePanel from './TranscendencePanel.vue.js';
+import ParagonPanel from './ParagonPanel.vue.js';
 import SettingsPanel from './SettingsPanel.vue.js';
 import StatsPanel from './StatsPanel.vue.js';
 import ProgressPanel from './ProgressPanel.vue.js';
@@ -17,14 +19,17 @@ import UnlockModal from './components/UnlockModal.vue.js';
 import InfoModal from './components/InfoModal.vue.js';
 import CardSection from './components/CardSection.vue.js';
 import PanelHeader from './components/PanelHeader.vue.js';
+import MilestoneCelebration from './components/MilestoneCelebration.vue.js';
+import TutorialOverlay from './components/TutorialOverlay.vue.js';
+import ShareCodeModal from './components/ShareCodeModal.vue.js';
 
 export default {
   name: 'App',
   components: {
     GameSelectorPanel, ResourceBar, GeneratorPanel, UpgradePanel, CharacterPanel,
-    InventoryPanel, ArtifactPanel, AchievementPanel, AscensionPanel,
+    InventoryPanel, ArtifactPanel, AchievementPanel, AscensionPanel, TranscendencePanel, ParagonPanel,
     SettingsPanel, StatsPanel, ProgressPanel, ActionBar, Toast, EventBanner,
-    UnlockModal, InfoModal, CardSection, PanelHeader
+    UnlockModal, InfoModal, CardSection, PanelHeader, MilestoneCelebration, TutorialOverlay, ShareCodeModal
   },
   props: {
     game: Object
@@ -101,6 +106,31 @@ export default {
     },
     ascensionData() {
       return this.game.getAscensionDisplay();
+    },
+    transcendenceData() {
+      return this.game.getTranscendenceDisplay();
+    },
+    paragonData() {
+      return this.game.getParagonDisplay();
+    },
+    shareModal() {
+      return this.game.shareModal;
+    },
+    tabBadges() {
+      return this.game.getTabBadges();
+    },
+    milestoneCelebration() {
+      return this.game.milestoneCelebration;
+    },
+    tutorialDisplay() {
+      return this.game.getTutorialDisplay();
+    },
+    automationSettings() {
+      return this.game.getAutomationSettings();
+    },
+    tutorialHighlightTap() {
+      const t = this.tutorialDisplay;
+      return t?.step?.id === 'tap';
     },
     ascensionTierIcon() {
       return this.game.getAscensionTierIcon();
@@ -187,6 +217,18 @@ export default {
     onPrestige() { this.game.performPrestige(); },
     onAscend() { this.game.performAscend(); },
     onBuyBonus(code) { this.game.buyPrestigeBonus(code); },
+    onTranscend() { this.game.performTranscendence(); },
+    onBuyTranscendenceUpgrade(code) { this.game.buyTranscendenceUpgrade(code); },
+    onBuyParagonLevel() { this.game.buyParagonLevel(); },
+    dismissMilestone() { this.game.dismissMilestone(); },
+    openShareExport() { this.game.openShareExport(); },
+    openShareImport() { this.game.openShareImport(); },
+    closeShareModal() { this.game.closeShareModal(); },
+    copyShareCode() { this.game.copyShareCode(); },
+    importShareCode(code) { this.game.importShareCode(code); },
+    advanceTutorial() { this.game.advanceTutorial(); },
+    skipTutorial() { this.game.skipTutorial(); },
+    restartTutorial() { this.game.restartTutorial(); },
     onUpdateSetting(key, val) { this.game.updateSetting(key, val); },
     onExportSave() { this.game.exportSave(); },
     onImportSave(file) { this.game.importSave(file); },
@@ -260,17 +302,29 @@ export default {
             @more-info="onMoreInfo" />
           <AscensionPanel v-if="state.ui.activeTab === 'ascension'" v-bind="ascensionData"
             :format-number="formatNumber" :primary-currency-label="primaryCurrencyLabel"
+            :show-end-game-banner="ascensionData.maxTierReached && transcendenceData.enabled"
             @prestige="onPrestige" @ascend="onAscend" @buy-bonus="onBuyBonus"
+            @more-info="onMoreInfo" @go-transcendence="onTabClick({ id: 'transcendence', feature: 'tab:transcendence' })" />
+          <TranscendencePanel v-if="state.ui.activeTab === 'transcendence'" v-bind="transcendenceData"
+            :format-number="formatNumber"
+            @transcend="onTranscend" @buy-upgrade="onBuyTranscendenceUpgrade"
             @more-info="onMoreInfo" />
+          <ParagonPanel v-if="state.ui.activeTab === 'paragon'" :paragon="paragonData"
+            :format-number="formatNumber" @buy-level="onBuyParagonLevel" />
           <StatsPanel v-if="state.ui.activeTab === 'stats'"
             :stats="statsData" :primary-breakdown="primaryBreakdown"
             :primary-currency-label="primaryCurrencyLabel"
             :get-generator-label="game.getGeneratorLabel.bind(game)"
-            :format-number="formatNumber" :active-events="eventBannerItems" />
+            :format-number="formatNumber" :active-events="eventBannerItems"
+            :synergies="statsData.synergies" />
           <SettingsPanel v-if="state.ui.activeTab === 'settings'"
             :settings="state.settings"
             :save-management="saveManagement"
+            :automation-settings="automationSettings"
             @update-setting="onUpdateSetting"
+            @restart-tutorial="restartTutorial"
+            @export-share="openShareExport"
+            @import-share="openShareImport"
             @export-save="onExportSave"
             @import-save="onImportSave"
             @save-now="onSaveNow"
@@ -303,19 +357,29 @@ export default {
         </div>
         <nav class="tab-sidebar">
           <button v-for="tab in tabs" :key="tab.id"
-            class="tab-btn" :class="{ active: state.ui.activeTab === tab.id, locked: !isTabUnlocked(tab) }"
+            class="tab-btn" :class="{ active: state.ui.activeTab === tab.id, locked: !isTabUnlocked(tab), 'has-badge': tabBadges[tab.id] }"
             @click="onTabClick(tab)" :title="tab.label">
             {{ tab.icon }}
+            <span v-if="tabBadges[tab.id]" class="tab-badge"></span>
             <span v-if="!isTabUnlocked(tab)" class="tab-lock" @click="onTabLockClick(tab, $event)">🔒</span>
           </button>
         </nav>
       </div>
       <ActionBar :tap-gain-formatted="tapGainFormatted" :primary-icon="primaryIcon"
-        :skills="skills" :boosts="boosts"
+        :skills="skills" :boosts="boosts" :highlight-tap="tutorialHighlightTap"
         @tap="onTap" @activate-skill="onActivateSkill" @use-boost="onUseBoost" />
       <Toast :toasts="state.ui.toasts" />
       <UnlockModal v-if="unlockModal" :info="unlockModal" @close="closeUnlockModal" />
       <InfoModal v-if="infoModal" :info="infoModal" :format-number="formatNumber" @close="closeInfoModal" />
+      <MilestoneCelebration :milestone="milestoneCelebration" @dismiss="dismissMilestone" />
+      <TutorialOverlay v-if="tutorialDisplay"
+        :step="tutorialDisplay.step"
+        :step-index="tutorialDisplay.index"
+        :total-steps="tutorialDisplay.total"
+        @next="advanceTutorial" @skip="skipTutorial" />
+      <ShareCodeModal v-if="shareModal" :mode="shareModal.mode"
+        :share-code="shareModal.shareCode" :qr-url="shareModal.qrUrl"
+        @close="closeShareModal" @copy="copyShareCode" @import-code="importShareCode" />
       <div v-if="offlineModal" class="modal-overlay" @click.self="dismissOffline">
         <div class="modal animate__animated animate__fadeIn">
           <h3>Welcome Back!</h3>

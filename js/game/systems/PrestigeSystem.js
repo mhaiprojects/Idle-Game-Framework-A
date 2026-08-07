@@ -2,6 +2,8 @@ import { FormulaEngine } from '../FormulaEngine.js';
 import { EventBus, EVENTS } from '../../core/EventBus.js';
 import { ConfigManager } from '../../core/ConfigManager.js';
 import { ModifierSystem } from '../ModifierSystem.js';
+import { initPrestigeRun } from './RunTracker.js';
+import { DirectiveSystem } from './DirectiveSystem.js';
 
 export const PrestigeSystem = {
   canPrestige(state, config) {
@@ -44,10 +46,8 @@ export const PrestigeSystem = {
     }
 
     if (profile.resetRunStats) {
-      state.meta.prestige.run = { resourcesEarnedThisRun: {}, peakPrimaryCurrencyRateThisRun: 0 };
-      for (const r of config.resources.resources) {
-        state.meta.prestige.run.resourcesEarnedThisRun[r.codeName] = 0;
-      }
+      DirectiveSystem.onPrestigePerformed(state, config, gameState);
+      initPrestigeRun(state, config);
     }
 
     if (profile.resetPrestigeShopAllocation) {
@@ -95,7 +95,7 @@ export const PrestigeSystem = {
     if (p.resetPrestigeShopAllocation) lost.push('Prestige shop levels (allocation reset)');
     return {
       lost,
-      kept: ['Artifacts', 'Generator unlocks', 'Achievements', 'Ascension tier', 'Prestige Shards (currency)', 'Characters', 'Lifetime milestones']
+      kept: ['Artifacts', 'Generator unlocks', 'Achievements', 'Ascension tier', 'Prestige Shards (currency)', 'Prestige shop levels', 'Characters', 'Lifetime milestones']
     };
   }
 };

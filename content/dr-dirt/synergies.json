@@ -1,0 +1,58 @@
+{
+  "synergies": [
+    {
+      "codeName": "dataLab",
+      "displayName": "Data Pipeline",
+      "description": "+15% digital generators when Data Center and ML Laboratory are both active.",
+      "icon": "🔗",
+      "generators": ["dataCenter", "mlLaboratory"],
+      "minQuantity": 1,
+      "effect": { "type": "categoryMultiplier", "category": "digital", "multiplier": 1.15 }
+    },
+    {
+      "codeName": "powerGrid",
+      "displayName": "Power Grid",
+      "description": "+12% electricity production when Power Plant and Broadcast Tower both run.",
+      "icon": "⚡",
+      "generators": ["powerPlant", "broadcastTower"],
+      "minQuantity": 1,
+      "effect": { "type": "resourceMultiplier", "resource": "electricity", "multiplier": 1.12 }
+    },
+    {
+      "codeName": "bronzeWorks",
+      "displayName": "Bronze Works",
+      "description": "+10% bronze output when Copper and Tin Smelters operate together.",
+      "icon": "🔶",
+      "generators": ["copperSmelter", "tinSmelter"],
+      "minQuantity": 1,
+      "effect": { "type": "resourceMultiplier", "resource": "bronze", "multiplier": 1.1 }
+    },
+    {
+      "codeName": "agiQuantum",
+      "displayName": "Quantum Singularity",
+      "description": "+20% intelligence when AGI Core and Quantum Processor both operate.",
+      "icon": "🌌",
+      "generators": ["agiCore", "quantumProcessor"],
+      "minQuantity": 1,
+      "effect": { "type": "resourceMultiplier", "resource": "intelligence", "multiplier": 1.2 }
+    },
+    {
+      "codeName": "meshMind",
+      "displayName": "Planetary Mind",
+      "description": "+25% mesh node output when Neural Mesh and AGI Core both operate.",
+      "icon": "🕸️",
+      "generators": ["neuralMesh", "agiCore"],
+      "minQuantity": 1,
+      "effect": { "type": "resourceMultiplier", "resource": "meshNodes", "multiplier": 1.25 }
+    },
+    {
+      "codeName": "industrialCore",
+      "displayName": "Industrial Core",
+      "description": "+10% global production when Coal Mine and Steel Forge both operate.",
+      "icon": "🏭",
+      "generators": ["coalMine", "steelForge"],
+      "minQuantity": 1,
+      "effect": { "type": "globalMultiplier", "multiplier": 1.1 }
+    }
+  ]
+}

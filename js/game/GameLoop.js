@@ -4,6 +4,8 @@ import { FormulaEngine } from './FormulaEngine.js';
 import { DropSystem } from './systems/DropSystem.js';
 import { AchievementSystem } from './systems/AchievementSystem.js';
 import { EventSystem } from './systems/EventSystem.js';
+import { AutomationSystem } from './systems/AutomationSystem.js';
+import { DirectiveSystem } from './systems/DirectiveSystem.js';
 
 export class GameLoop {
   constructor(gameState, config) {
@@ -58,6 +60,8 @@ export class GameLoop {
       DropSystem.onTick(state, this.config, deltaSec, this.gameState);
       EventSystem.tick(state, this.config, deltaSec, this.gameState);
       AchievementSystem.checkAll(state, this.config, this.gameState);
+      DirectiveSystem.checkAll(state, this.config, this.gameState);
+      AutomationSystem.tick(state, this.config, deltaSec, this.gameState);
       this.accumulator -= tickInterval;
     }
 

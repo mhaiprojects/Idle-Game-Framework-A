@@ -188,6 +188,24 @@
       "color": "#ec4899",
       "isPrimary": false,
       "baseValue": 0
+    },
+    {
+      "codeName": "quantumFlops",
+      "displayName": "Quantum Flops",
+      "description": "Quantum compute operations beyond classical limits.",
+      "icon": "⚛️",
+      "color": "#a855f7",
+      "isPrimary": false,
+      "baseValue": 0
+    },
+    {
+      "codeName": "meshNodes",
+      "displayName": "Mesh Nodes",
+      "description": "Distributed neural mesh nodes linking global cognition.",
+      "icon": "🕸️",
+      "color": "#14b8a6",
+      "isPrimary": false,
+      "baseValue": 0
     }
   ]
 }
