@@ -6,6 +6,27 @@ Production formula: `(Flat base rate) × (1 + Σ Increased) × Π More`
 - **Operation (`consumes`)** — ongoing inputs per second while producing.
 - **Duplicate outputs removed** — each generator has at most one output line per resource+role.
 
+See also [`CONTENT_CONVENTIONS.md`](CONTENT_CONVENTIONS.md) for current design rules.
+
+---
+
+## 2026-08 content logic polish (canonical current state)
+
+Further cleanup after the initial rebalance. **Source of truth:** `content/dr-dirt/generators.json`.
+
+| Generator | displayName | Primary | Removed / changed |
+|-----------|-------------|---------|-------------------|
+| Gatherer (`rockGatherer`) | Gatherer | stone + wood unlockGate | Renamed from "Rock Gatherer" |
+| Woodcutter | Woodcutter | wood only | Removed game unlockGate |
+| Hunter | Hunter | game only | Removed plants unlockGate |
+| Farmer | Farmer | plants only | Removed food unlockGate |
+| Campfire | Campfire | food | Removed copperOre unlockGate |
+| Prospector | Prospector | ore traces | ironOre 0.02/s, gated by bronzeSmith |
+
+Unlock-gate side outputs (coal from Trade Caravan, food trace from Steel Forge, gold from Iron Smelter) remain intentional — see CONTENT_CONVENTIONS.md.
+
+---
+
 ## Intentional multi-generator resources
 
 | Resource | Generators | Reason |
@@ -16,9 +37,9 @@ Production formula: `(Flat base rate) × (1 + Σ Increased) × Π More`
 
 ## Per-generator changes
 
-### Rock Gatherer (`rockGatherer`)
+### Gatherer (`rockGatherer`)
 
-Manual gathering ~70 kg/hour stone; incidental wood finds while quarrying.
+Display name **Gatherer**. Manual gathering ~70 kg/hour stone; incidental wood finds while quarrying.
 
 **costResources**
 - Before: `[{"resource":"stone","multiplier":1}]`
@@ -32,7 +53,7 @@ Manual gathering ~70 kg/hour stone; incidental wood finds while quarrying.
 
 ### Woodcutter (`woodcutter`)
 
-Felling ~2 m³ timber/hour; forest trails reveal game tracks.
+Felling ~2 m³ timber/hour; wood only (2026-08 polish removed game side output).
 
 **costResources**
 - Before: `[{"resource":"stone","multiplier":1},{"resource":"wood","multiplier":1}]`
@@ -40,13 +61,14 @@ Felling ~2 m³ timber/hour; forest trails reveal game tracks.
 
 **produces**
 - Before: `[{"resource":"wood","amount":1,"role":"primary"},{"resource":"game","amount":0.4,"role":"unlockGate","forGenerator":"hunter"}]`
-- After: `[{"resource":"wood","amount":0.6,"role":"primary"},{"resource":"game","amount":0.15,"role":"unlockGate","forGenerator":"hunter"}]`
+- After (rebalance): `[{"resource":"wood","amount":0.6,"role":"primary"},{"resource":"game","amount":0.15,"role":"unlockGate","forGenerator":"hunter"}]`
+- **Current:** `[{"resource":"wood","amount":0.6,"role":"primary"}]`
 
 ---
 
 ### Hunter (`hunter`)
 
-Successful hunt ~6 kg meat/hour; foragers note edible plants.
+Successful hunt ~6 kg meat/hour; game only (2026-08 polish removed plants side output).
 
 **costResources**
 - Before: `[{"resource":"stone","multiplier":1},{"resource":"wood","multiplier":1}]`
@@ -54,13 +76,14 @@ Successful hunt ~6 kg meat/hour; foragers note edible plants.
 
 **produces**
 - Before: `[{"resource":"game","amount":1,"role":"primary"},{"resource":"plants","amount":0.2,"role":"unlockGate","forGenerator":"farmer"}]`
-- After: `[{"resource":"game","amount":0.25,"role":"primary"},{"resource":"plants","amount":0.12,"role":"unlockGate","forGenerator":"farmer"}]`
+- After (rebalance): `[{"resource":"game","amount":0.25,"role":"primary"},{"resource":"plants","amount":0.12,"role":"unlockGate","forGenerator":"farmer"}]`
+- **Current:** `[{"resource":"game","amount":0.25,"role":"primary"}]`
 
 ---
 
 ### Farmer (`farmer`)
 
-Subsistence plot ~1.5 kg crops/hour; small garden snacks for cooking.
+Subsistence plot ~1.5 kg crops/hour; plants only (2026-08 polish removed food side output).
 
 **costResources**
 - Before: `[{"resource":"stone","multiplier":1},{"resource":"wood","multiplier":1},{"resource":"game","multiplier":1}]`
@@ -68,7 +91,8 @@ Subsistence plot ~1.5 kg crops/hour; small garden snacks for cooking.
 
 **produces**
 - Before: `[{"resource":"plants","amount":1,"role":"primary"},{"resource":"food","amount":0.15,"role":"unlockGate","forGenerator":"campfire"}]`
-- After: `[{"resource":"plants","amount":0.4,"role":"primary"},{"resource":"food","amount":0.08,"role":"unlockGate","forGenerator":"campfire"}]`
+- After (rebalance): `[{"resource":"plants","amount":0.4,"role":"primary"},{"resource":"food","amount":0.08,"role":"unlockGate","forGenerator":"campfire"}]`
+- **Current:** `[{"resource":"plants","amount":0.4,"role":"primary"}]`
 
 ---
 
@@ -92,7 +116,7 @@ Pyrolysis ~25% wood mass to charcoal (historical kiln yield).
 
 ### Campfire (`campfire`)
 
-Cooking converts raw meat to preserved food; ash reveals ore traces.
+Cooks raw game into food using wood fuel (2026-08 polish removed copperOre side output).
 
 **costResources**
 - Before: `[{"resource":"stone","multiplier":1},{"resource":"wood","multiplier":2},{"resource":"game","multiplier":1}]`
@@ -104,7 +128,8 @@ Cooking converts raw meat to preserved food; ash reveals ore traces.
 
 **produces**
 - Before: `[{"resource":"food","amount":1.5,"role":"primary"},{"resource":"copperOre","amount":0.02,"role":"unlockGate","forGenerator":"prospector"}]`
-- After: `[{"resource":"food","amount":0.35,"role":"primary"},{"resource":"copperOre","amount":0.015,"role":"unlockGate","forGenerator":"prospector"}]`
+- After (rebalance): `[{"resource":"food","amount":0.35,"role":"primary"},{"resource":"copperOre","amount":0.015,"role":"unlockGate","forGenerator":"prospector"}]`
+- **Current:** `[{"resource":"food","amount":0.35,"role":"primary"}]`
 
 ---
 
@@ -436,12 +461,14 @@ AGI synthesis — high compute/data cost for general intelligence output.
 
 ## Production logic summary
 
-- **Rock Gatherer** (`rockGatherer`): +0.8/s stone; −—. Manual gathering ~70 kg/hour stone; incidental wood finds while quarrying.
-- **Woodcutter** (`woodcutter`): +0.6/s wood; −—. Felling ~2 m³ timber/hour; forest trails reveal game tracks.
-- **Hunter** (`hunter`): +0.25/s game; −—. Successful hunt ~6 kg meat/hour; foragers note edible plants.
-- **Farmer** (`farmer`): +0.4/s plants; −—. Subsistence plot ~1.5 kg crops/hour; small garden snacks for cooking.
+*Updated 2026-08 to match content logic polish.*
+
+- **Gatherer** (`rockGatherer`): +0.8/s stone, +0.2/s wood (unlockGate); −—. Manual gathering; incidental timber while quarrying.
+- **Woodcutter** (`woodcutter`): +0.6/s wood; −—. Felling ~2 m³ timber/hour.
+- **Hunter** (`hunter`): +0.25/s game; −—. Successful hunt ~6 kg meat/hour.
+- **Farmer** (`farmer`): +0.4/s plants; −—. Subsistence plot ~1.5 kg crops/hour.
 - **Charcoal Kiln** (`charcoalKiln`): +0.15/s charcoal; −0.6/s wood. Pyrolysis ~25% wood mass to charcoal (historical kiln yield).
-- **Campfire** (`campfire`): +0.35/s food; −0.15/s wood, 0.25/s game. Cooking converts raw meat to preserved food; ash reveals ore traces.
+- **Campfire** (`campfire`): +0.35/s food; −0.15/s wood, 0.25/s game. Cooks raw game into food.
 - **Mason** (`mason`): +0.2/s brick; −1.0/s stone. ~5:1 stone waste when cutting bricks (Roman masonry ratios).
 - **Prospector** (`prospector`): +—; −—. Surveying finds surface ore traces; iron trace after bronze metallurgy knowledge.
 - **Copper Mine** (`copperMine`): +0.35/s copperOre; −—. Shallow Bronze Age pit ~25 kg ore/hour per crew.
@@ -460,4 +487,6 @@ AGI synthesis — high compute/data cost for general intelligence output.
 - **Internet Hub** (`internetHub`): +0.45/s data; −0.35/s electricity, 0.08/s data. Packet routing amplifies data flow (net positive data after electricity cost).
 - **Data Center** (`dataCenter`): +1.2/s data; −0.5/s electricity, 0.12/s data. Hyperscale storage/processing — main data producer; ~1 PB/day abstracted.
 - **ML Laboratory** (`mlLaboratory`): +0.8/s compute; −0.35/s data, 0.2/s electricity. GPU training converts datasets to compute cycles; early model artifacts.
-- **AGI Core** (`agiCore`): +0.15/s intelligence; −0.5/s compute, 0.25/s data. AGI synthesis — high compute/data cost for general intelligence output.
+- **AGI Core** (`agiCore`): +0.15/s intelligence, +0.04/s compute (bonus); −0.5/s compute, 0.25/s data. AGI synthesis — high compute/data cost for general intelligence output.
+- **Quantum Processor** (`quantumProcessor`): +0.08/s quantumFlops; −0.8/s compute, 0.3/s electricity. Post-classical quantum operations.
+- **Neural Mesh** (`neuralMesh`): +0.05/s meshNodes, +0.1/s intelligence (secondary); −0.15/s quantumFlops, 0.4/s data, 0.25/s electricity. Planetary distributed cognition mesh.

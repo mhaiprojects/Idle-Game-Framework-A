@@ -2,6 +2,8 @@
 
 Browser-based idle/incremental game engine with swappable **content packs**. Development focuses on **Dr Dirt** (`dr-dirt`) — civilization from the Stone Age through the AI Age. **Cosmic Time Factory** remains registered as a secondary demo pack.
 
+**Repository:** [github.com/mhaiprojects/Idle-Game-Framework-A](https://github.com/mhaiprojects/Idle-Game-Framework-A)
+
 ## Quick start
 
 ### Play the game
@@ -49,7 +51,11 @@ content/
   dr-dirt/              Dr Dirt JSON content (primary, default)
   cosmic-time-factory/  Demo pack (registered, secondary)
 docs/
+  ARCHITECTURE.md       Engine vs content, module map
+  CONTENT_CONVENTIONS.md Dr Dirt design rules
   GENERATOR_CHANGES.md  Generator rebalance changelog
+  GENERATOR_AUDIT.md    Name/description/production audit
+  plans/                Completed content-logic plans
 js/
   main.js               App bootstrap + GameFacade
   afk.js                Engine module barrel export
@@ -69,7 +75,10 @@ Edit JSON under `content/<pack-id>/`. After changes, run `python3 scripts/test.p
 
 ## Save versions
 
-Each content pack declares `framework.save.gameVersion` in its JSON. Saves store this version. When the game version changes, the player is prompted for a **hard reset** (all progress lost). Full save migration will be added after stable release.
+- **Save schema:** `2.0.0` (engine format in `SaveManager.js`).
+- **Content version:** each pack declares `framework.save.gameVersion` in its JSON (Dr Dirt: `1.0.0`).
+
+Saves store the content `gameVersion`. When it changes, the player is prompted for a **hard reset** (all progress lost). Full save migration will be added after stable release.
 
 Bump `gameVersion` in `content/<pack>/framework.json` whenever a breaking content or balance change requires players to start fresh.
 
@@ -85,9 +94,13 @@ Bump `gameVersion` in `content/<pack>/framework.json` whenever a breaking conten
 | 1 | Bronze Age | 🥉 | Copper/tin mines & smelters, bronze forge, characters, drops |
 | 2 | Medieval | 🏰 | Iron chain, blacksmith → gold, trade caravan, artifacts |
 | 3 | Industrial | 🏭 | Coal, steel forge, food packaging, power, broadcast tower, random events |
-| 4 | AI Age | 🧠 | Internet hub, data center, ML lab, AGI core |
+| 4 | AI Age | 🧠 | Internet hub, data center, ML lab, AGI core, quantum processor, neural mesh |
 
 Ascension gates live in `content/dr-dirt/ascension.json`. **Bronze Age ascension** grants **1000 `copperOre` + 1000 `tinOre`**.
+
+### UI — generator requirements
+
+The generator panel shows a single **Requirements** section in two columns: **buy cost** (left) and **unlock status** (right). Labels are in `content/dr-dirt/defaults.json`.
 
 ### Production modifiers
 
@@ -97,7 +110,17 @@ Ascension gates live in `content/dr-dirt/ascension.json`. **Bronze Age ascension
 - **More** — equipment, upgrades, and permanent bonuses multiply together.
 - **Purchase vs operation** — `costResources` = build price; `consumes[]` = ongoing fuel per second.
 
-See [`docs/GENERATOR_CHANGES.md`](docs/GENERATOR_CHANGES.md) for generator rebalance details.
+See [`docs/GENERATOR_CHANGES.md`](docs/GENERATOR_CHANGES.md) for generator rebalance details and [`docs/CONTENT_CONVENTIONS.md`](docs/CONTENT_CONVENTIONS.md) for design rules.
+
+---
+
+## Troubleshooting
+
+| Issue | Fix |
+|-------|-----|
+| `Address already in use` on serve | Another app holds the port — `serve.py` tries the next port up to 10 times, or reuse an already-running game instance |
+| E2E tests fail on Playwright | Run `.venv-test/bin/playwright install chromium` (see [`tests/README.md`](tests/README.md)) |
+| Stale save after content bump | Hard reset when prompted, or clear `localStorage` key from `framework.save.storageKey` |
 
 ---
 
@@ -126,6 +149,18 @@ python3 scripts/test.py --e2e     # browser tests only
 4. Run `python3 scripts/test.py`
 
 Engine code stays generic; game-specific values live in JSON under `content/<pack-id>/`.
+
+---
+
+## Documentation
+
+| Doc | Purpose |
+|-----|---------|
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Engine modules, runtime, repo |
+| [`docs/CONTENT_CONVENTIONS.md`](docs/CONTENT_CONVENTIONS.md) | Dr Dirt design rules (smelter/forge, primitive chain, unlock gates) |
+| [`docs/GENERATOR_CHANGES.md`](docs/GENERATOR_CHANGES.md) | Rebalance changelog |
+| [`docs/GENERATOR_AUDIT.md`](docs/GENERATOR_AUDIT.md) | Open description/name polish recommendations |
+| [`docs/plans/dr-dirt-content-logic-completed.md`](docs/plans/dr-dirt-content-logic-completed.md) | Completed content-logic implementation log |
 
 ---
 

@@ -42,6 +42,8 @@ python3 -m venv .venv-test
 .venv-test/bin/playwright install chromium
 ```
 
+If E2E fails with a missing Chromium binary, run `playwright install chromium` inside `.venv-test`.
+
 ## In-browser test API
 
 When loaded with `?automation=1`, the game exposes `window.__AFK_TEST__`:
