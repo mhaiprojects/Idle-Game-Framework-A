@@ -121,7 +121,10 @@ export const ModifierSystem = {
 
     for (const evt of state.activeEvents || []) {
       if (evt.expiresAt && evt.expiresAt <= now) continue;
-      this._addEffectMods(mods, evt.effect, `event:${evt.codeName}`, evt.effect.category, null, 1);
+      const eventEffects = evt.effects || (evt.effect ? [evt.effect] : []);
+      for (const eff of eventEffects) {
+        this._addEffectMods(mods, eff, `event:${evt.codeName}`, eff.category, null, 1);
+      }
     }
 
     for (const synergy of config.synergies?.synergies || []) {

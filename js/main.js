@@ -1348,7 +1348,31 @@ window.AFK = AFK;
 
     const contentId = AFK.getSelectedContentId();
     const config = await AFK.loadAllConfigs(contentId);
-    const saved = AFK.SaveManager.load();
+    let saved = AFK.SaveManager.load();
+
+    if (saved?._needsHardReset) {
+      const { savedVersion, currentVersion } = saved._versionCheck || {};
+      const savedLabel = savedVersion || 'unknown';
+      const message = AFK.ConfigManager.getDefaultLabel('saveVersionMismatch', {
+        saved: savedLabel,
+        current: currentVersion || 'unknown'
+      });
+      const isAutomation = params.get('automation') === '1';
+      const shouldReset = isAutomation || confirm(message);
+      if (shouldReset) {
+        AFK.SaveManager.clearAll();
+        if (isAutomation) {
+          saved = null;
+        } else {
+          location.reload();
+          return;
+        }
+      } else {
+        AFK.SaveManager.clear();
+        saved = null;
+      }
+    }
+
     const gameState = new AFK.GameState(config, saved?.state);
     const gameLoop = new AFK.GameLoop(gameState, config);
     const game = reactive(new GameFacade(config, gameState, gameLoop, contentId));
@@ -1450,7 +1474,10 @@ window.AFK = AFK;
         assert('AFK engine loaded', () => { if (!window.AFK?.GameLoop) throw new Error('missing AFK'); });
         assert('content registry', () => {
           const games = AFK.ConfigManager.getAvailableGames();
-          if (!games.some(g => g.id === 'dr-dirt')) throw new Error('dr-dirt not registered');
+          const defaultId = AFK.ConfigManager.getContentRegistry()?.defaultContentId;
+          if (!defaultId || !games.some(g => g.id === defaultId)) {
+            throw new Error('default content pack not registered');
+          }
         });
         assert('tap increases primary', () => {
           const before = window.__AFK_TEST__.getPrimary();

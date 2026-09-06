@@ -11,7 +11,7 @@
     {
       "codeName": "firstGenerator",
       "displayName": "Tool User",
-      "description": "Own a Rock Gatherer.",
+      "description": "Own a Gatherer.",
       "icon": "🪨",
       "requirement": { "type": "generatorOwned", "generator": "rockGatherer", "amount": 1 },
       "reward": { "type": "modifierUnlock", "effect": { "type": "globalMultiplier", "multiplier": 1.05 } }

@@ -1,6 +1,6 @@
 # Test automation (agents & CI)
 
-Automated checks to validate content packs, bundles, and full browser gameplay.
+Automated checks to validate content packs and full browser gameplay.
 
 ## Quick start
 
@@ -10,7 +10,7 @@ python3 scripts/test.py
 
 This will:
 
-1. Validate all `content/*` JSON (generator chains, primary resource, tiers)
+1. Validate all `content/*` JSON (generator chains, primary resource, game version, tiers)
 2. Launch a local HTTP server and run Playwright E2E tests in headless Chromium
 
 ## Options
@@ -18,7 +18,7 @@ This will:
 | Command | Purpose |
 |---------|---------|
 | `python3 scripts/test.py --quick` | Skip content validation |
-| `python3 scripts/test.py --content` | Content/bundle validation only (no browser) |
+| `python3 scripts/test.py --content` | Content validation only (no browser) |
 | `python3 scripts/test.py --e2e` | Browser tests only |
 | `python3 scripts/test.py --full-playthrough` | Exhaustive 100× playthrough (on request) |
 
@@ -73,8 +73,8 @@ After editing content or engine code:
 
 ```
 tests/
-  automation/content_validator.py  # shared JSON validation
-  test_content.py                  # pytest: content + bundles
+  automation/content_validator.py  # shared JSON validation (source of truth)
+  test_content.py                  # pytest: content + runtime assets
   e2e/
     conftest.py                    # HTTP server fixture
     test_game_smoke.py             # boot, tap, buy, game selector

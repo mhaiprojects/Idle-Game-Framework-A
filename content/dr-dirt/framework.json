@@ -6,6 +6,7 @@
   },
   "save": {
     "storageKey": "afk_dr_dirt_save",
+    "gameVersion": "1.0.0",
     "autoSaveIntervalMs": 10000,
     "rollingBackupIntervalMs": 300000,
     "maxBackups": 5,

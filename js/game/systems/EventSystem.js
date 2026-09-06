@@ -37,7 +37,14 @@ export const EventSystem = {
     }
     const evt = events[Math.floor(Math.random() * events.length)];
     const expiresAt = Date.now() + evt.duration * 1000;
-    state.activeEvents.push({ codeName: evt.codeName, effect: evt.effect, expiresAt, displayName: evt.displayName, icon: evt.icon });
+    state.activeEvents.push({
+      codeName: evt.codeName,
+      effect: evt.effect,
+      effects: evt.effects,
+      expiresAt,
+      displayName: evt.displayName,
+      icon: evt.icon
+    });
     state.stats.eventsSeen = (state.stats.eventsSeen || 0) + 1;
     ModifierSystem.invalidate();
     gameState._bumpModCache();
@@ -75,7 +82,14 @@ export const EventSystem = {
     const evt = config.events.events.find(e => e.codeName === codeName);
     if (!evt) return;
     const expiresAt = Date.now() + evt.duration * 1000;
-    state.activeEvents.push({ codeName: evt.codeName, effect: evt.effect, expiresAt, displayName: evt.displayName, icon: evt.icon });
+    state.activeEvents.push({
+      codeName: evt.codeName,
+      effect: evt.effect,
+      effects: evt.effects,
+      expiresAt,
+      displayName: evt.displayName,
+      icon: evt.icon
+    });
     state.stats.eventsSeen = (state.stats.eventsSeen || 0) + 1;
     ModifierSystem.invalidate();
     gameState._bumpModCache();

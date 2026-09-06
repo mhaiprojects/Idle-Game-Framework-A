@@ -16,6 +16,7 @@
     "primaryCurrency": "Stone",
     "requirementsUnknown": "Requirements unknown",
     "requirementsUnavailable": "Requirements unavailable.",
+    "requirementsNone": "None",
     "unknownGeneratorCost": "Unknown generator cost",
     "noGeneratorCostDefined": "no cost defined",
     "unknownEntity": "???",
@@ -32,6 +33,8 @@
     "unitsOwned": "{count} units",
     "saveLastSaved": "Last saved: {time}",
     "saveVersion": "Version: {version}",
+    "saveGameVersion": "Game version: {version}",
+    "saveVersionMismatch": "This save is from game version {saved}. The current version is {current}. A hard reset is required to continue. All progress will be lost. Reset now?",
     "saveNoData": "No save data found",
     "saveIntegrityWarning": "Checksum mismatch \u2014 save may be corrupted",
     "saveNow": "Save Now",
@@ -110,6 +113,18 @@
     "production": {
       "icon": "\ud83d\udcc8",
       "title": "Production"
+    },
+    "requirements": {
+      "icon": "📋",
+      "title": "Requirements"
+    },
+    "buyCost": {
+      "icon": "💰",
+      "title": "Buy Cost"
+    },
+    "unlockStatus": {
+      "icon": "🔒",
+      "title": "Unlock"
     },
     "purchaseRequirements": {
       "icon": "\ud83d\udcb0",
@@ -490,7 +505,7 @@
         "id": "generator",
         "icon": "⚙️",
         "title": "Automate Production",
-        "message": "Open the Generators tab and buy a Rock Gatherer to produce stone automatically.",
+        "message": "Open the Generators tab and buy a Gatherer to produce stone automatically.",
         "targetTab": "generators",
         "waitEvent": "generatorPurchase"
       },

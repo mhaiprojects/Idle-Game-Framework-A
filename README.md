@@ -1,6 +1,6 @@
 # AFK Game Engine
 
-Browser-based idle/incremental game engine with swappable **content packs**. The **Dr Dirt** theme (`dr-dirt`) models civilization from the Stone Age through the AI Age.
+Browser-based idle/incremental game engine with swappable **content packs**. Development focuses on **Dr Dirt** (`dr-dirt`) — civilization from the Stone Age through the AI Age. **Cosmic Time Factory** remains registered as a secondary demo pack.
 
 ## Quick start
 
@@ -10,10 +10,13 @@ Requires a local HTTP server (ES modules + content fetch):
 
 ```bash
 python3 scripts/serve.py
-# open http://127.0.0.1:8765/index.html
 ```
 
+The script prints the full game URL (e.g. `http://127.0.0.1:8765/index.html`). If the game is already running on the starting port, it reuses that instance instead of starting a duplicate. If another app occupies the port, it tries the next port up to 10 times.
+
 **Dr Dirt** loads by default. Tap to earn **Stone**, buy generators, prestige, and ascend through historical eras.
+
+Edit game balance directly in `content/dr-dirt/*.json` — no generator scripts required.
 
 ### Debug / playtesting URLs
 
@@ -43,25 +46,32 @@ See [`tests/README.md`](tests/README.md) for the full automation API.
 index.html              Entry point (Vue CDN + ES module bootstrap)
 content/
   registry.json         Registered games + defaultContentId
-  dr-dirt/              Dr Dirt JSON content (canonical, in registry)
-  cosmic-time-factory/  Legacy demo pack (on disk, not in registry)
+  dr-dirt/              Dr Dirt JSON content (primary, default)
+  cosmic-time-factory/  Demo pack (registered, secondary)
 docs/
   GENERATOR_CHANGES.md  Generator rebalance changelog
 js/
   main.js               App bootstrap + GameFacade
   afk.js                Engine module barrel export
-  game/                 Engine source
+  game/                 Engine source (content-agnostic)
   ui/                   Vue UI components (ES modules)
   test/                 Playthrough automation (loaded on demand)
 scripts/
   serve.py              Local HTTP server for play + tests
-  bundle.py             Content validation (Python source of truth)
-  test.py               Validate + E2E tests
+  test.py               Content validation + E2E tests
 tests/                  Content validation + Playwright smoke tests
 prompts/                Design/spec prompts (reference only)
 ```
 
 Edit JSON under `content/<pack-id>/`. After changes, run `python3 scripts/test.py`.
+
+---
+
+## Save versions
+
+Each content pack declares `framework.save.gameVersion` in its JSON. Saves store this version. When the game version changes, the player is prompted for a **hard reset** (all progress lost). Full save migration will be added after stable release.
+
+Bump `gameVersion` in `content/<pack>/framework.json` whenever a breaking content or balance change requires players to start fresh.
 
 ---
 
@@ -97,7 +107,6 @@ See [`docs/GENERATOR_CHANGES.md`](docs/GENERATOR_CHANGES.md) for generator rebal
 python3 scripts/test.py          # content validation + E2E smoke tests
 python3 scripts/test.py --content # JSON validation only
 python3 scripts/test.py --e2e     # browser tests only
-python3 scripts/bundle.py         # content validation only
 ```
 
 | Flag | Purpose |
@@ -112,16 +121,17 @@ python3 scripts/bundle.py         # content validation only
 ## Adding content packs
 
 1. Create `content/<id>/` with standard JSON files + `manifest.json`
-2. Register in `content/registry.json` under `games[]`
-3. Run `python3 scripts/test.py`
+2. Set `framework.save.gameVersion` in `framework.json`
+3. Register in `content/registry.json` under `games[]`
+4. Run `python3 scripts/test.py`
 
-Unregistered packs (e.g. `cosmic-time-factory/`) remain on disk for reference and are still validated by `scripts/bundle.py`.
+Engine code stays generic; game-specific values live in JSON under `content/<pack-id>/`.
 
 ---
 
 ## Content packs
 
-| ID | In registry | Primary currency |
-|----|-------------|------------------|
-| `dr-dirt` | Yes (default) | Stone |
-| `cosmic-time-factory` | No (legacy folder) | Time shards |
+| ID | In registry | Default | Primary currency |
+|----|-------------|---------|------------------|
+| `dr-dirt` | Yes | Yes | Stone |
+| `cosmic-time-factory` | Yes | No | Time shards |

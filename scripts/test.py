@@ -3,9 +3,10 @@
 Run full test automation for the AFK game engine.
 
 Usage:
-  python3 scripts/test.py          # validate content + E2E tests
+  python3 scripts/test.py          # content validation + E2E tests
   python3 scripts/test.py --quick  # skip content validation
   python3 scripts/test.py --e2e    # browser tests only
+  python3 scripts/test.py --content # JSON validation only
   python3 scripts/test.py --full-playthrough  # exhaustive 100x sim (slow)
 
 Agents: run this after config or engine changes to verify a working game.
@@ -40,6 +41,10 @@ def ensure_venv() -> None:
     run([str(VENV / "bin" / "playwright"), "install", "chromium"])
 
 
+def run_content_validation() -> int:
+    return run([str(PYTEST), "tests/test_content.py", "-v"])
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="AFK game test automation")
     parser.add_argument("--quick", action="store_true", help="Skip content validation")
@@ -54,18 +59,12 @@ def main() -> int:
 
     ensure_venv()
 
-    if not args.e2e and not args.content and not args.quick:
-        code = run([sys.executable, str(ROOT / "scripts" / "bundle.py")])
-        if code != 0:
-            return code
-
     if args.content:
-        return run([str(PYTEST), "tests/test_content.py", "-v"])
+        return run_content_validation()
 
     if args.full_playthrough:
-        bundle = not args.quick
-        if bundle:
-            code = run([sys.executable, str(ROOT / "scripts" / "bundle.py")])
+        if not args.quick:
+            code = run_content_validation()
             if code != 0:
                 return code
         return run([
@@ -80,9 +79,11 @@ def main() -> int:
     if args.e2e:
         return run([str(PYTEST), "tests/e2e", "-v"])
 
-    code = run([str(PYTEST), "tests/test_content.py", "-v"])
-    if code != 0:
-        return code
+    if not args.quick:
+        code = run_content_validation()
+        if code != 0:
+            return code
+
     return run([str(PYTEST), "tests/e2e", "-v"])
 
 

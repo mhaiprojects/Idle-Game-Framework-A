@@ -32,6 +32,8 @@
     "unitsOwned": "{count} units",
     "saveLastSaved": "Last saved: {time}",
     "saveVersion": "Version: {version}",
+    "saveGameVersion": "Game version: {version}",
+    "saveVersionMismatch": "This save is from game version {saved}. The current version is {current}. A hard reset is required to continue. All progress will be lost. Reset now?",
     "saveNoData": "No save data found",
     "saveIntegrityWarning": "Checksum mismatch — save may be corrupted",
     "saveNow": "Save Now",

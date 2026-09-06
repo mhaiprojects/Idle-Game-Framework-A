@@ -24,6 +24,9 @@ export default {
     buyLabel(gen) {
       if (gen.buyQuantity > 1) return `Buy ×${gen.buyQuantity}`;
       return 'Buy';
+    },
+    sectionTitle(key) {
+      return AFK?.ConfigManager?.getSection?.(key)?.title || key;
     }
   },
   template: `
@@ -43,12 +46,24 @@ export default {
         <CardSection section-key="production" :first="true">
           <GeneratorProductionList :rows="gen.production" :format-number="formatNumber" />
         </CardSection>
-        <UnlockRequirementsList v-if="!gen.isUnlocked && gen.unlockRequirements?.length"
-          :requirements="gen.unlockRequirements" />
-        <p v-else-if="!gen.isUnlocked" class="hint-text">{{ requirementsUnavailable }}</p>
-        <CardSection v-if="gen.isUnlocked" section-key="purchaseRequirements">
-          <ResourceProgressList :entries="gen.costProgress" />
-          <div class="section-actions">
+        <CardSection section-key="requirements">
+          <div class="requirements-two-col">
+            <div class="requirements-col">
+              <div class="requirements-col-heading">{{ sectionTitle('buyCost') }}</div>
+              <ResourceProgressList v-if="gen.costProgress?.length" :entries="gen.costProgress" />
+              <p v-else class="hint-text muted">—</p>
+            </div>
+            <div class="requirements-col">
+              <div class="requirements-col-heading">{{ sectionTitle('unlockStatus') }}</div>
+              <UnlockRequirementsList
+                v-if="gen.unlockRequirements?.length"
+                bare
+                :requirements="gen.unlockRequirements"
+              />
+              <p v-else class="hint-text muted">{{ requirementsNone }}</p>
+            </div>
+          </div>
+          <div v-if="gen.isUnlocked" class="section-actions">
             <button class="btn btn-primary animate__animated" :disabled="!gen.canBuy" @click="$emit('buy', gen.codeName)">{{ buyLabel(gen) }}</button>
           </div>
         </CardSection>
@@ -56,8 +71,8 @@ export default {
     </div>
   `,
   computed: {
-    requirementsUnavailable() {
-      return AFK?.ConfigManager?.getDefaultLabel?.('requirementsUnavailable') || '';
+    requirementsNone() {
+      return AFK?.ConfigManager?.getDefaultLabel?.('requirementsNone') || 'None';
     }
   }
 };

@@ -7,19 +7,26 @@
       "entries": [
         {
           "item": "rationPack",
-          "weight": 70,
-          "quantity": [
-            1,
-            1
-          ]
+          "weight": 50,
+          "quantity": [1, 1]
+        },
+        {
+          "item": "driedMeat",
+          "weight": 25,
+          "quantity": [1, 1],
+          "dropRequirements": { "minAscensionTier": 0 }
+        },
+        {
+          "item": "herbalTea",
+          "weight": 25,
+          "quantity": [1, 1],
+          "dropRequirements": { "minAscensionTier": 0 }
         },
         {
           "item": "energyDrink",
           "weight": 30,
-          "quantity": [
-            1,
-            1
-          ]
+          "quantity": [1, 1],
+          "dropRequirements": { "minAscensionTier": 3 }
         }
       ]
     },
@@ -30,19 +37,26 @@
       "entries": [
         {
           "item": "rationPack",
-          "weight": 60,
-          "quantity": [
-            1,
-            2
-          ]
+          "weight": 45,
+          "quantity": [1, 2]
+        },
+        {
+          "item": "driedMeat",
+          "weight": 20,
+          "quantity": [1, 1],
+          "dropRequirements": { "minAscensionTier": 0 }
+        },
+        {
+          "item": "herbalTea",
+          "weight": 15,
+          "quantity": [1, 1],
+          "dropRequirements": { "minAscensionTier": 0 }
         },
         {
           "item": "energyDrink",
-          "weight": 40,
-          "quantity": [
-            1,
-            1
-          ]
+          "weight": 20,
+          "quantity": [1, 1],
+          "dropRequirements": { "minAscensionTier": 3 }
         }
       ]
     },
@@ -54,30 +68,52 @@
       "entries": [
         {
           "item": "stonePick",
-          "weight": 40,
-          "quantity": [
-            1,
-            1
-          ],
-          "dropTier": "common"
+          "weight": 35,
+          "quantity": [1, 1],
+          "dropTier": "common",
+          "dropRequirements": { "minAscensionTier": 0 }
         },
         {
           "item": "leafCrown",
-          "weight": 35,
-          "quantity": [
-            1,
-            1
-          ],
-          "dropTier": "common"
+          "weight": 30,
+          "quantity": [1, 1],
+          "dropTier": "common",
+          "dropRequirements": { "minAscensionTier": 0 }
         },
         {
           "item": "boneCharm",
+          "weight": 20,
+          "quantity": [1, 1],
+          "dropTier": "uncommon",
+          "dropRequirements": { "minAscensionTier": 0 }
+        },
+        {
+          "item": "bronzeAxe",
           "weight": 25,
-          "quantity": [
-            1,
-            1
-          ],
-          "dropTier": "uncommon"
+          "quantity": [1, 1],
+          "dropTier": "uncommon",
+          "dropRequirements": { "minAscensionTier": 1, "generator": "bronzeForge" }
+        },
+        {
+          "item": "ironSword",
+          "weight": 20,
+          "quantity": [1, 1],
+          "dropTier": "rare",
+          "dropRequirements": { "minAscensionTier": 2, "generator": "blacksmith" }
+        },
+        {
+          "item": "steamWrench",
+          "weight": 18,
+          "quantity": [1, 1],
+          "dropTier": "rare",
+          "dropRequirements": { "minAscensionTier": 3, "generator": "powerPlant" }
+        },
+        {
+          "item": "neuralHeadset",
+          "weight": 12,
+          "quantity": [1, 1],
+          "dropTier": "epic",
+          "dropRequirements": { "minAscensionTier": 4, "generator": "agiCore" }
         }
       ]
     },

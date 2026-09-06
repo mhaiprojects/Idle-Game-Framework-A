@@ -22,7 +22,7 @@ export const DropSystem = {
       } else if (table.codeName === 'artifactDrop') {
         entry = this._rollArtifactEntry(table, state, config);
       } else {
-        entry = this._rollEntry(table.entries);
+        entry = this._rollEntry(this._filterDropEntries(table.entries, state));
       }
       if (!entry) continue;
 
@@ -43,7 +43,7 @@ export const DropSystem = {
       if (table.trigger !== 'click') continue;
       if (Math.random() > table.chance) continue;
 
-      const entry = this._rollEntry(table.entries);
+      const entry = this._rollEntry(this._filterDropEntries(table.entries, state));
       if (!entry || !entry.item) continue;
 
       const qty = this._rollQuantity(entry.quantity);
@@ -63,29 +63,35 @@ export const DropSystem = {
   _rollEquipmentEntry(table, state, config) {
     const mods = config.drops.equipmentDropModifiers;
     const tier = state.meta.ascension.currentTier;
+    const eligible = this._filterDropEntries(table.entries, state);
     const tierWeights = mods?.tierWeightsByAscension?.[String(tier)]
       || mods?.tierWeightsByAscension?.['0']
       || { common: 0.6, rare: 0.3, epic: 0.1 };
 
-    const eligible = table.entries.filter(e => {
+    const weighted = eligible.filter(e => {
       const dropTier = e.dropTier || 'common';
       const w = tierWeights[dropTier] ?? 0.33;
       return Math.random() <= w;
     });
 
-    return this._rollEntry(eligible.length ? eligible : table.entries);
+    return this._rollEntry(weighted.length ? weighted : eligible);
   },
 
   _rollArtifactEntry(table, state, config) {
-    const tier = state.meta.ascension.currentTier;
-    const eligible = table.entries.filter(e => {
-      const req = e.dropRequirements;
-      if (!req) return true;
-      if (tier < (req.minAscensionTier || 0)) return false;
-      return (state.generators[req.generator]?.quantityPurchased || 0) > 0;
-    });
+    const eligible = this._filterDropEntries(table.entries, state);
     if (!eligible.length) return null;
     return this._rollEntry(eligible);
+  },
+
+  _filterDropEntries(entries, state) {
+    const tier = state.meta.ascension.currentTier;
+    return entries.filter(e => {
+      const req = e.dropRequirements;
+      if (!req) return true;
+      if (tier < (req.minAscensionTier ?? 0)) return false;
+      if (req.generator && !(state.generators[req.generator]?.quantityPurchased > 0)) return false;
+      return true;
+    });
   },
 
   _rollEntry(entries) {

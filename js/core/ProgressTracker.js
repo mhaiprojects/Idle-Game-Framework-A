@@ -4,7 +4,7 @@ function makeChecks() {
   return {
     scaffold: [
       { id: 'index_html', label: 'index.html ES module bootstrap', check: () => true },
-      { id: 'content_validator', label: 'scripts/bundle.py content validation', check: () => true },
+      { id: 'content_validator', label: 'scripts/test.py content validation', check: () => true },
       { id: 'afk_namespace', label: 'window.AFK engine namespace', check: () => !!window.AFK?.GameLoop },
       { id: 'content_fetch', label: 'Config loaded via fetch from content/', check: () => !!ConfigManager.getAll() }
     ],
@@ -69,9 +69,9 @@ function makeChecks() {
     save: [
       { id: 'save_load', label: 'SaveManager load/save', check: () => typeof window.AFK?.SaveManager?.save === 'function' },
       { id: 'offline', label: 'Offline progress config', check: () => ConfigManager.getFramework()?.save?.offlineCapSeconds > 0 },
-      { id: 'migration', label: 'Save migration v1.4.0', check: () => {
-        const m = window.AFK?.SaveManager?.migrate({ version: '1.3.0', state: { meta: { prestige: { run: { peakPPSThisRun: 5, peakPrimaryCurrencyRateThisRun: 5 } } } } });
-        return m?.version === '1.4.0' && m.state.meta.prestige.run.peakPPSThisRun === undefined;
+      { id: 'migration', label: 'Save format version tracked', check: () => {
+        return typeof window.AFK?.SaveManager?.getSaveVersion === 'function'
+          && typeof window.AFK?.SaveManager?.getGameVersion === 'function';
       }}
     ],
     characters: [

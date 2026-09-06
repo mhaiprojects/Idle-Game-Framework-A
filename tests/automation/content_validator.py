@@ -104,6 +104,10 @@ def validate_content_pack(content_id: str) -> list[str]:
     elif "costIncreasePerPrestige" not in pdc:
         errors.append(f"{content_id}: difficulty.prestigeDifficultyPerCount.costIncreasePerPrestige required")
 
+    game_version = pack.get("framework", {}).get("save", {}).get("gameVersion")
+    if not game_version:
+        errors.append(f"{content_id}: framework.save.gameVersion required")
+
     return errors
 
 

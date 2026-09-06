@@ -25,6 +25,14 @@ def test_all_content_folders_valid():
     assert not failures, f"Content validation failed: {failures}"
 
 
+def test_default_content_has_game_version():
+    registry = load_registry()
+    default_id = registry.get("defaultContentId")
+    pack = validate_registered_content()
+    assert default_id in pack
+    assert not pack[default_id], pack[default_id]
+
+
 def test_runtime_assets_present():
     errors = validate_runtime_assets()
     assert not errors, errors

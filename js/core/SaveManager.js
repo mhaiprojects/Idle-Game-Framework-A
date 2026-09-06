@@ -1,7 +1,7 @@
 import { EventBus, EVENTS } from './EventBus.js';
 import { ConfigManager } from './ConfigManager.js';
 
-const SAVE_VERSION = '1.4.0';
+const SAVE_VERSION = '2.0.0';
 const LEGACY_STORAGE_KEY = 'afk_ai_save';
 
 let persistEnabled = true;
@@ -48,6 +48,7 @@ function buildPayload(state) {
   const serializable = state.toJSON();
   const payload = {
     version: SAVE_VERSION,
+    gameVersion: ConfigManager.getFramework()?.save?.gameVersion || null,
     contentId: ConfigManager.getCurrentContentId(),
     timestamp: Date.now(),
     state: serializable,
@@ -72,6 +73,24 @@ export const SaveManager = {
 
   getSaveVersion() {
     return SAVE_VERSION;
+  },
+
+  getGameVersion() {
+    return ConfigManager.getFramework()?.save?.gameVersion || null;
+  },
+
+  checkGameVersion(data) {
+    const current = this.getGameVersion();
+    if (!current) return { compatible: true, currentVersion: null, savedVersion: data?.gameVersion || null };
+    const saved = data?.gameVersion || null;
+    if (!saved) {
+      return { compatible: false, currentVersion: current, savedVersion: null };
+    }
+    return {
+      compatible: saved === current,
+      currentVersion: current,
+      savedVersion: saved
+    };
   },
 
   verifyPayload(data) {
@@ -100,6 +119,11 @@ export const SaveManager = {
       const currentId = ConfigManager.getCurrentContentId();
       if (data.contentId && data.contentId !== currentId) return null;
       if (!data.contentId) data.contentId = currentId;
+      const versionCheck = this.checkGameVersion(data);
+      if (!versionCheck.compatible) {
+        data._needsHardReset = true;
+        data._versionCheck = versionCheck;
+      }
       data._integrity = this.verifyPayload(data);
       return data;
     } catch (e) {
@@ -245,7 +269,9 @@ export const SaveManager = {
 
     if (migrated.version === '1.2.0') {
       if (!migrated.contentId) {
-        migrated.contentId = 'dr-dirt';
+        migrated.contentId = ConfigManager.getContentRegistry()?.defaultContentId
+          || ConfigManager.getAvailableGames()?.[0]?.id
+          || null;
       }
       migrated.version = '1.3.0';
     }
@@ -257,6 +283,10 @@ export const SaveManager = {
       }
       delete run?.peakPPSThisRun;
       migrated.version = '1.4.0';
+    }
+
+    if (migrated.version === '1.4.0') {
+      migrated.version = SAVE_VERSION;
     }
 
     if (migrated.version === SAVE_VERSION) return migrated;

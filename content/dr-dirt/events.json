@@ -44,11 +44,14 @@
       "codeName": "factoryShift",
       "displayName": "Factory Shift",
       "icon": "🏭",
-      "description": "Industrial surge — double steel output.",
+      "description": "Industrial surge — double coal and steel output.",
       "duration": 25,
       "minInterval": 160,
       "maxInterval": 380,
-      "effect": { "type": "resourceMultiplier", "resource": "steel", "multiplier": 2 }
+      "effects": [
+        { "type": "resourceMultiplier", "resource": "coal", "multiplier": 2 },
+        { "type": "resourceMultiplier", "resource": "steel", "multiplier": 2 }
+      ]
     },
     {
       "codeName": "modelBreakthrough",

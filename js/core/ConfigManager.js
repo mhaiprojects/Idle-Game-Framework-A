@@ -33,7 +33,7 @@ export function getSelectedContentId() {
     const stored = localStorage.getItem(CONTENT_SELECTION_KEY);
     if (stored) return stored;
   }
-  return contentRegistry?.defaultContentId || 'dr-dirt';
+  return contentRegistry?.defaultContentId || contentRegistry?.games?.[0]?.id || null;
 }
 
 export function setSelectedContentId(contentId) {

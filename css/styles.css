@@ -194,9 +194,31 @@ html, body {
 }
 
 .unlock-requirements-inline {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px dashed rgba(100, 116, 139, 0.4);
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.requirements-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+  align-items: start;
+}
+
+.requirements-col-heading {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+  margin-bottom: 0.45rem;
+}
+
+@media (max-width: 480px) {
+  .requirements-two-col {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Shared section grouping — cards, modals, and tabs */
